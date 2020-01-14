@@ -4,14 +4,15 @@ class ImageClass {
   int index,  weight;
   ArrayList<String> cites = new ArrayList<String>();
   
-  ImageClass(int index, PImage image, String name, int tempWeight) {
+  ImageClass(int index, PImage image, String name) {
     this.index = index;
     this.image = image;
     this.name = name;
     category = null;
-    this.weight = tempWeight;
     this.cites = cites;
+    this.weight = this.cites.size();
   }
+  
   void updateWeight(int value) {
     this.weight += value;
     // println("updated ic: " + this.index + "  to: " + this.weight);

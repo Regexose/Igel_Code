@@ -9,33 +9,34 @@ Table zitate, bildTexte;
 int  picIndex, counter;
 PImage[] weydemeyer, singer;
 String [] weydeList, singerList;
+ArrayList<ImageClass> singerScales = new ArrayList<ImageClass>();
+ArrayList<ImageClass> weydeScales = new ArrayList<ImageClass>();
+IntList weightList;
+PFont Arial;
 int [][] rythms = { {1000, 1000, 1000, 1000, 250, 500}, 
   {500, 2000, 2000, 500, 500, 1000, 1000}, 
   {3000, 500, 500, 1000, 1000}};
-ArrayList<ImageClass> singerScales = new ArrayList<ImageClass>();
-ArrayList<ImageClass> weydeScales = new ArrayList<ImageClass>();
-int [] weights;
-PFont Arial;
 
 void setup() {
   size(900, 600);
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   Arial = createFont("Arial", 16, true);
+  weightList = new IntList();
   sing_folder = new File(sketchPath("data/singer"));
   weyd_folder = new File(sketchPath("data/weyde"));
   weydemeyer = loadImages(weyd_folder);
   singer = loadImages(sing_folder);
   weydeList = weyd_folder.list();
   singerList = sing_folder.list();
-  buildClasses(singerScales, singer, singerList, "Plansche Singerstrasse");
-  buildClasses(weydeScales, weydemeyer, weydeList, "Plasche Weydemeyerstr");
+  buildClasses(singerScales, singer, singerList);
+  buildClasses(weydeScales, weydemeyer, weydeList);
   picIndex = 0;
   counter = 0;
 }
 
 void draw() {
-  selectImage(weydeScales, frameCount, rythms[2]);
+  selectImage(singerScales, frameCount, rythms[2]);
   imageMode(CENTER);
   image(singerScales.get(picIndex).image, width/2, height/2, width, height);
   textFont(Arial, 29);
@@ -43,16 +44,18 @@ void draw() {
 }
 
 void loadCites(ImageClass iC) {
+  println("checking:    " +iC.name); 
   for (TableRow row : bildTexte.rows()) {
     String bildName = row.getString("BildName");
-    // println("bildName:   " + bildName + "   iC:image:   " + iC.name);
-    String quote = row.getString("Zitat");
-    if (bildName.equals(iC.name) == true) {
-      println("quote: " + quote);
+     if (bildName.equals(iC.name) == true) {
+      println("\tMATCH !!!   ! with:  " + iC.name);
+      String quote = row.getString("Zitat");
+      println("bildName:   " + bildName + "   iC:image:   " + iC.name + "\n cite: " + quote);
       iC.textAcquire(quote); //<>//
     }
   }
-  for (String cite : iC.cites) {println("cite: " +cite);}
+  println("cites size: " + iC.cites.size());
+  weightList.append(iC.cites.size());
 }
 
 PImage[] loadImages(File folder) {
@@ -69,13 +72,10 @@ PImage[] loadImages(File folder) {
   return imgArray;
 }
 
-void buildClasses(ArrayList<ImageClass> imageList, PImage[] images, String[] names, String ortName) {
-  weights = new int[images.length];
+void buildClasses(ArrayList<ImageClass> imageList, PImage[] images, String[] names) {
   for (int i=0; i<images.length; i++) {
-    int mockLength = int(random(images.length));
-    ImageClass iC = new ImageClass(i, images[i], names[i], mockLength);
+    ImageClass iC = new ImageClass(i, images[i], names[i]);
     imageList.add(iC);
     loadCites(iC);
-    weights[i] = mockLength;
   }
 }
