@@ -10,9 +10,13 @@ class ImageClass {
     this.name = name;
     category = null;
     this.weight = tempWeight;
+    this.cites = cites;
   }
   void updateWeight(int value) {
     this.weight += value;
     // println("updated ic: " + this.index + "  to: " + this.weight);
+  }
+  void textAcquire(String cite) {
+    this.cites.add(cite);
   }
 }
