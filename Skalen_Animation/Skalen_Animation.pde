@@ -30,7 +30,7 @@ void setup() {
   weydeList = weyd_folder.list();
   singerList = sing_folder.list();
   buildClasses(singerScales, singer, singerList);
-  buildClasses(weydeScales, weydemeyer, weydeList);
+  // buildClasses(weydeScales, weydemeyer, weydeList);
   picIndex = 0;
   counter = 0;
 }
@@ -40,22 +40,22 @@ void draw() {
   imageMode(CENTER);
   image(singerScales.get(picIndex).image, width/2, height/2, width, height);
   textFont(Arial, 29);
-  text(weydeScales.get(3).cites.get(0), mouseX, mouseY);
+  text(singerScales.get(3).cites.get(0), mouseX, mouseY);
 }
 
 void loadCites(ImageClass iC) {
-  println("checking:    " +iC.name); 
+  // println("checking:    " +iC.name); 
   for (TableRow row : bildTexte.rows()) {
     String bildName = row.getString("BildName");
      if (bildName.equals(iC.name) == true) {
-      println("\tMATCH !!!   ! with:  " + iC.name);
       String quote = row.getString("Zitat");
-      println("bildName:   " + bildName + "   iC:image:   " + iC.name + "\n cite: " + quote);
-      iC.textAcquire(quote); //<>//
+      // println("bildName:   " + bildName + "   iC:image:   " + iC.name + "\n cite: " + quote);
+      iC.textAcquire(quote);
     }
   }
-  println("cites size: " + iC.cites.size());
+  iC.updateWeight(iC.cites.size());
   weightList.append(iC.cites.size());
+  
 }
 
 PImage[] loadImages(File folder) {

@@ -10,7 +10,7 @@ class ImageClass {
     this.name = name;
     category = null;
     this.cites = cites;
-    this.weight = this.cites.size();
+    this.weight = 0;
   }
   
   void updateWeight(int value) {
