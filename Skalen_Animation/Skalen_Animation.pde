@@ -33,7 +33,7 @@ void setup() {
   weydeList = weyd_folder.list();
   singerList = sing_folder.list();
   buildClasses(singerScales, singer, singerList);
-  pic1 = createImage(width, height, RGB);
+  pic1 = createImage(width, height, ARGB);
   // buildClasses(weydeScales, weydemeyer, weydeList);
   picIndex = 0;
   beatNumber = 0;

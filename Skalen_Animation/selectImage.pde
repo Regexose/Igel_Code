@@ -2,31 +2,31 @@ void selectImage (ArrayList<ImageClass> scale, int[] ryt, int beatNum) {
   beatNum = beatNum % ryt.length;
   int beatValue = ryt[beatNum];
   int maxWeight = matchList.max();
-  println("beatValue " + beatValue);
+  IntList tempList = new IntList();
   if ((frameCount * 1000/ 25) % beatValue == 0) {
+    println("beatNum: " + beatNum);
     for(int i=0; i< scale.size(); i++) {
-      // println("element " + scale.get(i).name +  "matchingBeat =  " + scale.get(i).matchingBeatValue);
-      if (beatNum == 0 && scale.get(i).weight == maxWeight) {
-         pic1 = scale.get(i).image;
-      } else if (scale.get(i).matchingBeatValue == beatValue){
-        pic1 = scale.get(i).image;
-      }
-     }
-    beatNumber += 1;
- 
-  }
-}
-
-void updateWeights(ArrayList<ImageClass> scale) {
-  for(int i=0; i< scale.size(); i ++) {
-    // println("weights not updated: " + scale.get(i).weight);
-    println("weightlist element: " + matchList.get(i)); //<>//
-    if (scale.get(i).weight == matchList.min()) {
-      scale.get(i).updateWeight(2);
+      ImageClass element = scale.get(i);
+      // println("element " + element.name +  "matchingBeat =  " + element.matchingBeatValue);
+      if (beatNum == 0 && element.weight == maxWeight) {
+         pic1 = element.image;
+      } else if (element.matchingBeatValue == beatValue){
+        println("element  " + element.name);
+        tempList.append(element.index); //<>//
+        if (tempList.size() > 1) {
+          for (int t=0; t<tempList.size(); t++) {
+            if (element.index == tempList.get(int(random(tempList.size())))) {
+              println("element: " +element.name + "  from templist; " + tempList);
+              pic1 = element.image;
+              element.counter += 1;
+              }
+          }
+        } else {
+        pic1 = element.image;
+        element.counter += 1;
+       }
     }
-    matchList.set(i, scale.get(i).weight);
-    
-    // weightList.get(i).set(scale.get(i).weight);
-    
+   }
   }
+  beatNumber += 1;
 }

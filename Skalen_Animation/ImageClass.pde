@@ -1,7 +1,7 @@
 class ImageClass {
   PImage image;
   String name, category;
-  int index,  weight, matchingBeatValue;
+  int index,  weight, matchingBeatValue, counter;
   ArrayList<String> cites = new ArrayList<String>();
   
   ImageClass(int index, PImage image, String name) {
@@ -9,9 +9,9 @@ class ImageClass {
     this.image = image;
     this.name = name;
     category = null;
-    this.cites = cites;
     this.weight = 0;
     this.matchingBeatValue = 0;
+    this.counter = 1;
   }
   
   void updateWeight(int value) {
@@ -23,7 +23,7 @@ class ImageClass {
   }
   void mapBeatValue(int value) {
     this.matchingBeatValue =  value;
-    // println("matching iC " + this.name + " with " + value + " value");
+    println("matching iC " + this.name + " with " + value + " value");
   }
   
 }
