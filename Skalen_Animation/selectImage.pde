@@ -32,8 +32,3 @@ void selectImage (ArrayList<ImageClass> scale, ArrayList<Integer> ryt) {
     }
  
 }
-
-boolean contains(int[] arr, int item) {
-      int index = Arrays.binarySearch(arr, item);
-      return index >= 0;
-}

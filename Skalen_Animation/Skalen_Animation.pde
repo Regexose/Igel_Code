@@ -76,8 +76,8 @@ void draw() {
     beatNumber += 1;
     beatNumber = beatNumber % newRythms.get(0).size(); 
   }
- 
-  }
+  //saveFrame("output/skala####.png");
+}
   /*
   
 } 
