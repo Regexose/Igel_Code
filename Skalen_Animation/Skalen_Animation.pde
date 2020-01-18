@@ -22,13 +22,21 @@ ArrayList<ImageClass> singerScales = new ArrayList<ImageClass>();
 ArrayList<ImageClass> weydeScales = new ArrayList<ImageClass>();
 IntList matchList, weightList;
 PFont Arial;
-int[][] rythms = { {3000, 1000, 750, 1500, 500, 500}, 
-  {3000, 2000, 2000, 500, 500, 1000, 1000}, 
-  {3000, 500, 500, 1000, 1000}};
+ArrayList<ArrayList<Integer>> newRythms = new ArrayList<ArrayList<Integer>>();
 
+
+
+/*
+int[][] rythms = { {3000, 2000, 2000, 500, 500, 1000, 1000}, 
+  , 
+  {3000, 500, 500, 1000, 1000}};
+*/
 
 void setup() {
   size(900, 600);
+  newRythms.add(new ArrayList<Integer>(Arrays.asList(3000, 1000, 750, 1500, 1375, 500)));
+  newRythms.add(new ArrayList<Integer>(Arrays.asList(3000, 2000, 2000, 500, 500, 1000, 1000)));
+  newRythms.add(new ArrayList<Integer>(Arrays.asList(3000, 2000, 2000, 500, 500, 1000, 1000)));
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
@@ -55,18 +63,18 @@ void setup() {
 
 void draw() {
   if (hasFinished) {
-    int waitTime = rythms[0][beatNumber];
+    int waitTime = newRythms.get(0).get(beatNumber);
     createScheduleTimer(waitTime);
  
     println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
-    selectImage(singerScales, rythms[0]);
+    selectImage(singerScales, newRythms.get(0));
     imageMode(CENTER);
     // println("second:  " + second() + "    draw beatnumber:  " + beatNumber + "   image: " + singerScales.get(picIndex).name);
     image(pic1, width/2, height/2, width, height);
     textFont(Arial, 29);
-    text(beatNumber + " – " + rythms[0][beatNumber], 20, 20);  
+    text(beatNumber + " – " + newRythms.get(0).get(beatNumber), 20, 20);  
     beatNumber += 1;
-    beatNumber = beatNumber % rythms[0].length; 
+    beatNumber = beatNumber % newRythms.get(0).size(); 
   }
  
   }
