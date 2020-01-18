@@ -1,41 +1,36 @@
 void selectImage (ArrayList<ImageClass> scale, int[] ryt) {
-  
   int beatValue = ryt[beatNumber];
   int maxWeight = weightList.max();
   IntList tempList = new IntList();
-  if ((frameCount * 2000/ 25) % beatValue == 0) {
-    println("beatNum: " + beatNumber + " beatValue: " + beatValue + "  picindex:  " + picIndex);
-    for(int i=0; i< scale.size(); i++) {
-      ImageClass element = scale.get(i);
-      // boolean contains = IntStream.of(ryt).anyMatch(x -> x == beatValue);
-      if (beatNumber == 0 && element.weight == maxWeight) {
-        pic1 = element.image; 
-        picIndex = i;
-        println("element " + element.name +  ", pic1 =  " + pic1 + "  i:   " + i);
-      } else if (element.matchingBeatValue == beatValue){
-        println("element  " + element.name + "  element weight:   " + element.weight);
-        tempList.append(element.index); //<>//
-        if (tempList.size() > 1) {
-          for (int t=0; t<tempList.size(); t++) {
-            if (element.index == tempList.get(int(random(tempList.size())))) {
-              // println("element: " +element.name + "  from templist; " + tempList);
-              pic1 = element.image;
-              picIndex = i;
-              element.counter += 1;
-              }
-          }
-        } else if (contains(ryt, element.matchingBeatValue) == false) {
-          pic1 = pic2;
-        } else {
-        pic1 = element.image;
-        element.counter += 1;
+
+  // println("beatNum: " + beatNumber + " beatValue: " + beatValue);
+  for(int i=0; i< scale.size(); i++) {
+    ImageClass element = scale.get(i);
+    if (beatNumber == 0  && element.weight == maxWeight) {
+      pic1 = element.image; 
+      picIndex = i;
+      // println("element " + element.name  + "  I: " + i + "  pic1 == element?   " + (pic1 == element.image));
+    } else if (beatNumber > 0 && element.matchingBeatValue == beatValue && element.weight != maxWeight){
+      tempList.append(element.index); //<>//
+    } else if (beatNumber > 0 && contains(ryt, element.matchingBeatValue) == false) {
+        pic1 = totaleSinger;
+        println("else... " + "   element Iter:   " + element.name + "   matching beat:   " + element.matchingBeatValue); 
+      } 
+    }
+   
+    if(tempList.size() >= 1) {
+       tempList.shuffle();
+       // printArray("tempList  " + tempList);
+       for (int t=0; t<scale.size(); t++) {
+         if(scale.get(t).index == tempList.get(0)) {
+           println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
+            pic1 = scale.get(t).image;
+            scale.get(t).counter += 1;
+            picIndex = t;
+         } 
        }
     }
-   }
-   beatNumber += 1;
-   beatNumber = beatNumber % ryt.length;
-  }
-  
+ 
 }
 
 boolean contains(int[] arr, int item) {

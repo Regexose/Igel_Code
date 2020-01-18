@@ -11,7 +11,7 @@ class ImageClass {
     category = null;
     this.weight = 0;
     this.matchingBeatValue = 0;
-    this.counter = 1;
+    this.counter = 0;
   }
   
   void updateWeight(int value) {
@@ -23,7 +23,7 @@ class ImageClass {
   }
   void mapBeatValue(int value) {
     this.matchingBeatValue =  value;
-    println("matching iC " + this.name + " with " + value + " value");
+    // println("matching iC " + this.name + " with " + value + " value");
   }
   
 }
@@ -57,21 +57,26 @@ void loadCitesAndRythms(ImageClass iC) {
 PImage[] loadImages(File folder) {
   File[] fileList = folder.listFiles();
   PImage[] imgArray = new PImage[fileList.length];
+  IntList ortBilder = new IntList();
+  PImage[] ortArray= new PImage[ortBilder.size()];
   for (int i=0; i<fileList.length; i++) {
     // String path = fileList[i].getAbsolutePath();
     String fileName = fileList[i].toString();
-    if(!fileName.endsWith(".DS_Store")) {
-    PImage img = loadImage(fileList[i].toString());
-    imgArray[i] = img ;
-    }
+    if(!fileName.endsWith(".DS_Store") && fileName.indexOf("Ort_") == -1) {
+      // println( fileName + "  indexOf??   " + (fileName.indexOf("Ort_") == -1));
+      PImage img = loadImage(fileList[i].toString());
+      imgArray[i] = img ;
+    } 
   }
   return imgArray;
 }
 
 void buildClasses(ArrayList<ImageClass> imageList, PImage[] images, String[] names) {
   for (int i=0; i<images.length; i++) {
-    ImageClass iC = new ImageClass(i, images[i], names[i]);
-    imageList.add(iC);
-    loadCitesAndRythms(iC);
+    if (names[i].indexOf("Ort_") == -1) {
+      ImageClass iC = new ImageClass(i, images[i], names[i]);
+      imageList.add(iC);
+      loadCitesAndRythms(iC);
+    }
   }
 }
