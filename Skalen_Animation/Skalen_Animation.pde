@@ -1,20 +1,22 @@
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.File;
+import java.util.Arrays;
 // more directory stuff: https://processing.org/examples/directorylist.html
 
 File sing_folder, weyd_folder;
 File[] files;
 Table zitate, bildTexte, durationMap;
 int  picIndex, beatNumber;
+String currentBeat;
 PImage pic1, pic2;
 PImage[] weydemeyer, singer;
 String [] weydeList, singerList;
 ArrayList<ImageClass> singerScales = new ArrayList<ImageClass>();
 ArrayList<ImageClass> weydeScales = new ArrayList<ImageClass>();
-IntList matchList;
+IntList matchList, weightList;
 PFont Arial;
-int[][] rythms = { {3000, 1000, 1000, 1000, 250, 500}, 
+int[][] rythms = { {3000, 1000, 750, 1500, 250, 500}, 
   {3000, 2000, 2000, 500, 500, 1000, 1000}, 
   {3000, 500, 500, 1000, 1000}};
 
@@ -26,6 +28,7 @@ void setup() {
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Arial", 16, true);
   matchList = new IntList();
+  weightList = new IntList();
   sing_folder = new File(sketchPath("data/singer"));
   weyd_folder = new File(sketchPath("data/weyde"));
   weydemeyer = loadImages(weyd_folder);
@@ -33,7 +36,8 @@ void setup() {
   weydeList = weyd_folder.list();
   singerList = sing_folder.list();
   buildClasses(singerScales, singer, singerList);
-  pic1 = createImage(width, height, ARGB);
+  pic1 = createImage(width, height, RGB);
+  pic2 = createImage(width,height, RGB);
   // buildClasses(weydeScales, weydemeyer, weydeList);
   picIndex = 0;
   beatNumber = 0;
@@ -41,9 +45,10 @@ void setup() {
 }
 
 void draw() {
-  selectImage(singerScales, rythms[0], beatNumber);
+  selectImage(singerScales, rythms[0]);
   imageMode(CENTER);
+  // if (pic1 == singerScales.get(6).image) {println(" image plansche");}
   image(pic1, width/2, height/2, width, height);
   textFont(Arial, 29);
-  text(singerScales.get(3).cites.get(0), mouseX, mouseY);
-}
+  text(beatNumber + " – " + rythms[0][beatNumber] + " " + singerScales.get(picIndex).name , mouseX, mouseY);
+} 

@@ -39,6 +39,7 @@ void loadCitesAndRythms(ImageClass iC) {
     }
   }
   iC.updateWeight(iC.cites.size());
+  weightList.append(iC.cites.size());
   
   for(TableRow row : durationMap.rows()) {
     int min = row.getInt("min");
@@ -49,7 +50,7 @@ void loadCitesAndRythms(ImageClass iC) {
     }
   }
   matchList.append(iC.matchingBeatValue);
-  println("matchlist: " + matchList);
+  // println("matchlist: " + matchList);
 
 }
 
