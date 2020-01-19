@@ -28,8 +28,9 @@ class ImageClass {
   
 }
 
-void loadCitesAndRythms(ImageClass iC) {
-  // println("checking:    " +iC.name); 
+void loadCitesAndRythms(ImageClass iC, String weightListName) {
+  println("checking:    " +iC.name); 
+  IntList weighListName = new IntList();
   for (TableRow row : bildTexte.rows()) {
     String bildName = row.getString("BildName");
      if (bildName.equals(iC.name) == true) {
@@ -39,7 +40,7 @@ void loadCitesAndRythms(ImageClass iC) {
     }
   }
   iC.updateWeight(iC.cites.size());
-  weightList.append(iC.cites.size());
+  weightListName.append(iC.cites.size());
   
   for(TableRow row : durationMap.rows()) {
     int min = row.getInt("min");
@@ -71,12 +72,12 @@ PImage[] loadImages(File folder) {
   return imgArray;
 }
 
-void buildClasses(ArrayList<ImageClass> imageList, PImage[] images, String[] names) {
+void buildClasses(String listName, ArrayList<ImageClass> imageList, PImage[] images, String[] names) {
   for (int i=0; i<images.length; i++) {
     if (names[i].indexOf("Ort_") == -1) {
       ImageClass iC = new ImageClass(i, images[i], names[i]);
       imageList.add(iC);
-      loadCitesAndRythms(iC);
+      loadCitesAndRythms(iC, listName);
     }
   }
 }

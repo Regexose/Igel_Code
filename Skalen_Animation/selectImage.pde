@@ -3,13 +3,15 @@ void selectImage (ArrayList<ImageClass> scale, ArrayList<Integer> ryt, PImage no
   int maxWeight = weightList.max();
   IntList tempList = new IntList();
 
-  // println("beatNum: " + beatNumber + " beatValue: " + beatValue);
+  println("beatNum: " + beatNumber + " beatValue: " + beatValue + " weightlist:  " + weightList + " max weight " + maxWeight);
   for(int i=0; i< scale.size(); i++) {
+    
     ImageClass element = scale.get(i);
+    println("element " + element.name  + "  I: " + i + "  element.weight   " + element.weight);
     if (beatNumber == 0  && element.weight == maxWeight) {
       pic1 = element.image; 
       picIndex = i;
-      // println("element " + element.name  + "  I: " + i + "  pic1 == element?   " + (pic1 == element.image));
+      println("element " + element.name  + "  I: " + i + "  element.weight   " + (pic1 == element.image)); //<>//
     } else if (beatNumber > 0 && element.matchingBeatValue == beatValue && element.weight != maxWeight){
       tempList.append(element.index); //<>//
     } else if (beatNumber > 0 && !ryt.contains(element.matchingBeatValue)) {

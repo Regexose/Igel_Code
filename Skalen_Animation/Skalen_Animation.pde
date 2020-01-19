@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 // more directory stuff: https://processing.org/examples/directorylist.html
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,7 +20,7 @@ String [] weydeList, singerList;
 ArrayList<ImageClass> singerScales = new ArrayList<ImageClass>();
 ArrayList<ImageClass> weydeScales = new ArrayList<ImageClass>();
 ArrayList<ImageClass> scale;
-IntList matchList, weightList;
+IntList matchList, weightList; /// HashMap instead
 PFont Arial;
 ArrayList<ArrayList<Integer>> newRythms = new ArrayList<ArrayList<Integer>>();
 
@@ -34,21 +35,20 @@ void setup() {
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Arial", 16, true);
   matchList = new IntList();
-  weightList = new IntList();
   sing_folder = new File(sketchPath("data/singer"));
   weyd_folder = new File(sketchPath("data/weyde"));
   weydemeyer = loadImages(weyd_folder);
   singer = loadImages(sing_folder);
   weydeList = weyd_folder.list();
   singerList = sing_folder.list();
-  buildClasses(singerScales, singer, singerList);
+  buildClasses("Singer", singerScales, singer, singerList);
   pic1 = createImage(width, height, RGB);
   totaleSinger = loadImage("singer/Ort_Totale_DSC05176.jpg");
   totaleWeydemeyer = loadImage("weyde/Ort_Totale_DSC05018.jpg");
-  buildClasses(weydeScales, weydemeyer, weydeList);
+  buildClasses("Weydemeyer", weydeScales, weydemeyer, weydeList);
   picIndex = 0;
   beatNumber = 0;
-  minute = 0;
+  minute = 1;
   scale = weydeScales;
   noMatch = totaleWeydemeyer;
   frameRate(25);
@@ -56,14 +56,14 @@ void setup() {
 }
 
 void draw() {
-  getRythm(); 
+  // getRythm(); 
   if (hasFinished) {
     int waitTime = newRythms.get(minute).get(beatNumber);
     createScheduleTimer(waitTime);
     println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
-    selectImage(scale, newRythms.get(0), noMatch);
+    selectImage(weydeScales, newRythms.get(minute), noMatch);
     beatNumber += 1;
-    beatNumber = beatNumber % newRythms.get(0).size(); 
+    beatNumber = beatNumber % newRythms.get(minute).size(); 
   }
    
     imageMode(CENTER);
