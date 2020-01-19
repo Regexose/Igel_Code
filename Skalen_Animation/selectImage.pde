@@ -1,4 +1,4 @@
-void selectImage (ArrayList<ImageClass> scale, ArrayList<Integer> ryt) {
+void selectImage (ArrayList<ImageClass> scale, ArrayList<Integer> ryt, PImage noMatch) {
   int beatValue = ryt.get(beatNumber);
   int maxWeight = weightList.max();
   IntList tempList = new IntList();
@@ -13,8 +13,7 @@ void selectImage (ArrayList<ImageClass> scale, ArrayList<Integer> ryt) {
     } else if (beatNumber > 0 && element.matchingBeatValue == beatValue && element.weight != maxWeight){
       tempList.append(element.index); //<>//
     } else if (beatNumber > 0 && !ryt.contains(element.matchingBeatValue)) {
-        pic1 = totaleSinger;
-        println("else... " + "   element Iter:   " + element.name + "   matching beat:   " + element.matchingBeatValue); 
+        pic1 = noMatch;
       } 
     }
    
@@ -23,7 +22,7 @@ void selectImage (ArrayList<ImageClass> scale, ArrayList<Integer> ryt) {
        // printArray("tempList  " + tempList);
        for (int t=0; t<scale.size(); t++) {
          if(scale.get(t).index == tempList.get(0)) {
-           println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
+            println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
             pic1 = scale.get(t).image;
             scale.get(t).counter += 1;
             picIndex = t;
