@@ -11,13 +11,14 @@ boolean hasFinished = true;
 File sing_folder, weyd_folder;
 File[] files;
 Table zitate, bildTexte, durationMap;
-int  picIndex, beatNumber, start, time;
+int  picIndex, beatNumber, minute;
 String currentBeat;
-PImage pic1, totaleSinger, totaleWeydemeyer;
+PImage pic1, totaleSinger, totaleWeydemeyer, noMatch;
 PImage[] weydemeyer, singer;
 String [] weydeList, singerList;
 ArrayList<ImageClass> singerScales = new ArrayList<ImageClass>();
 ArrayList<ImageClass> weydeScales = new ArrayList<ImageClass>();
+ArrayList<ImageClass> scale;
 IntList matchList, weightList;
 PFont Arial;
 ArrayList<ArrayList<Integer>> newRythms = new ArrayList<ArrayList<Integer>>();
@@ -26,7 +27,7 @@ ArrayList<ArrayList<Integer>> newRythms = new ArrayList<ArrayList<Integer>>();
 void setup() {
   size(1900, 1100);
   newRythms.add(new ArrayList<Integer>(Arrays.asList(3000, 1000, 750, 1500, 1375, 500)));
-  newRythms.add(new ArrayList<Integer>(Arrays.asList(3000, 2000, 2000, 500, 500, 1000, 1000)));
+  newRythms.add(new ArrayList<Integer>(Arrays.asList(4500, 500, 500, 500, 500, 500, 500, 2000, 250)));
   newRythms.add(new ArrayList<Integer>(Arrays.asList(3000, 2000, 2000, 500, 500, 1000, 1000)));
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
@@ -44,21 +45,23 @@ void setup() {
   pic1 = createImage(width, height, RGB);
   totaleSinger = loadImage("singer/Ort_Totale_DSC05176.jpg");
   totaleWeydemeyer = loadImage("weyde/Ort_Totale_DSC05018.jpg");
-  // buildClasses(weydeScales, weydemeyer, weydeList);
+  buildClasses(weydeScales, weydemeyer, weydeList);
   picIndex = 0;
   beatNumber = 0;
-  start = millis();
+  minute = 0;
+  scale = weydeScales;
+  noMatch = totaleWeydemeyer;
   frameRate(25);
   
 }
 
 void draw() {
- 
+  getRythm(); 
   if (hasFinished) {
-    int waitTime = newRythms.get(0).get(beatNumber);
+    int waitTime = newRythms.get(minute).get(beatNumber);
     createScheduleTimer(waitTime);
     println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
-    selectImage(singerScales, newRythms.get(0));
+    selectImage(scale, newRythms.get(0), noMatch);
     beatNumber += 1;
     beatNumber = beatNumber % newRythms.get(0).size(); 
   }
@@ -68,7 +71,7 @@ void draw() {
     tint(255, mouseX);
     image(pic1, width/2, height/2, width, height);
     textFont(Arial, 29);
-    text(beatNumber + " – " + newRythms.get(0).get(beatNumber), 20, 20);  
+    text(beatNumber + " – " + newRythms.get(minute).get(beatNumber), 20, 20);  
   //saveFrame("output/skala####.png");
 }
   /*
@@ -85,4 +88,18 @@ void createScheduleTimer(final int ms) {
     }
   }
   , (long) (ms));
+}
+
+void getRythm() {
+  
+  if(minute()%2 ==0) {
+    minute = 0;
+    scale = singerScales;
+    noMatch = totaleSinger;
+  }
+  else {
+    minute = 1;
+    scale = weydeScales;
+    noMatch = totaleWeydemeyer;
+  }
 }
