@@ -27,7 +27,7 @@ ArrayList<ArrayList<Integer>> newRythms = new ArrayList<ArrayList<Integer>>();
 
 
 void setup() {
-  size(1900, 1100);
+  size(1000, 666);
   newRythms.add(new ArrayList<Integer>(Arrays.asList(3000, 1000, 750, 1500, 1375, 500)));
   newRythms.add(new ArrayList<Integer>(Arrays.asList(4500, 500, 500, 500, 500, 500, 500, 2000, 250)));
   newRythms.add(new ArrayList<Integer>(Arrays.asList(3000, 2000, 2000, 500, 500, 1000, 1000)));
@@ -35,7 +35,6 @@ void setup() {
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Arial", 16, true);
-  matchList = new IntList();
   sing_folder = new File(sketchPath("data/singer"));
   weyd_folder = new File(sketchPath("data/weyde"));
   weydemeyer = loadImages(weyd_folder);

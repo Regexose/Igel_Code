@@ -1,5 +1,5 @@
-void selectImage (ArrayList<ImageClass> scale, ArrayList<Integer> ryt, PImage noMatch) {
-  int beatValue = ryt.get(beatNumber);
+void selectImage (ArrayList<ImageClass> scale, ArrayList<Integer> rytArray, PImage noMatch) {
+  int beatValue = rytArray.get(beatNumber);
   int maxWeight = weightList.max();
   IntList tempList = new IntList();
 
@@ -14,7 +14,7 @@ void selectImage (ArrayList<ImageClass> scale, ArrayList<Integer> ryt, PImage no
       println("element " + element.name  + "  I: " + i + "  element.weight   " + (pic1 == element.image)); //<>//
     } else if (beatNumber > 0 && element.matchingBeatValue == beatValue && element.weight != maxWeight){
       tempList.append(element.index); //<>//
-    } else if (beatNumber > 0 && !ryt.contains(element.matchingBeatValue)) {
+    } else if (beatNumber > 0 && !rytArray.contains(element.matchingBeatValue)) {
         pic1 = noMatch;
       } 
     }

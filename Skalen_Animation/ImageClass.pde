@@ -28,9 +28,8 @@ class ImageClass {
   
 }
 
-void loadCitesAndRythms(ImageClass iC, String weightListName) {
+void loadCitesAndRythms(ImageClass iC, IntList weightList, IntList matchList) {
   println("checking:    " +iC.name); 
-  IntList weighListName = new IntList();
   for (TableRow row : bildTexte.rows()) {
     String bildName = row.getString("BildName");
      if (bildName.equals(iC.name) == true) {
@@ -40,7 +39,7 @@ void loadCitesAndRythms(ImageClass iC, String weightListName) {
     }
   }
   iC.updateWeight(iC.cites.size());
-  weightListName.append(iC.cites.size());
+  weightList.append(iC.cites.size());
   
   for(TableRow row : durationMap.rows()) {
     int min = row.getInt("min");
@@ -51,15 +50,15 @@ void loadCitesAndRythms(ImageClass iC, String weightListName) {
     }
   }
   matchList.append(iC.matchingBeatValue);
-  // println("matchlist: " + matchList);
+  // println("HashMap: " + counterLists);
 
 }
 
 PImage[] loadImages(File folder) {
   File[] fileList = folder.listFiles();
   PImage[] imgArray = new PImage[fileList.length];
-  IntList ortBilder = new IntList();
-  PImage[] ortArray= new PImage[ortBilder.size()];
+  // IntList ortBilder = new IntList();
+  // PImage[] ortArray= new PImage[ortBilder.size()];
   for (int i=0; i<fileList.length; i++) {
     // String path = fileList[i].getAbsolutePath();
     String fileName = fileList[i].toString();
@@ -73,11 +72,15 @@ PImage[] loadImages(File folder) {
 }
 
 void buildClasses(String listName, ArrayList<ImageClass> imageList, PImage[] images, String[] names) {
+  weightList = new IntList();
+  matchList = new IntList();
+  counterLists.put(listName + "Weight", weightList); 
+  counterLists.put(listName + "Match", matchList);
   for (int i=0; i<images.length; i++) {
     if (names[i].indexOf("Ort_") == -1) {
       ImageClass iC = new ImageClass(i, images[i], names[i]);
       imageList.add(iC);
-      loadCitesAndRythms(iC, listName);
+      loadCitesAndRythms(iC, weightList, matchList);
     }
   }
 }
