@@ -9,7 +9,7 @@ import java.util.TimerTask;
 final Timer t = new Timer();
 boolean hasFinished = true;
 
-File sing_folder, weyd_folder, folder;
+File folder;
 File[] files;
 Table zitate, bildTexte, durationMap;
 int  picIndex, beatNumber, minute;
@@ -39,9 +39,6 @@ void setup() {
   loadScales("singer");
   loadScales("weyde");
   pic1 = createImage(width, height, RGB);
-  // totaleSinger = loadImage("singer/Ort_Totale_DSC05176.jpg");
-  // totaleWeydemeyer = loadImage("weyde/Ort_Totale_DSC05018.jpg");
-  // buildClasses("Weydemeyer", weydeScales, weydemeyer, weydeList);
   picIndex = 0;
   beatNumber = 0;
   minute = 1;
@@ -57,12 +54,13 @@ void draw() {
   if (hasFinished) {
     int waitTime = newRythms.get(minute).get(beatNumber);
     createScheduleTimer(waitTime);
-    println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
+    // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
     selectImage(currentScaleName, currentScale, newRythms.get(minute), noMatch);
     textFont(Arial, 29);
     text(beatNumber + " – " + newRythms.get(minute).get(beatNumber), 20, 20);  
     beatNumber += 1;
     beatNumber = beatNumber % newRythms.get(minute).size(); 
+    // println("new Minute with:  " + currentScaleName);
   }
    
     imageMode(CENTER);
@@ -81,7 +79,7 @@ void createScheduleTimer(final int ms) {
  
   t.schedule(new TimerTask() {
     public void run() {
-      print("   dong   " + nf(ms, 0, 2));
+      // print("   dong   " + nf(ms, 0, 2));
       hasFinished = true;
     }
   }
@@ -101,6 +99,11 @@ void getRythm() {
 
    
   }
+   if (beatNumber > newRythms.get(minute).size()) {
+   println("beatNumber set to 0!: " + beatNumber);
+   beatNumber = 0;
+ }
    currentScale = (ArrayList)scaleMap.get(currentScaleName).get(0);
    noMatch = (PImage)scaleMap.get(currentScaleName).get(1);
+   
 }
