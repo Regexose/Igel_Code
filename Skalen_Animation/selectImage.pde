@@ -1,13 +1,14 @@
-void selectImage (ArrayList<ImageClass> scale, ArrayList<Integer> rytArray, PImage noMatch) {
+void selectImage (String scaleName, ArrayList<ImageClass> scale, ArrayList<Integer> rytArray, PImage noMatch) {
   int beatValue = rytArray.get(beatNumber);
-  int maxWeight = weightList.max();
+  IntList wL = counterLists.get(scaleName+"Weight");
+  int maxWeight = wL.max();
   IntList tempList = new IntList();
 
-  println("beatNum: " + beatNumber + " beatValue: " + beatValue + " weightlist:  " + weightList + " max weight " + maxWeight);
+  println("beatNum: " + beatNumber + " beatValue: " + beatValue + "\nweightlist:  " + wL + " max weight " + maxWeight + "\nscaleName:   " + scaleName);
   for(int i=0; i< scale.size(); i++) {
     
     ImageClass element = scale.get(i);
-    println("element " + element.name  + "  I: " + i + "  element.weight   " + element.weight);
+    // println("element " + element.name  + "  I: " + i + "  element.weight   " + element.weight);
     if (beatNumber == 0  && element.weight == maxWeight) {
       pic1 = element.image; 
       picIndex = i;
