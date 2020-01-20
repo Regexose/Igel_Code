@@ -16,7 +16,7 @@ class ImageClass {
   
   void updateWeight(int value) {
     this.weight += value;
-    // println("updated ic: " + this.index + "  to: " + this.weight);
+    println("updated ic: " + this.name + "  to: " + this.weight);
   }
   void textAcquire(String cite) {
       this.cites.add(cite);
@@ -28,8 +28,8 @@ class ImageClass {
   
 }
 
-void loadCitesAndRythms(ImageClass iC, IntList weightList, IntList matchList) {
-  println("checking:    " +iC.name); 
+IntList loadCites(ImageClass iC, IntList weightList) {
+  // println("checking:    " +iC.name); 
   for (TableRow row : bildTexte.rows()) {
     String bildName = row.getString("BildName");
      if (bildName.equals(iC.name) == true) {
@@ -40,7 +40,10 @@ void loadCitesAndRythms(ImageClass iC, IntList weightList, IntList matchList) {
   }
   iC.updateWeight(iC.cites.size());
   weightList.append(iC.cites.size());
+  return weightList;
+}
   
+IntList loadRythms (ImageClass iC, IntList matchList) {
   for(TableRow row : durationMap.rows()) {
     int min = row.getInt("min");
     int max = row.getInt("max");
@@ -50,8 +53,9 @@ void loadCitesAndRythms(ImageClass iC, IntList weightList, IntList matchList) {
     }
   }
   matchList.append(iC.matchingBeatValue);
-  // println("HashMap: " + counterLists);
+  // printArray("matchlist :   " + matchList);
 
+  return matchList;
 }
 
 PImage[] loadImages(File folder) {
@@ -66,21 +70,20 @@ PImage[] loadImages(File folder) {
       // println( fileName + "  indexOf??   " + (fileName.indexOf("Ort_") == -1));
       PImage img = loadImage(fileList[i].toString());
       imgArray[i] = img ;
-    } 
+    } else if (fileName.indexOf("Ort_Totale") != -1) {
+      PImage img = loadImage(fileList[i].toString());
+      noMatch = img;
+    }
   }
   return imgArray;
 }
 
-void buildClasses(String listName, ArrayList<ImageClass> imageList, PImage[] images, String[] names) {
-  weightList = new IntList();
-  matchList = new IntList();
-  counterLists.put(listName + "Weight", weightList); 
-  counterLists.put(listName + "Match", matchList);
+ArrayList<ImageClass> buildClass(String listName, ArrayList<ImageClass> iC_Array, PImage[] images, String[] names) {
   for (int i=0; i<images.length; i++) {
     if (names[i].indexOf("Ort_") == -1) {
       ImageClass iC = new ImageClass(i, images[i], names[i]);
-      imageList.add(iC);
-      loadCitesAndRythms(iC, weightList, matchList);
+      iC_Array.add(iC);
     }
   }
+  return iC_Array;
 }
