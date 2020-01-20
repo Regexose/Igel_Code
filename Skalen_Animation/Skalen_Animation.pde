@@ -20,6 +20,7 @@ String [] weydeList, singerList;
 ArrayList<ImageClass> singerScales = new ArrayList<ImageClass>();
 ArrayList<ImageClass> weydeScales = new ArrayList<ImageClass>();
 ArrayList<ImageClass> scale;
+HashMap<String, IntList> counterLists = new HashMap<String,IntList>();
 IntList matchList, weightList; /// HashMap instead
 PFont Arial;
 ArrayList<ArrayList<Integer>> newRythms = new ArrayList<ArrayList<Integer>>();
