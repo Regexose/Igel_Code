@@ -19,7 +19,6 @@ void loadScales(String folderName) {
   scaleValues.add(weightList);
   scaleValues.add(matchList);
   scaleMap.put(folderName, scaleValues);
-  println("HashMap.get(2):   " + folderName + "   weights: " + scaleMap.get(folderName).get(2));
-  println("HashMap.get(2):   " + folderName + "   matches: " + scaleMap.get(folderName).get(3));
-  // println("hashmap:  " + Arrays.asList(scaleMap));
+  // println("HashMap.get(2):   " + folderName + "   weights: " + scaleMap.get(folderName).get(2));
+  // println("HashMap.get(2):   " + folderName + "   matches: " + scaleMap.get(folderName).get(3));
 }
