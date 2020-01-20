@@ -87,7 +87,6 @@ void createScheduleTimer(final int ms) {
 }
 
 void getRythm() {
-  
   if(minute()%2 ==0) {
     minute = 0;
     currentScaleName = "singer";
@@ -96,8 +95,6 @@ void getRythm() {
     minute = 1;
     currentScaleName = "weyde";
     // println("currentScaleName:  " + currentScaleName + "\nweigths: " + (IntList)scaleMap.get(currentScaleName).get(2));
-
-   
   }
    if (beatNumber > newRythms.get(minute).size()) {
    println("beatNumber set to 0!: " + beatNumber);
@@ -105,5 +102,4 @@ void getRythm() {
  }
    currentScale = (ArrayList)scaleMap.get(currentScaleName).get(0);
    noMatch = (PImage)scaleMap.get(currentScaleName).get(1);
-   
 }
