@@ -16,7 +16,7 @@ class ImageClass {
   
   void updateWeight(int value) {
     this.weight += value;
-    println("updated ic: " + this.name + "  to: " + this.weight);
+    // println("updated ic: " + this.name + "  to: " + this.weight);
   }
   void textAcquire(String cite) {
       this.cites.add(cite);

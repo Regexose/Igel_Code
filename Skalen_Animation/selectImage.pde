@@ -1,21 +1,20 @@
 void selectImage (String scaleName, ArrayList<ImageClass> scale, ArrayList<Integer> rytArray, PImage noMatch) {
-  println("hashmap weightlist:   " + counterLists + "   scaleName:  " + scaleName);
+  // println("hashmap weightlist:   " + counterLists + "   scaleName:  " + scaleName);
   int beatValue = rytArray.get(beatNumber);
   IntList wL = (IntList)scaleMap.get(scaleName).get(2);
   int maxWeight = wL.max();
   IntList tempList = new IntList();
 
-  println("beatNum: " + beatNumber + " beatValue: " + beatValue + "\nweightlist:  " + wL + " max weight " + maxWeight + "\nscaleName:   " + scaleName);
+  // println("beatNum: " + beatNumber + " beatValue: " + beatValue + "\nweightlist:  " + wL + " max weight " + maxWeight + "\nscaleName:   " + scaleName);
   for(int i=0; i< scale.size(); i++) {
     ImageClass element = scale.get(i);
-    println("element.weights: " + element.weight);
     if (beatNumber == 0  && element.weight == maxWeight) {
       pic1 = element.image; 
       picIndex = i;
-      println("element " + element.name  + "  I: " + i + "  element.weight   " + (pic1 == element.image)); //<>// //<>//
-    } else if (beatNumber > 0 && element.matchingBeatValue == beatValue && element.weight != maxWeight){
+      // println("element " + element.name  + "  I: " + i + "  element.weight   " + (pic1 == element.image)); //<>// //<>//
+    } else if (beatNumber > 0 && element.matchingBeatValue == beatValue && element.weight != maxWeight){ //<>//
       tempList.append(element.index); //<>// //<>//
-    } else if (beatNumber > 0 && !rytArray.contains(element.matchingBeatValue)) {
+    } else if (beatNumber > 0 && !rytArray.contains(element.matchingBeatValue)) { //<>//
         pic1 = noMatch;
       } 
     }
@@ -25,7 +24,7 @@ void selectImage (String scaleName, ArrayList<ImageClass> scale, ArrayList<Integ
        // printArray("tempList  " + tempList);
        for (int t=0; t<scale.size(); t++) {
          if(scale.get(t).index == tempList.get(0)) {
-            println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
+            // println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
             pic1 = scale.get(t).image;
             scale.get(t).counter += 1;
             picIndex = t;
