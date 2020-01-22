@@ -17,21 +17,21 @@ String currentBeat, currentScaleName;
 PImage pic1, noMatch;
 PImage[] imgArray;
 String [] fileNames;
-ArrayList<ImageClass> genericScale, currentScale;
-ArrayList<ImageClass> imageClassArray;
-HashMap<String,IntList> counterLists = new HashMap<String,IntList>();
+ArrayList<ImageClass> genericScale, currentScale, imageClassArray;
+// HashMap<String,IntList> counterLists = new HashMap<String,IntList>();
 HashMap<String, ArrayList> scaleMap = new HashMap<String, ArrayList>();
 ArrayList<Object> scaleValues;
-IntList matchList, weightList; 
+IntList weightList; 
 PFont Arial;
-ArrayList<ArrayList<Integer>> newRythms = new ArrayList<ArrayList<Integer>>();
+ArrayList<ArrayList<Float>> newRythms = new ArrayList<ArrayList<Float>>();
+float factor = 1.0;
 
 
 void setup() {
   size(1000, 666);
-  newRythms.add(new ArrayList<Integer>(Arrays.asList(3000, 1000, 750, 1500, 1375, 500)));
-  newRythms.add(new ArrayList<Integer>(Arrays.asList(4500, 750, 500, 750, 500, 750, 500, 2000, 250)));
-  newRythms.add(new ArrayList<Integer>(Arrays.asList(3000, 2000, 2000, 500, 500, 1000, 1000)));
+  newRythms.add(new ArrayList<Float>(Arrays.asList(5000.0, 1000.0, 750.0, 1500.0, 1375.0, 500.0)));
+  newRythms.add(new ArrayList<Float>(Arrays.asList(4500.0, 750.0, 500.0, 750.0, 500.0, 750.0, 500.0, 2000.0, 250.0)));
+  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 120.0, 200.0, 120.0, 200.0, 120.0, 200.0, 120.0, 200.0, 1100.0)));
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
@@ -52,7 +52,7 @@ void setup() {
 void draw() {
   getRythm(); 
   if (hasFinished) {
-    int waitTime = newRythms.get(minute).get(beatNumber);
+    float waitTime = newRythms.get(minute).get(beatNumber);
     createScheduleTimer(waitTime);
     // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
     selectImage(currentScaleName, currentScale, newRythms.get(minute), noMatch);
@@ -65,7 +65,7 @@ void draw() {
    
     imageMode(CENTER);
     // println("second:  " + second() + "    draw beatnumber:  " + beatNumber + "   image: " + singerScales.get(picIndex).name);
-    tint(255, mouseX);
+    // tint(255);
     image(pic1, width/2, height/2, width, height);
    
   //saveFrame("output/skala####.png");
@@ -74,9 +74,8 @@ void draw() {
   
 } 
 */
-void createScheduleTimer(final int ms) {
+void createScheduleTimer(final float ms) {
   hasFinished = false;
- 
   t.schedule(new TimerTask() {
     public void run() {
       // print("   dong   " + nf(ms, 0, 2));
@@ -87,7 +86,7 @@ void createScheduleTimer(final int ms) {
 }
 
 void getRythm() {
-  if(minute()%2 ==0) {
+  if(minute()%2 == 0) {
     minute = 0;
     currentScaleName = "singer";
   }
@@ -100,6 +99,22 @@ void getRythm() {
    println("beatNumber set to 0!: " + beatNumber);
    beatNumber = 0;
  }
+
    currentScale = (ArrayList)scaleMap.get(currentScaleName).get(0);
    noMatch = (PImage)scaleMap.get(currentScaleName).get(1);
+  
+}
+
+void updatePause() {
+  ArrayList<Float> r_list = newRythms.get(minute);
+ 
+  factor += random(-0.1, 0.1);
+ 
+  println("factor  " + factor);
+  for (int i=0; i<r_list.size(); i++) {
+      float pause = (float)r_list.get(i);
+      float newPause = pause * factor;
+      // println("new Pause  " + newPause + "for element " + i);
+      r_list.set(i, newPause);
+   }
 }
