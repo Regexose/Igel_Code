@@ -54,7 +54,7 @@ void setup() {
 
 void draw() {
   getRythm(); 
-  if (hasFinished && beatNumber <= newRythms.get(minute).size()) {
+  if (hasFinished && beatNumber < newRythms.get(minute).size()) {
     float waitTime = newRythms.get(minute).get(beatNumber);
     createScheduleTimer(waitTime);
     // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
@@ -64,7 +64,7 @@ void draw() {
     beatNumber += 1;
     beatNumber = beatNumber % newRythms.get(minute).size(); 
     if (beatNumber % newRythms.get(minute).size() == 0) {globalCounter += 1;}
-    if (globalCounter > 0 && globalCounter%5 == 0) {
+    if (globalCounter > 0 && globalCounter%7 == 0) {
        println("Update pause because:  " + globalCounter);
        updatePause(); }
     // println("new Minute with:  " + currentScaleName);
@@ -93,17 +93,17 @@ void createScheduleTimer(final float ms) {
 }
 
 void getRythm() {
-  flicker3min = (second()>=15 && second() <= 18);
-  flicker7min = (second()>=49 && second() <= 54);
+  flicker3min = minute()%3 ==0 && (second()>=15 && second() <= 18);
+  flicker7min = minute()% 7 == 0 &&  (second()>=49 && second() <= 54);
   
   if(minute()%2 == 0) {
     minute = 0;
     currentScaleName = "singer";
-  } else if ((minute()%3 ==0 && flicker3min) || (minute()% 7 == 0 && flicker7min)) {
+  } else if (flicker3min || flicker7min) {
     minute = 2;
     // println( "flicker at minute: " , minute());
     
-  } else if (minute()%2 != 0){
+  } else {
     minute = 1;
     currentScaleName = "weyde";
     // println("currentScaleName:  " + currentScaleName + "\nweigths: " + (IntList)scaleMap.get(currentScaleName).get(2));
