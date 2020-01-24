@@ -20,9 +20,7 @@ void selectImage (String scaleName, ArrayList<ImageClass> scale, ArrayList<Float
         picWhite = createImage(width, height, RGB);
         pic1 = picWhite;
       }
-        
     }
-   
     if(tempList.size() >= 1) {
        tempList.shuffle();
        // printArray("tempList  " + tempList);

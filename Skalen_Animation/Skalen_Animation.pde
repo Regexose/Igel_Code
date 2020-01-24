@@ -9,12 +9,12 @@ import java.util.TimerTask;
 final Timer t = new Timer();
 
 boolean hasFinished = true;
-boolean flicker;
+boolean flicker3min, flicker7min, timetoUpdate;
 
 File folder;
 File[] files;
 Table zitate, bildTexte, durationMap;
-int  picIndex, beatNumber, minute;
+int  picIndex, beatNumber, minute, globalCounter, newglobalCounter;
 String currentBeat, currentScaleName;
 PImage pic1, noMatch, picWhite;
 PImage[] imgArray;
@@ -31,8 +31,8 @@ float factor = 1.0;
 
 void setup() {
   size(1000, 666);
-  newRythms.add(new ArrayList<Float>(Arrays.asList(1800.0, 1000.0, 750.0, 1000.0, 750.0, 1000.0, 750.0, 1000.0, 750.0, 1500.0)));
-  newRythms.add(new ArrayList<Float>(Arrays.asList(2000.0, 750.0, 500.0, 750.0, 500.0, 750.0, 500.0, 1000.0, 750.0, 1000.0, 750.0, 1000.0, 750.0)));
+  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1800.0, 1100.0, 250.0, 1100.0, 250.0, 1100.0, 250.0)));
+  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 750.0, 330.0, 750.0, 330.0, 750.0, 500.0, 1100.0, 500.0, 1100.0, 500.0, 1100.0, 210.0, 820.0, 1100.0, 820.0, 1100.0, 820.0)));
   newRythms.add(new ArrayList<Float>(Arrays.asList(50.0, 10.0)));
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
@@ -44,6 +44,7 @@ void setup() {
   picIndex = 0;
   beatNumber = 0;
   minute = 1;
+  newglobalCounter = -1;
   currentScaleName = "singer";
   currentScale = (ArrayList)scaleMap.get(currentScaleName).get(0);
   noMatch = (PImage)scaleMap.get(currentScaleName).get(1);
@@ -53,7 +54,7 @@ void setup() {
 
 void draw() {
   getRythm(); 
-  if (hasFinished) {
+  if (hasFinished && beatNumber <= newRythms.get(minute).size()) {
     float waitTime = newRythms.get(minute).get(beatNumber);
     createScheduleTimer(waitTime);
     // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
@@ -62,6 +63,7 @@ void draw() {
     text(beatNumber + " – " + newRythms.get(minute).get(beatNumber), 20, 20);  
     beatNumber += 1;
     beatNumber = beatNumber % newRythms.get(minute).size(); 
+    if (beatNumber % newRythms.get(minute).size() == 0) {globalCounter += 1;}
     // println("new Minute with:  " + currentScaleName);
   }
    
@@ -88,16 +90,20 @@ void createScheduleTimer(final float ms) {
 }
 
 void getRythm() {
-  flicker = (second()>=15 && second() <= 20);
+  flicker3min = (second()>=15 && second() <= 18);
+  flicker7min = (second()>=49 && second() <= 54);
   
   if(minute()%2 == 0) {
     minute = 0;
     currentScaleName = "singer";
-  }
-  else if (minute()%3 ==0 && flicker) {
+  } else if ((minute()%3 ==0 && flicker3min) || (minute()% 7 == 0 && flicker7min)) {
     minute = 2;
-    // currentScaleName = "singer";
-    // println( "minute: " , minute);
+    // println( "flicker at minute: " , minute());
+    
+  } else if (globalCounter > 0 && globalCounter%5 == 0) {
+    println("Update pause because:  " + globalCounter);
+    updatePause();
+    // globalCounter = 0;
     
   } else {
     minute = 1;
@@ -108,7 +114,10 @@ void getRythm() {
    println("beatNumber set to 0!: " + beatNumber);
    beatNumber = 0;
  }
-
+   if (globalCounter != newglobalCounter) {
+   println("globalCounter: " + globalCounter);
+   newglobalCounter = globalCounter;
+ }
    currentScale = (ArrayList)scaleMap.get(currentScaleName).get(0);
    noMatch = (PImage)scaleMap.get(currentScaleName).get(1);
   
@@ -116,14 +125,18 @@ void getRythm() {
 
 void updatePause() {
   ArrayList<Float> r_list = newRythms.get(minute);
- 
-  factor += random(-0.1, 0.1);
- 
+  if (minute()%2 == 0) {
+  factor = 1.01;
+  } else {
+    factor = 0.99;
+  }
   println("factor  " + factor);
   for (int i=0; i<r_list.size(); i++) {
       float pause = (float)r_list.get(i);
       float newPause = pause * factor;
-      // println("new Pause  " + newPause + "for element " + i);
+      println("new Pause  " + newPause + "for element " + i);
       r_list.set(i, newPause);
    }
+   globalCounter = 0;
+   printArray("r_list:   " + r_list + "\n ryhtmlist: " + newRythms.get(minute));
 }
