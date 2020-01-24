@@ -33,7 +33,7 @@ void setup() {
   size(1000, 666);
   newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1800.0, 1100.0, 250.0, 1100.0, 250.0, 1100.0, 250.0)));
   newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 750.0, 330.0, 750.0, 330.0, 750.0, 500.0, 1100.0, 500.0, 1100.0, 500.0, 1100.0, 210.0, 820.0, 1100.0, 820.0, 1100.0, 820.0)));
-  newRythms.add(new ArrayList<Float>(Arrays.asList(50.0, 10.0)));
+  newRythms.add(new ArrayList<Float>(Arrays.asList(50.0, 10.0, 50.0, 10.0)));
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
@@ -64,6 +64,9 @@ void draw() {
     beatNumber += 1;
     beatNumber = beatNumber % newRythms.get(minute).size(); 
     if (beatNumber % newRythms.get(minute).size() == 0) {globalCounter += 1;}
+    if (globalCounter > 0 && globalCounter%5 == 0) {
+       println("Update pause because:  " + globalCounter);
+       updatePause(); }
     // println("new Minute with:  " + currentScaleName);
   }
    
@@ -100,12 +103,7 @@ void getRythm() {
     minute = 2;
     // println( "flicker at minute: " , minute());
     
-  } else if (globalCounter > 0 && globalCounter%5 == 0) {
-    println("Update pause because:  " + globalCounter);
-    updatePause();
-    // globalCounter = 0;
-    
-  } else {
+  } else if (minute()%2 != 0){
     minute = 1;
     currentScaleName = "weyde";
     // println("currentScaleName:  " + currentScaleName + "\nweigths: " + (IntList)scaleMap.get(currentScaleName).get(2));
@@ -125,7 +123,7 @@ void getRythm() {
 
 void updatePause() {
   ArrayList<Float> r_list = newRythms.get(minute);
-  if (minute()%2 == 0) {
+  if (minute()%3 == 0) {
   factor = 1.01;
   } else {
     factor = 0.99;
