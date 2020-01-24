@@ -16,7 +16,11 @@ void selectImage (String scaleName, ArrayList<ImageClass> scale, ArrayList<Float
       tempList.append(element.index); //<>// //<>//
     } else if (beatNumber > 0 && !rytArray.contains(element.minMatch)) { //<>//
         pic1 = noMatch;
-      } 
+      } else if (beatValue <= 0.0 && beatValue <= 25.0) {
+        picWhite = createImage(width, height, RGB);
+        pic1 = picWhite;
+      }
+        
     }
    
     if(tempList.size() >= 1) {

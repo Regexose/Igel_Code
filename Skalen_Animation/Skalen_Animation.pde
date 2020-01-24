@@ -7,14 +7,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 // timer tutorial: https://forum.processing.org/two/discussion/1725/millis-and-timer
 final Timer t = new Timer();
+
 boolean hasFinished = true;
+boolean flicker;
 
 File folder;
 File[] files;
 Table zitate, bildTexte, durationMap;
 int  picIndex, beatNumber, minute;
 String currentBeat, currentScaleName;
-PImage pic1, noMatch;
+PImage pic1, noMatch, picWhite;
 PImage[] imgArray;
 String [] fileNames;
 ArrayList<ImageClass> genericScale, currentScale, imageClassArray;
@@ -29,9 +31,9 @@ float factor = 1.0;
 
 void setup() {
   size(1000, 666);
-  newRythms.add(new ArrayList<Float>(Arrays.asList(5000.0, 1000.0, 750.0, 1500.0, 1375.0, 500.0)));
-  newRythms.add(new ArrayList<Float>(Arrays.asList(4500.0, 750.0, 500.0, 750.0, 500.0, 750.0, 500.0, 2000.0, 250.0)));
-  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 120.0, 200.0, 120.0, 200.0, 120.0, 200.0, 120.0, 200.0, 1100.0)));
+  newRythms.add(new ArrayList<Float>(Arrays.asList(1800.0, 1000.0, 750.0, 1000.0, 750.0, 1000.0, 750.0, 1000.0, 750.0, 1500.0)));
+  newRythms.add(new ArrayList<Float>(Arrays.asList(2000.0, 750.0, 500.0, 750.0, 500.0, 750.0, 500.0, 1000.0, 750.0, 1000.0, 750.0, 1000.0, 750.0)));
+  newRythms.add(new ArrayList<Float>(Arrays.asList(50.0, 10.0)));
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
@@ -86,11 +88,18 @@ void createScheduleTimer(final float ms) {
 }
 
 void getRythm() {
+  flicker = (second()>=15 && second() <= 20);
+  
   if(minute()%2 == 0) {
     minute = 0;
     currentScaleName = "singer";
   }
-  else {
+  else if (minute()%3 ==0 && flicker) {
+    minute = 2;
+    // currentScaleName = "singer";
+    // println( "minute: " , minute);
+    
+  } else {
     minute = 1;
     currentScaleName = "weyde";
     // println("currentScaleName:  " + currentScaleName + "\nweigths: " + (IntList)scaleMap.get(currentScaleName).get(2));
