@@ -31,7 +31,7 @@ float factor = 1.0;
 
 void setup() {
   fullScreen();
-  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1800.0, 78.0,  1100.0, 250.0, 1100.0, 250.0, 1100.0, 250.0)));
+  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1800.0, 78.0,  1100.0, 250.0, 1100.0, 250.0, 1100.0, 250.0, 120.0)));
   newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 750.0, 330.0, 750.0, 330.0, 750.0, 500.0, 1100.0, 500.0, 1100.0, 500.0, 1100.0, 210.0, 820.0, 1100.0, 820.0, 1100.0, 820.0)));
   newRythms.add(new ArrayList<Float>(Arrays.asList(50.0, 10.0 )));
   zitate = loadTable("Igel_Zitate.csv", "header");
@@ -78,10 +78,7 @@ void draw() {
    
   //saveFrame("output/skala####.png");
 }
-  /*
-  
-} 
-*/
+
 void createScheduleTimer(final float ms) {
   hasFinished = false;
   t.schedule(new TimerTask() {
@@ -119,8 +116,8 @@ void checkFlicker() {
   flicker30sec = (second()>=30 && second() <= 35);
   flicker3min = (minute()%3 ==0 && (second()>=15 && second() <= 18));
   flicker7min = (minute()% 7 == 0 &&  (second()>=49 && second() <= 54));
-  if (flicker30sec || flicker7min) {
-    println( "flicker?  " + (flicker30sec || flicker7min) + "   at min:  " + minute());
+  if (flicker3min || flicker7min) {
+    // println( "flicker?  " + (flicker3min || flicker7min) + "   at min:  " + minute());
     minute = 2;
   } 
 }
@@ -128,15 +125,15 @@ void checkFlicker() {
 void updatePause() {
   ArrayList<Float> r_list = newRythms.get(minute);
   if (minute()%3 == 0) {
-  factor = 1.01;
+  factor = 1.05;
   } else {
-    factor = 0.99;
+    factor = 0.95;
   }
   println("factor  " + factor);
   for (int i=0; i<r_list.size(); i++) {
       float pause = (float)r_list.get(i);
       float newPause = pause * factor;
-      println("new Pause  " + newPause + "for element " + i);
+      // println("new Pause  " + newPause + "for element " + i);
       r_list.set(i, newPause);
    }
    globalCounter = 0;
