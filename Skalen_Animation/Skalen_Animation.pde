@@ -9,7 +9,7 @@ import java.util.TimerTask;
 final Timer t = new Timer();
 
 boolean hasFinished = true;
-boolean flicker3min, flicker7min, timetoUpdate;
+boolean flicker30sec, flicker3min, flicker7min, timetoUpdate;
 
 File folder;
 File[] files;
@@ -30,10 +30,10 @@ float factor = 1.0;
 
 
 void setup() {
-  size(1000, 666);
-  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1800.0, 1100.0, 250.0, 1100.0, 250.0, 1100.0, 250.0)));
+  fullScreen();
+  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1202.0, 580.0, 1800.0, 78.0,  1100.0, 250.0, 1100.0, 250.0, 1100.0, 250.0)));
   newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 750.0, 330.0, 750.0, 330.0, 750.0, 500.0, 1100.0, 500.0, 1100.0, 500.0, 1100.0, 210.0, 820.0, 1100.0, 820.0, 1100.0, 820.0)));
-  newRythms.add(new ArrayList<Float>(Arrays.asList(50.0, 10.0, 50.0, 10.0)));
+  newRythms.add(new ArrayList<Float>(Arrays.asList(50.0, 10.0 )));
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
@@ -48,19 +48,20 @@ void setup() {
   currentScaleName = "singer";
   currentScale = (ArrayList)scaleMap.get(currentScaleName).get(0);
   noMatch = (PImage)scaleMap.get(currentScaleName).get(1);
-  frameRate(25);
+  frameRate(20);
   
 }
 
 void draw() {
   getRythm(); 
-  if (hasFinished && beatNumber < newRythms.get(minute).size()) {
+  if (hasFinished) {
+    println("beatnumber: " + beatNumber + "   rythm size:  " + newRythms.get(minute).size() + "   rhythm segment: " +newRythms.get(minute).get(beatNumber) );
     float waitTime = newRythms.get(minute).get(beatNumber);
     createScheduleTimer(waitTime);
     // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
     selectImage(currentScaleName, currentScale, newRythms.get(minute), noMatch);
-    textFont(Arial, 29);
-    text(beatNumber + " – " + newRythms.get(minute).get(beatNumber), 20, 20);  
+    /* textFont(Arial, 29);
+    text(beatNumber + " – " + newRythms.get(minute).get(beatNumber), 20, 20);  */
     beatNumber += 1;
     beatNumber = beatNumber % newRythms.get(minute).size(); 
     if (beatNumber % newRythms.get(minute).size() == 0) {globalCounter += 1;}
@@ -93,32 +94,35 @@ void createScheduleTimer(final float ms) {
 }
 
 void getRythm() {
-  flicker3min = minute()%3 ==0 && (second()>=15 && second() <= 18);
-  flicker7min = minute()% 7 == 0 &&  (second()>=49 && second() <= 54);
-  
   if(minute()%2 == 0) {
     minute = 0;
     currentScaleName = "singer";
-  } else if (flicker3min || flicker7min) {
-    minute = 2;
-    // println( "flicker at minute: " , minute());
-    
-  } else {
+  }  else {
     minute = 1;
     currentScaleName = "weyde";
     // println("currentScaleName:  " + currentScaleName + "\nweigths: " + (IntList)scaleMap.get(currentScaleName).get(2));
   }
-   if (beatNumber > newRythms.get(minute).size()) {
-   println("beatNumber set to 0!: " + beatNumber);
-   beatNumber = 0;
+  checkFlicker();
+  if (beatNumber > newRythms.get(minute).size()) {
+    println("beatNumber set to 0!: " + beatNumber);
+    beatNumber = 0;
  }
-   if (globalCounter != newglobalCounter) {
-   println("globalCounter: " + globalCounter);
-   newglobalCounter = globalCounter;
+  if (globalCounter != newglobalCounter) {
+    println("globalCounter: " + globalCounter);
+    newglobalCounter = globalCounter;
  }
    currentScale = (ArrayList)scaleMap.get(currentScaleName).get(0);
    noMatch = (PImage)scaleMap.get(currentScaleName).get(1);
-  
+}
+
+void checkFlicker() {
+  flicker30sec = (second()>=30 && second() <= 35);
+  flicker3min = (minute()%3 ==0 && (second()>=15 && second() <= 18));
+  flicker7min = (minute()% 7 == 0 &&  (second()>=49 && second() <= 54));
+  if (flicker30sec || flicker7min) {
+    println( "flicker?  " + (flicker30sec || flicker7min) + "   at min:  " + minute());
+    minute = 2;
+  } 
 }
 
 void updatePause() {
