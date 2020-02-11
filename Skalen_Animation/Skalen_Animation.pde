@@ -70,11 +70,7 @@ void draw() {
     // println("new Minute with:  " + currentScaleName);
   }
     imageMode(CENTER);
-    // println("second:  " + second() + "    draw beatnumber:  " + beatNumber + "   image: " + singerScales.get(picIndex).name);
-    // tint(255);
     image(pic1, width/2, height/2, width*7/5, height*7/5);
-   
-  //saveFrame("output/skala####.png");
 }
 
 void createScheduleTimer(final float ms) {

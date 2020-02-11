@@ -56,12 +56,6 @@ void loadRythms (ImageClass iC) {
       iC.mapBeatValue(duration_min, duration_max);
     }
   }
-  //int[] minmax = new int[2];
-  //minmax[0] = iC.minMatch;
-  //minmax[1] = iC.maxMatch;
-  //matchList.append(minmax);
-  //printArray("matchlist :   " + matchList);
-
 
 }
 
