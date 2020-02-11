@@ -1,6 +1,6 @@
-void selectImage (String scaleName, ArrayList<ImageClass> scale, ArrayList<Integer> rytArray, PImage noMatch) {
+void selectImage (String scaleName, ArrayList<ImageClass> scale, ArrayList<Float> rytArray, PImage noMatch) {
   // println("hashmap weightlist:   " + counterLists + "   scaleName:  " + scaleName);
-  int beatValue = rytArray.get(beatNumber);
+  float beatValue = rytArray.get(beatNumber);
   IntList wL = (IntList)scaleMap.get(scaleName).get(2);
   int maxWeight = wL.max();
   IntList tempList = new IntList();
@@ -12,13 +12,15 @@ void selectImage (String scaleName, ArrayList<ImageClass> scale, ArrayList<Integ
       pic1 = element.image; 
       picIndex = i;
       // println("element " + element.name  + "  I: " + i + "  element.weight   " + (pic1 == element.image)); //<>// //<>//
-    } else if (beatNumber > 0 && element.matchingBeatValue == beatValue && element.weight != maxWeight){ //<>//
+    } else if (beatNumber > 0 && (element.minMatch <= beatValue && element.maxMatch >= beatValue) && element.weight != maxWeight){ //<>//
       tempList.append(element.index); //<>// //<>//
-    } else if (beatNumber > 0 && !rytArray.contains(element.matchingBeatValue)) { //<>//
+    } else if (beatNumber > 0 && !rytArray.contains(element.minMatch)) { //<>//
         pic1 = noMatch;
-      } 
+      } else if (beatValue <= 0.0 && beatValue <= 25.0) {
+        picWhite = createImage(width, height, RGB);
+        pic1 = picWhite;
+      }
     }
-   
     if(tempList.size() >= 1) {
        tempList.shuffle();
        // printArray("tempList  " + tempList);

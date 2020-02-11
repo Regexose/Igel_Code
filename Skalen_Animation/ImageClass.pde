@@ -1,7 +1,7 @@
 class ImageClass {
   PImage image;
   String name, category;
-  int index,  weight, matchingBeatValue, counter;
+  int index,  weight, minMatch, maxMatch, counter;
   ArrayList<String> cites = new ArrayList<String>();
   
   ImageClass(int index, PImage image, String name) {
@@ -10,7 +10,8 @@ class ImageClass {
     this.name = name;
     category = null;
     this.weight = 0;
-    this.matchingBeatValue = 0;
+    this.minMatch = 0;
+    this.maxMatch = 100;
     this.counter = 0;
   }
   
@@ -21,8 +22,9 @@ class ImageClass {
   void textAcquire(String cite) {
       this.cites.add(cite);
   }
-  void mapBeatValue(int value) {
-    this.matchingBeatValue =  value;
+  void mapBeatValue(int minVal, int maxVal) {
+    this.minMatch =  minVal;
+    this.maxMatch =  maxVal;
     // println("matching iC " + this.name + " with " + value + " value");
   }
   
@@ -43,19 +45,24 @@ IntList loadCites(ImageClass iC, IntList weightList) {
   return weightList;
 }
   
-IntList loadRythms (ImageClass iC, IntList matchList) {
+void loadRythms (ImageClass iC) {
   for(TableRow row : durationMap.rows()) {
     int min = row.getInt("min");
     int max = row.getInt("max");
-    int duration = row.getInt("duration");
+    int duration_min = row.getInt("min_duration");
+    int duration_max = row.getInt("max_duration");
+
     if (iC.cites.size() >= min && iC.cites.size() <= max) {
-      iC.mapBeatValue(duration);
+      iC.mapBeatValue(duration_min, duration_max);
     }
   }
-  matchList.append(iC.matchingBeatValue);
-  // printArray("matchlist :   " + matchList);
+  //int[] minmax = new int[2];
+  //minmax[0] = iC.minMatch;
+  //minmax[1] = iC.maxMatch;
+  //matchList.append(minmax);
+  //printArray("matchlist :   " + matchList);
 
-  return matchList;
+
 }
 
 PImage[] loadImages(File folder) {
