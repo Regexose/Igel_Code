@@ -20,7 +20,6 @@ PImage pic1, noMatch, picWhite;
 PImage[] imgArray;
 String [] fileNames;
 ArrayList<ImageClass> genericScale, currentScale, imageClassArray;
-// HashMap<String,IntList> counterLists = new HashMap<String,IntList>();
 HashMap<String, ArrayList> scaleMap = new HashMap<String, ArrayList>();
 ArrayList<Object> scaleValues;
 IntList weightList; 
@@ -30,10 +29,8 @@ float factor = 1.0;
 
 
 void setup() {
-  fullScreen();
-  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 1202.0, 580.0, 1202.0, 580.0, 1800.0, 78.0,  1100.0, 250.0, 1100.0, 250.0, 120.0)));
-  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 750.0, 330.0, 750.0, 330.0, 750.0, 500.0, 1100.0, 500.0, 1100.0, 210.0, 820.0)));
-  newRythms.add(new ArrayList<Float>(Arrays.asList(50.0, 10.0)));
+  size(1706, 960);
+  buildRythms(newRythms);
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
