@@ -7,17 +7,21 @@ import java.util.Timer;
 import java.util.TimerTask;
 // timer tutorial: https://forum.processing.org/two/discussion/1725/millis-and-timer
 final Timer t = new Timer();
+import ddf.minim.*;
+import ddf.minim.analysis.*;
 
 boolean hasFinished = true;
-boolean flicker30sec, flicker3min, flicker7min, timetoUpdate;
+boolean flicker30sec, flicker3min, flicker7min, timetoUpdate, message;
 
+Klopfen klopfen;
 File folder;
 File[] files;
 Table zitate, bildTexte, durationMap;
 int  picIndex, beatNumber, rScale, globalCounter, newglobalCounter;
-String currentBeat, currentScaleName;
+String currentBeat, currentScaleName, knockMessage;
 PImage pic1, noMatch, picWhite;
 PImage[] imgArray;
+PGraphics audio;
 String [] fileNames;
 ArrayList<ImageClass> genericScale, currentScale, imageClassArray;
 HashMap<String, ArrayList> scaleMap = new HashMap<String, ArrayList>();
@@ -28,6 +32,7 @@ ArrayList<ArrayList<Float>> newRythms = new ArrayList<ArrayList<Float>>();
 float factor = 1.0;
 
 
+
 void setup() {
   size(1706, 960);
   buildRythms(newRythms);
@@ -35,6 +40,7 @@ void setup() {
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Arial", 16, true);
+  message = false;
   loadScales("singer");
   loadScales("weyde");
   pic1 = createImage(width, height, RGB);
@@ -46,6 +52,9 @@ void setup() {
   currentScale = (ArrayList)scaleMap.get(currentScaleName).get(0);
   noMatch = (PImage)scaleMap.get(currentScaleName).get(1);
   frameRate(20);
+  klopfen = new Klopfen();
+  // minim = new Minim(this);
+  // in = minim.getLineIn();
   
 }
 
@@ -68,6 +77,21 @@ void draw() {
   }
     imageMode(CENTER);
     image(pic1, width/2, height/2, width*7/5, height*7/5);
+    klopfen.analyseInput();
+    image(klopfen.audioIn, 0, height/2);
+    if (message) {
+      textFont(Arial, 100);
+      textAlign(CENTER);
+      fill(0);
+      rectMode(CENTER);
+      rect(width/2, height/2, 800, 500);
+      fill(255);
+      text("KLOPFEN FUER\nPlansche " + currentScaleName + "strasse", width/2, height/2);
+    }
+   
+  //String monitoringState = klopfen.in.isMonitoring() ? "enabled" : "disabled";
+  //text( "Input monitoring is currently " + monitoringState + ".", 5, 15 );
+    
 }
 
 void createScheduleTimer(final float ms) {
@@ -105,12 +129,16 @@ void getRythm() {
 }
 
 void checkFlicker() {
+  message = false;
   flicker30sec = (second()>=30 && second() <= 35);
   flicker3min = (minute()%3 ==0 && (second()>=15 && second() <= 18));
   flicker7min = (minute()% 7 == 0 &&  (second()>=49 && second() <= 54));
   if (flicker3min || flicker7min) {
     println( "flicker?  " + (flicker3min || flicker7min) + "   at beat:  " + beatNumber);
     rScale = 2;
+  } else if (flicker30sec) {
+    rScale = 3;
+    message = true;
   } 
 }
 
