@@ -34,7 +34,7 @@ float factor = 1.0;
 
 
 void setup() {
-  size(1706, 960);
+  size(1000, 700);
   buildRythms(newRythms);
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
@@ -78,7 +78,7 @@ void draw() {
     imageMode(CENTER);
     image(pic1, width/2, height/2, width*7/5, height*7/5);
     klopfen.analyseInput();
-    image(klopfen.audioIn, 0, height/2);
+    image(audio, width/3, height/2);
     if (message) {
       textFont(Arial, 100);
       textAlign(CENTER);
