@@ -3,7 +3,7 @@ class Scale {
   ArrayList<Message> messages;
   ArrayList<Object> values;
   String name, arrayType;
-  PImage noMatch, pic2Show;
+  PImage noMatch, pic2Show, pic4Flicker;
   IntList weightList;
   boolean flicker;
   
@@ -11,11 +11,13 @@ class Scale {
     this.name = name;
     this.arrayType = arrayType;
     loadImages(folderName, this.arrayType);
-    this.flicker = true;
+    this.flicker = false;
+    this.pic4Flicker = createImage(width, height, RGB);
   }
   
   public void display(float pause) {
     selectImage(pause, this.arrayType);
+    
     imageMode(CENTER);
     image(this.pic2Show, width/2, height/2, width, height);
   }
@@ -63,9 +65,9 @@ class Scale {
         // println("element " + element.name  + "  I: " + i + "  element.weight   " + (pic1 == element.image)); //<>//
       } else if (beatNumber > 0 && (element.minMatch <= pause && element.maxMatch >= pause) && element.weight != maxWeight){
         tempList.append(element.index);
-      } else if (pause <= 0.0 && pause <= 25.0) {
-          picWhite = createImage(width, height, RGB);
-          this.pic2Show = picWhite;
+      } else if (this.flicker) {
+          this.pic2Show = this.pic4Flicker;
+          this.flicker = !this.flicker;
         }
       }
       if(tempList.size() >= 1) {

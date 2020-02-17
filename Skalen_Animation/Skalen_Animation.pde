@@ -103,7 +103,7 @@ void getRythm() {
     currentScaleName = "weyde";
     // println("currentScaleName:  " + currentScaleName + "\nweigths: " + (IntList)scaleMap.get(currentScaleName).get(2));
   }
-  checkFlicker();
+  timedEvents();
   
   if (beatNumber >= newRythms.get(rScale).size()) {
     println("beatNumber set to 0!: " + beatNumber);
@@ -117,14 +117,13 @@ void getRythm() {
    noMatch = scale.noMatch;
 }
 
-void checkFlicker() {
-  message = false;
+void timedEvents() {
   flicker30sec = (second()>=30 && second() <= 35);
   flicker3min = (minute()%3 ==0 && (second()>=15 && second() <= 18));
   flicker7min = (minute()% 7 == 0 &&  (second()>=49 && second() <= 54));
   if (flicker3min || flicker7min) {
-    println( "flicker?  " + (flicker3min || flicker7min) + "   at beat:  " + beatNumber);
     rScale = 2;
+    scale.flicker = true;
   } else if (flicker30sec) {
     rScale = 3;
     currentScaleName = "klopf";
