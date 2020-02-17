@@ -1,13 +1,106 @@
-class ImageClass {
+class Scale {
+  ArrayList<AugmentedImage> siteImages;
+  ArrayList<Message> messages;
+  ArrayList<Object> values;
+  String name, arrayType;
+  PImage noMatch, pic2Show;
+  IntList weightList;
+  boolean flicker;
+  
+  Scale(String name, String folderName, String arrayType){
+    this.name = name;
+    this.arrayType = arrayType;
+    loadImages(folderName, this.arrayType);
+    this.flicker = true;
+  }
+  
+  public void display(float pause) {
+    selectImage(pause, this.arrayType);
+    imageMode(CENTER);
+    image(this.pic2Show, width/2, height/2, width, height);
+  }
+  
+  private void loadImages(String folderName, String arrayType) {
+    String [] fileNames;
+    folder = new File(sketchPath("data/"+folderName));
+    files = folder.listFiles(); // need for absolut path
+    fileNames = folder.list();
+    if (arrayType == "augmented") {
+      siteImages = new ArrayList<AugmentedImage>();
+      for (int i=0; i<fileNames.length; i++) {
+        if (fileNames[i].indexOf("Ort_") == -1) {
+          PImage img = loadImage(files[i].toString());
+          AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
+          siteImages.add(aI);
+          this.weightList = loadCites(aI);
+          loadRythms(aI);
+        } else if (fileNames[i].indexOf("Ort_Totale") != -1) {
+          PImage img = loadImage(files[i].toString());
+          this.noMatch = img;
+          }  
+        }
+    } else if (arrayType == "message") {
+      messages = new ArrayList<Message>();
+      for (int i=0; i<fileNames.length; i++) {
+         //println("36 filename " + fileNames[i] + " i " + i);
+         PImage img = loadImage(files[i].toString());
+         Message msg = new Message(fileNames[i], img);
+         messages.add(msg);
+         } 
+         
+      }
+  }
+  
+  void selectImage(float pause, String scaleType) {
+  if (scaleType == "augmented") {
+    int maxWeight = this.weightList.max();
+    IntList tempList = new IntList();
+    for(int i=0; i< this.siteImages.size(); i++) {
+      AugmentedImage element = siteImages.get(i);
+      if (beatNumber == 0  && element.weight == maxWeight) {
+        this.pic2Show = element.image; 
+        picIndex = i;
+        // println("element " + element.name  + "  I: " + i + "  element.weight   " + (pic1 == element.image)); //<>//
+      } else if (beatNumber > 0 && (element.minMatch <= pause && element.maxMatch >= pause) && element.weight != maxWeight){
+        tempList.append(element.index);
+      } else if (pause <= 0.0 && pause <= 25.0) {
+          picWhite = createImage(width, height, RGB);
+          this.pic2Show = picWhite;
+        }
+      }
+      if(tempList.size() >= 1) {
+         tempList.shuffle();
+         // printArray("tempList  " + tempList);
+         for (int t=0; t<siteImages.size(); t++) {
+           if(siteImages.get(t).index == tempList.get(0)) {
+              // println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
+              this.pic2Show = siteImages.get(t).image;
+              siteImages.get(t).counter += 1;
+              picIndex = t;
+           } 
+         }
+      }
+      } else if (arrayType == "message") {
+        if (this.flicker) {
+          this.pic2Show = this.messages.get(1).image;
+        } else {
+          this.pic2Show = this.messages.get(0).image;
+        }
+        this.flicker = !this.flicker;
+    }
+  }
+}
+
+class AugmentedImage {
+  String category, name;
   PImage image;
-  String name, category;
-  int index,  weight, minMatch, maxMatch, counter;
+  int index, weight, minMatch, maxMatch, counter;
   ArrayList<String> cites = new ArrayList<String>();
   
-  ImageClass(int index, PImage image, String name) {
-    this.index = index;
-    this.image = image;
+  AugmentedImage(String name, PImage image, int index) {
     this.name = name;
+    this.image = image;
+    this.index = index;
     category = null;
     this.weight = 0;
     this.minMatch = 0;
@@ -27,64 +120,44 @@ class ImageClass {
     this.maxMatch =  maxVal;
     // println("matching iC " + this.name + " with " + value + " value");
   }
-  
 }
 
-IntList loadCites(ImageClass iC, IntList weightList) {
-  // println("checking:    " +iC.name); 
+class Message {
+  String name;
+  PImage image;
+  PGraphics surface;
+  
+  Message(String name, PImage image) {
+    this.name = name;
+    this.image = image;
+  }
+}
+
+IntList loadCites(AugmentedImage augImage) {
+  IntList weightList = new IntList();
+  // println("checking:    " +augImage.name); 
   for (TableRow row : bildTexte.rows()) {
     String bildName = row.getString("BildName");
-     if (bildName.equals(iC.name) == true) {
+     if (bildName.equals(augImage.name) == true) {
       String quote = row.getString("Zitat");
-      // println("bildName:   " + bildName + "   iC:image:   " + iC.name + "\n cite: " + quote);
-      iC.textAcquire(quote);
+      // println("bildName:   " + bildName + "   iC:image:   " + augImage.name + "\n cite: " + quote);
+      augImage.textAcquire(quote);
     }
   }
-  iC.updateWeight(iC.cites.size());
-  weightList.append(iC.cites.size());
+  augImage.updateWeight(augImage.cites.size());
+  weightList.append(augImage.cites.size());
   return weightList;
 }
   
-void loadRythms (ImageClass iC) {
+void loadRythms (AugmentedImage aI) {
   for(TableRow row : durationMap.rows()) {
     int min = row.getInt("min");
     int max = row.getInt("max");
     int duration_min = row.getInt("min_duration");
     int duration_max = row.getInt("max_duration");
 
-    if (iC.cites.size() >= min && iC.cites.size() <= max) {
-      iC.mapBeatValue(duration_min, duration_max);
+    if (aI.cites.size() >= min && aI.cites.size() <= max) {
+      aI.mapBeatValue(duration_min, duration_max);
     }
   }
-
-}
-
-PImage[] loadImages(File folder) {
-  File[] fileList = folder.listFiles();
-  PImage[] imgArray = new PImage[fileList.length];
-  // IntList ortBilder = new IntList();
-  // PImage[] ortArray= new PImage[ortBilder.size()];
-  for (int i=0; i<fileList.length; i++) {
-    // String path = fileList[i].getAbsolutePath();
-    String fileName = fileList[i].toString();
-    if(!fileName.endsWith(".DS_Store") && fileName.indexOf("Ort_") == -1) {
-      // println( fileName + "  indexOf??   " + (fileName.indexOf("Ort_") == -1));
-      PImage img = loadImage(fileList[i].toString());
-      imgArray[i] = img ;
-    } else if (fileName.indexOf("Ort_Totale") != -1) {
-      PImage img = loadImage(fileList[i].toString());
-      noMatch = img;
-    }
-  }
-  return imgArray;
-}
-
-ArrayList<ImageClass> buildClass(String listName, ArrayList<ImageClass> iC_Array, PImage[] images, String[] names) {
-  for (int i=0; i<images.length; i++) {
-    if (names[i].indexOf("Ort_") == -1) {
-      ImageClass iC = new ImageClass(i, images[i], names[i]);
-      iC_Array.add(iC);
-    }
-  }
-  return iC_Array;
 }
