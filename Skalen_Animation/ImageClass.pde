@@ -17,7 +17,7 @@ class Scale {
   
   public void display(float pause) {
     selectImage(pause, this.arrayType);
-    
+    // println("selected image: " + this.pic2Show);
     imageMode(CENTER);
     image(this.pic2Show, width/2, height/2, width, height);
   }
@@ -49,48 +49,49 @@ class Scale {
          Message msg = new Message(fileNames[i], img);
          messages.add(msg);
          } 
-         
       }
   }
   
   void selectImage(float pause, String scaleType) {
-  if (scaleType == "augmented") {
-    int maxWeight = this.weightList.max();
-    IntList tempList = new IntList();
-    for(int i=0; i< this.siteImages.size(); i++) {
-      AugmentedImage element = siteImages.get(i);
-      if (beatNumber == 0  && element.weight == maxWeight) {
-        this.pic2Show = element.image; 
-        picIndex = i;
-        // println("element " + element.name  + "  I: " + i + "  element.weight   " + (pic1 == element.image)); //<>//
-      } else if (beatNumber > 0 && (element.minMatch <= pause && element.maxMatch >= pause) && element.weight != maxWeight){
-        tempList.append(element.index);
-      } else if (this.flicker) {
-          this.pic2Show = this.pic4Flicker;
+    // println("pause: " + pause + "  type:  " + scaleType);
+    if (scaleType == "augmented") {
+      int maxWeight = this.weightList.max();
+      IntList tempList = new IntList();
+      for(int i=0; i< this.siteImages.size(); i++) {
+        AugmentedImage element = siteImages.get(i);
+        if (beatNumber == 0  && element.weight == maxWeight) {
+          this.pic2Show = element.image; 
+          picIndex = i;
+        } else if (beatNumber > 0 && (element.minMatch <= pause && element.maxMatch >= pause) && element.weight != maxWeight){
+          tempList.append(element.index);
+        } else if (this.flicker) {
+            this.pic2Show = this.pic4Flicker;
+            this.flicker = !this.flicker;
+          } else {
+            this.pic2Show = this.noMatch;
+          }
+        }
+        if(tempList.size() >= 1) {
+           tempList.shuffle();
+           // printArray("tempList  " + tempList);
+           for (int t=0; t<siteImages.size(); t++) {
+             if(siteImages.get(t).index == tempList.get(0)) {
+                // println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
+                this.pic2Show = siteImages.get(t).image;
+                siteImages.get(t).counter += 1;
+                picIndex = t;
+             } 
+           }
+        }
+        } else if (arrayType == "message") {
+          if (this.flicker) {
+            this.pic2Show = this.messages.get(1).image;
+          } else {
+            this.pic2Show = this.messages.get(0).image;
+          }
           this.flicker = !this.flicker;
-        }
       }
-      if(tempList.size() >= 1) {
-         tempList.shuffle();
-         // printArray("tempList  " + tempList);
-         for (int t=0; t<siteImages.size(); t++) {
-           if(siteImages.get(t).index == tempList.get(0)) {
-              // println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
-              this.pic2Show = siteImages.get(t).image;
-              siteImages.get(t).counter += 1;
-              picIndex = t;
-           } 
-         }
-      }
-      } else if (arrayType == "message") {
-        if (this.flicker) {
-          this.pic2Show = this.messages.get(1).image;
-        } else {
-          this.pic2Show = this.messages.get(0).image;
-        }
-        this.flicker = !this.flicker;
     }
-  }
 }
 
 class AugmentedImage {

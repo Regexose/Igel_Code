@@ -11,7 +11,7 @@ import ddf.minim.*;
 import ddf.minim.analysis.*;
 
 boolean hasFinished = true;
-boolean flicker30sec, flicker3min, flicker7min, timetoUpdate, message;
+boolean flicker30sec, flicker3min, flicker7min, timetoUpdate, message, knock;
 
 Klopfen klopfen;
 Scale scale;
@@ -20,11 +20,9 @@ File[] files;
 Table zitate, bildTexte, durationMap;
 int  picIndex, beatNumber, rScale, globalCounter, newglobalCounter;
 String currentBeat, currentScaleName, knockMessage;
-PImage pic1, noMatch, picWhite, klopf0, klopf1s, klopf1w;
-PImage[] imgArray;
+PImage noMatch;
 PGraphics audio;
 String [] fileNames;
-// ArrayList<ImageClass> genericScale, currentScale, imageClassArray;
 HashMap<String, Scale> scaleMap = new HashMap<String, Scale>();
 ArrayList<Object> scaleValues, klopfValues;
 IntList weightList; 
@@ -51,7 +49,7 @@ void setup() {
   newglobalCounter = -1;
   currentScaleName = "singer";
   scale = scaleMap.get(currentScaleName);
-  noMatch = scale.noMatch;
+  knock = false;
   frameRate(20);
   klopfen = new Klopfen();
   
@@ -92,59 +90,4 @@ void createScheduleTimer(final float ms) {
     }
   }
   , (long) (ms));
-}
-
-void getRythm() {
-  if(minute()%2 == 0) {
-    rScale = 0;
-    currentScaleName = "singer";
-  }  else {
-    rScale = 1;
-    currentScaleName = "weyde";
-    // println("currentScaleName:  " + currentScaleName + "\nweigths: " + (IntList)scaleMap.get(currentScaleName).get(2));
-  }
-  timedEvents();
-  
-  if (beatNumber >= newRythms.get(rScale).size()) {
-    println("beatNumber set to 0!: " + beatNumber);
-    beatNumber = 0;
- }
-  if (globalCounter != newglobalCounter) {
-    println("globalCounter: " + globalCounter);
-    newglobalCounter = globalCounter;
- }
-   scale = scaleMap.get(currentScaleName);
-   noMatch = scale.noMatch;
-}
-
-void timedEvents() {
-  flicker30sec = (second()>=30 && second() <= 35);
-  flicker3min = (minute()%3 ==0 && (second()>=15 && second() <= 18));
-  flicker7min = (minute()% 7 == 0 &&  (second()>=49 && second() <= 54));
-  if (flicker3min || flicker7min) {
-    rScale = 2;
-    scale.flicker = true;
-  } else if (flicker30sec) {
-    rScale = 3;
-    currentScaleName = "klopf";
-    message = true;
-  } 
-}
-
-void updatePause() {
-  ArrayList<Float> r_list = newRythms.get(rScale);
-  if (minute()%3 == 0) {
-  factor = 1.05;
-  } else {
-    factor = 0.95;
-  }
-  println("factor  " + factor);
-  for (int i=0; i<r_list.size(); i++) {
-      float pause = (float)r_list.get(i);
-      float newPause = pause * factor;
-      // println("new Pause  " + newPause + "for element " + i);
-      r_list.set(i, newPause);
-   }
-   globalCounter = 0;
-   printArray("r_list:   " + r_list + "\n ryhtmlist: " + newRythms.get(rScale));
 }
