@@ -15,9 +15,7 @@ class Scale {
     this.pic4Flicker = createImage(width, height, RGB);
   }
   
-  public void display(float pause) {
-    selectImage(pause, this.arrayType);
-    // println("selected image: " + this.pic2Show);
+  public void display() {
     imageMode(CENTER);
     image(this.pic2Show, width/2, height/2, width, height);
   }

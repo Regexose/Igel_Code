@@ -10,6 +10,8 @@ final Timer t = new Timer();
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 
+Minim minim;
+
 boolean hasFinished = true;
 boolean flicker30sec, flicker3min, flicker7min, timetoUpdate, message, knock;
 
@@ -51,7 +53,8 @@ void setup() {
   scale = scaleMap.get(currentScaleName);
   knock = false;
   frameRate(20);
-  klopfen = new Klopfen();
+  minim = new Minim(this);
+  klopfen = new Klopfen(minim);
   
 }
 
@@ -70,11 +73,12 @@ void draw() {
        println("Update pause because:  " + globalCounter);
        updatePause(); 
      }
-     scale.display(waitTime);
+     scale.selectImage(waitTime, "augmented");
   }
-    klopfen.analyseInput();
-    imageMode(CORNER);
-    image(audio, 0, height - audio.height);
+   scale.display();
+   klopfen.analyseInput();
+   imageMode(CORNER);
+   image(audio, 0, height - audio.height);
    
   //String monitoringState = klopfen.in.isMonitoring() ? "enabled" : "disabled";
   //text( "Input monitoring is currently " + monitoringState + ".", 5, 15 );
