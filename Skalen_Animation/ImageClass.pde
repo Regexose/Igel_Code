@@ -10,6 +10,7 @@ class Scale {
   Scale(String name, String folderName, String arrayType){
     this.name = name;
     this.arrayType = arrayType;
+    this.weightList = new IntList();
     loadImages(folderName, this.arrayType);
     this.flicker = false;
     this.pic4Flicker = createImage(width, height, RGB);
@@ -32,7 +33,8 @@ class Scale {
           PImage img = loadImage(files[i].toString());
           AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
           siteImages.add(aI);
-          this.weightList = loadCites(aI);
+          loadCites(aI);
+          this.weightList.append(aI.weight);
           loadRythms(aI);
         } else if (fileNames[i].indexOf("Ort_Totale") != -1) {
           PImage img = loadImage(files[i].toString());
@@ -134,8 +136,7 @@ class Message {
   }
 }
 
-IntList loadCites(AugmentedImage augImage) {
-  IntList weightList = new IntList();
+void loadCites(AugmentedImage augImage) {
   // println("checking:    " +augImage.name); 
   for (TableRow row : bildTexte.rows()) {
     String bildName = row.getString("BildName");
@@ -146,8 +147,6 @@ IntList loadCites(AugmentedImage augImage) {
     }
   }
   augImage.updateWeight(augImage.cites.size());
-  weightList.append(augImage.cites.size());
-  return weightList;
 }
   
 void loadRythms (AugmentedImage aI) {

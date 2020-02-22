@@ -42,6 +42,10 @@ void timedEvents() {
   } 
 }
 
+void updateRythms() {
+  
+}
+
 void updatePause() {
   ArrayList<Float> r_list = newRythms.get(rScale);
   if (minute()%3 == 0) {

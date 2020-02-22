@@ -20,7 +20,7 @@ Scale scale;
 File folder;
 File[] files;
 Table zitate, bildTexte, durationMap;
-int  picIndex, beatNumber, rScale, globalCounter, newglobalCounter;
+int  picIndex, beatNumber, rScale, globalCounter, newglobalCounter, startTime, elapsedTime;
 String currentBeat, currentScaleName, knockMessage;
 PImage noMatch;
 PGraphics audio;
@@ -55,11 +55,13 @@ void setup() {
   frameRate(20);
   minim = new Minim(this);
   klopfen = new Klopfen(minim);
+  startTime = millis();
+
   
 }
 
 void draw() {
-  if (hasFinished) {
+    if (hasFinished && !knock) {
     getRythm();
     // println("beatnumber: " + beatNumber + "   rythm size:  " + newRythms.get(rScale).size() + "   rhythm segment: " +newRythms.get(rScale).get(beatNumber) );
     float waitTime = newRythms.get(rScale).get(beatNumber);
@@ -79,7 +81,7 @@ void draw() {
    klopfen.analyseInput();
    imageMode(CORNER);
    image(audio, 0, height - audio.height);
-   
+   elapsedTime = millis() - startTime;
   //String monitoringState = klopfen.in.isMonitoring() ? "enabled" : "disabled";
   //text( "Input monitoring is currently " + monitoringState + ".", 5, 15 );
     
