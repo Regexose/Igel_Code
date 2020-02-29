@@ -38,7 +38,7 @@ void timedEvents() {
   } else if (flicker30sec) {
     rScale = 3;
     currentScaleName = "klopf";
-    message = true;
+    scaleType = "message";
   } 
 }
 

@@ -21,7 +21,7 @@ File folder;
 File[] files;
 Table zitate, bildTexte, durationMap;
 int  picIndex, beatNumber, rScale, globalCounter, newglobalCounter, startTime, elapsedTime;
-String currentBeat, currentScaleName, knockMessage;
+String currentBeat, currentScaleName, knockMessage, scaleType;
 PImage noMatch;
 PGraphics audio;
 String [] fileNames;
@@ -51,6 +51,7 @@ void setup() {
   newglobalCounter = -1;
   currentScaleName = "singer";
   scale = scaleMap.get(currentScaleName);
+  scaleType = "augmented";
   knock = false;
   frameRate(20);
   minim = new Minim(this);
@@ -75,10 +76,10 @@ void draw() {
        println("Update pause because:  " + globalCounter);
        updatePause(); 
      }
-     scale.selectImage(waitTime, "augmented");
+     scale.selectImage(waitTime, scaleType);
   }
-   scale.display();
    klopfen.analyseInput();
+   scale.display();
    imageMode(CORNER);
    image(audio, 0, height - audio.height);
    elapsedTime = millis() - startTime;

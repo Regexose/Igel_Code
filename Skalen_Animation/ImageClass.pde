@@ -53,12 +53,13 @@ class Scale {
   }
   
   void selectImage(float pause, String scaleType) {
-    // println("pause: " + pause + "  type:  " + scaleType);
+    // println(" pause: " + pause + "  type:  " + scaleType);
     if (scaleType == "augmented") {
-      int maxWeight = this.weightList.max();
       IntList tempList = new IntList();
       for(int i=0; i< this.siteImages.size(); i++) {
-        AugmentedImage element = siteImages.get(i);
+        AugmentedImage element = this.siteImages.get(i);
+        // println("element minMatch: " + element.minMatch + "  - maxMatch" + element.maxMatch);
+        int maxWeight = this.weightList.max();
         if (beatNumber == 0  && element.weight == maxWeight) {
           this.pic2Show = element.image; 
           picIndex = i;
@@ -74,15 +75,15 @@ class Scale {
         if(tempList.size() >= 1) {
            tempList.shuffle();
            // printArray("tempList  " + tempList);
-           for (int t=0; t<siteImages.size(); t++) {
-             if(siteImages.get(t).index == tempList.get(0)) {
+           for (int t=0; t<this.siteImages.size(); t++) {
+             if(this.siteImages.get(t).index == tempList.get(0)) {
                 // println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
-                this.pic2Show = siteImages.get(t).image;
-                siteImages.get(t).counter += 1;
+                this.pic2Show = this.siteImages.get(t).image;
+                this.siteImages.get(t).counter += 1;
                 picIndex = t;
              } 
            }
-        }
+          }
         } else if (arrayType == "message") {
           if (this.flicker) {
             this.pic2Show = this.messages.get(1).image;
@@ -90,6 +91,11 @@ class Scale {
             this.pic2Show = this.messages.get(0).image;
           }
           this.flicker = !this.flicker;
+      } else  {
+        println("klopf");
+        int index = int(pause % this.siteImages.size());
+        println("image name: " + this.siteImages.get(index).name);
+        this.pic2Show = this.siteImages.get(index).image;
       }
     }
 }
