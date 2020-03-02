@@ -56,15 +56,14 @@ void setup() {
   frameRate(20);
   minim = new Minim(this);
   klopfen = new Klopfen(minim);
-  startTime = millis();
-
-  
+  startTime = millis();  
 }
 
 void draw() {
+    klopfen.analyseInput();
     if (hasFinished && !knock) {
     getRythm();
-    // println("beatnumber: " + beatNumber + "   rythm size:  " + newRythms.get(rScale).size() + "   rhythm segment: " +newRythms.get(rScale).get(beatNumber) );
+    println("beatnumber: " + beatNumber + "   rythm size:  " + newRythms.get(rScale).size() + "   rhythm segment: " +newRythms.get(rScale).get(beatNumber) );
     float waitTime = newRythms.get(rScale).get(beatNumber);
     createScheduleTimer(waitTime);
     // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
@@ -78,7 +77,7 @@ void draw() {
      }
      scale.selectImage(waitTime, scaleType);
   }
-   klopfen.analyseInput();
+   
    scale.display();
    imageMode(CORNER);
    image(audio, 0, height - audio.height);

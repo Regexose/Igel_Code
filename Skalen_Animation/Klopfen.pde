@@ -2,6 +2,7 @@ class Klopfen {
   Minim minim;
   AudioInput in;
   FFT fft;
+  AudioRecorder recorder;
   PGraphics audioIn;
   float pause, previousTime;
   int index = 0;
@@ -10,6 +11,7 @@ class Klopfen {
   Klopfen(Minim minim) {
     this.in = minim.getLineIn();
     this.fft = new FFT(this.in.bufferSize(), 48000);
+    this.recorder = minim.createRecorder(this.in, "klopfrecorder.wav");  
     this.audioIn = createGraphics(width, height/10);
     this.audioIn.smooth();
     this.previousTime = 0;
@@ -24,6 +26,7 @@ class Klopfen {
     if (this.fft.getBand(3) > 1.9) {
       // println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
       knock = true;
+      hasFinished = false;
       float elapsedTime = millis() - startTime;
       this.pause = elapsedTime - this.previousTime;
       // print("\nthis.index:  " + this.index);
@@ -40,8 +43,9 @@ class Klopfen {
       this.audioIn.endDraw();
       audio = this.audioIn;
     }
-    if (this.pause > 10000.0) {
-      knock = false;
-    }
+    
+  }
+  void timedRecording() {
+    
   }
 }
