@@ -1,20 +1,24 @@
 class Klopfen {
   Minim minim;
   AudioInput in;
+  Recorder recorder;
   FFT fft;
-  AudioRecorder recorder;
   PGraphics audioIn;
   float pause, previousTime;
   int index = 0;
+  int recNumber = 1;
+ 
   FloatList pauses = new FloatList();
 
   Klopfen(Minim minim) {
-    this.in = minim.getLineIn();
+    this.minim = minim;
+    this.in = this.minim.getLineIn();
     this.fft = new FFT(this.in.bufferSize(), 48000);
-    this.recorder = minim.createRecorder(this.in, "klopfrecorder.wav");  
     this.audioIn = createGraphics(width, height/10);
     this.audioIn.smooth();
     this.previousTime = 0;
+    this.recorder = null;
+    
   }
   
   void analyseInput() {
@@ -23,17 +27,19 @@ class Klopfen {
     this.audioIn.textFont(Arial, 50);
     this.audioIn.textAlign(CENTER);
     this.audioIn.clear();
-    if (this.fft.getBand(3) > 1.9) {
+    float elapsedTime = millis() - startTime;
+    if (this.fft.getBand(3) > 2.8) {
       // println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
       knock = true;
-      hasFinished = false;
-      float elapsedTime = millis() - startTime;
-      this.pause = elapsedTime - this.previousTime;
-      // print("\nthis.index:  " + this.index);
-      scale.selectImage(float(this.index), "klopf");
+      createRecorder();
       this.previousTime = elapsedTime;
+      // hasFinished = false;
+      scale.selectImage(float(this.index), "klopf");
       this.index ++;
-      } 
+      }   
+    this.pause = elapsedTime - this.previousTime;
+    // println("elapsed: " + elapsedTime + "  previous: " + this.previousTime + "  pause: " + this.pause);
+    if (knock) {checkTime();}
     for(int i = 0; i < fft.specSize(); i++) {
     // draw the line for frequency band i, scaling it up a bit so we can see it
       this.audioIn.beginDraw();
@@ -45,7 +51,46 @@ class Klopfen {
     }
     
   }
-  void timedRecording() {
-    
+  
+  void createRecorder() {
+    if (knock && this.recorder == null) {
+      this.recorder = new Recorder(this.minim, this.recNumber);
+      this.recorder.timedRecording();
+    } 
   }
+  
+  void checkTime() {
+    if (this.pause > 5000.0) {
+      println("\t\t5 sec !!");
+      this.recorder.stopRec = true;
+      this.recorder.timedRecording();
+      this.recNumber += 1;
+      this.recorder = null;
+      knock = false;
+    } 
+  }
+}
+
+class Recorder {
+  AudioRecorder recorder;
+  boolean recorded, stopRec;
+  
+  Recorder(Minim minim, int recNumber) {
+    this.recorder = minim.createRecorder(minim.getLineIn(), "klopfrecord_" + str(recNumber) + ".wav");
+    this.stopRec = false;
+  }
+  void timedRecording() {
+    if (this.stopRec || globalStop) {
+      if (this.recorder.isRecording()) {
+        this.recorder.endRecord();
+        println("stopping..." + this.recorder.isRecording());
+        recorded = true;
+        this.recorder.save();
+        println("done saving");
+        } 
+    } else {
+        this.recorder.beginRecord();
+        println("recording..." + this.recorder.isRecording());
+      }
+    }
 }
