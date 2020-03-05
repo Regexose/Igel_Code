@@ -1,5 +1,6 @@
 class Klopfen {
   Minim minim;
+  Table klopfLog;
   AudioInput in;
   Recorder recorder;
   FFT fft;
@@ -18,26 +19,33 @@ class Klopfen {
     this.audioIn.smooth();
     this.previousTime = 0;
     this.recorder = null;
+    buildLog();
     
   }
   
+  void buildLog() {
+    this.klopfLog = new Table();
+    this.klopfLog.addColumn("mm:ss");
+    this.klopfLog.addColumn("pause");
+  }
   void analyseInput() {
     this.fft.forward(this.in.mix);
     this.audioIn.beginDraw();
     this.audioIn.textFont(Arial, 50);
     this.audioIn.textAlign(CENTER);
     this.audioIn.clear();
-    float elapsedTime = millis() - startTime;
+    float elapsedTime = millis() - startTime; //vergangene Zeit seit run
     if (this.fft.getBand(3) > 2.8) {
       // println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
       knock = true;
       createRecorder();
-      this.previousTime = elapsedTime;
-      // hasFinished = false;
+      this.previousTime = elapsedTime; 
       scale.selectImage(float(this.index), "klopf");
       this.index ++;
+      writeLog(this.pause);
       }   
     this.pause = elapsedTime - this.previousTime;
+    
     // println("elapsed: " + elapsedTime + "  previous: " + this.previousTime + "  pause: " + this.pause);
     if (knock) {checkTime();}
     for(int i = 0; i < fft.specSize(); i++) {
@@ -61,29 +69,39 @@ class Klopfen {
   
   void checkTime() {
     if (this.pause > 5000.0) {
-      println("\t\t5 sec !!");
+      knock = false;
+      println("\t\t5 sec !!  " + knock);
       this.recorder.stopRec = true;
       this.recorder.timedRecording();
       this.recNumber += 1;
       this.recorder = null;
-      knock = false;
+      
     } 
+  }
+  void writeLog (float pause) {
+    String log = minute() + ":" + second() ;
+    TableRow newRow = this.klopfLog.addRow();
+    newRow.setString("mm:ss", log +"\t");
+    newRow.setFloat("pause", pause);
+    saveTable(this.klopfLog, audioPath + "/log.csv");
   }
 }
 
 class Recorder {
   AudioRecorder recorder;
   boolean recorded, stopRec;
+  String date;
   
   Recorder(Minim minim, int recNumber) {
-    this.recorder = minim.createRecorder(minim.getLineIn(), "klopfrecord_" + str(recNumber) + ".wav");
+    this.date = month() + "." + day() + "_" +hour() + ":" +minute() + ":" + second();
+    this.recorder = minim.createRecorder(minim.getLineIn(), audioPath + this.date + ".wav");
     this.stopRec = false;
   }
   void timedRecording() {
     if (this.stopRec || globalStop) {
       if (this.recorder.isRecording()) {
         this.recorder.endRecord();
-        println("stopping..." + this.recorder.isRecording());
+        println("stopping...");
         recorded = true;
         this.recorder.save();
         println("done saving");

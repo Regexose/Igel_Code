@@ -21,7 +21,7 @@ File folder;
 File[] files;
 Table zitate, bildTexte, durationMap;
 int  picIndex, beatNumber, rScale, globalCounter, newglobalCounter, startTime, elapsedTime;
-String currentBeat, currentScaleName, knockMessage, scaleType;
+String currentBeat, currentScaleName, knockMessage, scaleType, audioPath;
 PImage noMatch;
 PGraphics audio;
 String [] fileNames;
@@ -39,6 +39,7 @@ void setup() {
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Arial", 16, true);
+  audioPath = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Skalen_Animation/data/rec";
   message = false;
   scaleMap.put("singer", new Scale("PlanscheSinger", "singer", "augmented"));
   scaleMap.put("weyde", new Scale("PlanscheWeyde", "weyde", "augmented"));
