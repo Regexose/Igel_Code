@@ -25,7 +25,7 @@ void getRythm() {
     newglobalCounter = globalCounter;
  }
    scale = scaleMap.get(currentScaleName);
-   noMatch = scale.noMatch;
+
 }
 
 void timedEvents() {
@@ -39,7 +39,9 @@ void timedEvents() {
     rScale = 3;
     currentScaleName = "klopf";
     scaleType = "message";
-  } 
+  } else {
+    scaleType = "augmented";
+  }
 }
 
 void updateRythms() {

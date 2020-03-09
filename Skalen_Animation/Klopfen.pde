@@ -35,8 +35,8 @@ class Klopfen {
     this.audioIn.textAlign(CENTER);
     this.audioIn.clear();
     float elapsedTime = millis() - startTime; //vergangene Zeit seit run
-    if (this.fft.getBand(3) > 2.8) {
-      // println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
+    if (this.fft.getBand(3) > 40.0) {
+      println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
       knock = true;
       createRecorder();
       this.previousTime = elapsedTime; 

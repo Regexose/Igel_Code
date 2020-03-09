@@ -22,7 +22,6 @@ File[] files;
 Table zitate, bildTexte, durationMap;
 int  picIndex, beatNumber, rScale, globalCounter, newglobalCounter, startTime, elapsedTime;
 String currentBeat, currentScaleName, knockMessage, scaleType, audioPath;
-PImage noMatch;
 PGraphics audio;
 String [] fileNames;
 HashMap<String, Scale> scaleMap = new HashMap<String, Scale>();
@@ -49,8 +48,6 @@ void setup() {
   rScale = 1;
   newglobalCounter = -1;
   currentScaleName = "singer";
-  scale = scaleMap.get(currentScaleName);
-  scaleType = "augmented";
   knock = false;
   globalStop = false;
   frameRate(20);
@@ -77,11 +74,8 @@ void draw() {
      }
      scale.selectImage(waitTime, scaleType);
   }
+  
    scale.display();
-   imageMode(CORNER);
-   image(audio, 0, height - audio.height);
-  //String monitoringState = klopfen.in.isMonitoring() ? "enabled" : "disabled";
-  //text( "Input monitoring is currently " + monitoringState + ".", 5, 15 );
 }
 
 void createScheduleTimer(final float ms) {
