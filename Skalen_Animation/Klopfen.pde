@@ -34,16 +34,17 @@ class Klopfen {
     this.audioIn.textAlign(CENTER);
     this.audioIn.clear();
     float elapsedTime = millis() - startTime; //vergangene Zeit seit run
-    if (this.fft.getBand(3) > 8.0) {
-      println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
+    if (this.fft.getBand(5) > 3.0) {
+      println("\nindex to freq(5): " + this.fft.indexToFreq(5) + " volume: " + this.fft.getBand(5));
       knock = true;
       createRecorder();
-      this.previousTime = elapsedTime; 
+      this.pause = elapsedTime - this.previousTime;
       scale.selectImage(float(this.index), "klopf");
       this.index ++;
       writeLog(this.pause);
+      this.previousTime = elapsedTime; 
       }   
-    this.pause = elapsedTime - this.previousTime;
+    
     
     // println("elapsed: " + elapsedTime + "  previous: " + this.previousTime + "  pause: " + this.pause);
     if (knock) {checkTime();}

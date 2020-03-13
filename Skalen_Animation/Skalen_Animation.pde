@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.HashMap;
 // more directory stuff: https://processing.org/examples/directorylist.html
@@ -28,7 +29,7 @@ HashMap<String, Scale> scaleMap = new HashMap<String, Scale>();
 // IntList weightList; 
 PFont Arial;
 ArrayList<ArrayList<Float>> newRythms = new ArrayList<ArrayList<Float>>();
-float factor = 1.0;
+float factor, loadStatus;
 
 void setup() {
   size(1000, 700);
@@ -40,6 +41,7 @@ void setup() {
   audioPath = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Skalen_Animation/data/rec";
   loading = true;
   thread("loadScales");
+  loadStatus = 0.0;
   message = false;
   beatNumber = 0;
   rScale = 1;
@@ -64,6 +66,9 @@ void draw() {
       } else {
       background(100);
       text("loading image..  " + currentScaleName, width/2, height/2);
+      strokeWeight(5);
+      stroke(250);
+      line(10, height - 50, 10 + loadStatus, height-50);
       }
 }
 
