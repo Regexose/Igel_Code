@@ -20,7 +20,6 @@ class Klopfen {
     this.previousTime = 0;
     this.recorder = null;
     buildLog();
-    
   }
   
   void buildLog() {
@@ -35,7 +34,7 @@ class Klopfen {
     this.audioIn.textAlign(CENTER);
     this.audioIn.clear();
     float elapsedTime = millis() - startTime; //vergangene Zeit seit run
-    if (this.fft.getBand(3) > 40.0) {
+    if (this.fft.getBand(3) > 8.0) {
       println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
       knock = true;
       createRecorder();
@@ -55,14 +54,13 @@ class Klopfen {
       this.audioIn.line( i, this.audioIn.height, i, this.audioIn.height - fft.getBand(i)*5 );
       this.audioIn.text(str(knock), this.audioIn.width/2, this.audioIn.height/2);
       this.audioIn.endDraw();
-      audio = this.audioIn;
     }
-    
+    // scale.surface = this.audioIn;
   }
   
   void createRecorder() {
     if (knock && this.recorder == null) {
-      this.recorder = new Recorder(this.minim, this.recNumber);
+      this.recorder = new Recorder(this.minim);
       this.recorder.timedRecording();
     } 
   }
@@ -75,7 +73,6 @@ class Klopfen {
       this.recorder.timedRecording();
       this.recNumber += 1;
       this.recorder = null;
-      
     } 
   }
   void writeLog (float pause) {
@@ -92,7 +89,7 @@ class Recorder {
   boolean recorded, stopRec;
   String date;
   
-  Recorder(Minim minim, int recNumber) {
+  Recorder(Minim minim) {
     this.date = month() + "." + day() + "_" +hour() + ":" +minute() + ":" + second();
     this.recorder = minim.createRecorder(minim.getLineIn(), audioPath + this.date + ".wav");
     this.stopRec = false;

@@ -13,20 +13,19 @@ import ddf.minim.analysis.*;
 Minim minim;
 
 boolean hasFinished = true;
-boolean flicker30sec, flicker3min, flicker7min, timetoUpdate, message, knock, globalStop;
+boolean pleaseKnock, flicker3min, flicker7min, timetoUpdate, message, knock, globalStop, loading;
 
 Klopfen klopfen;
 Scale scale;
 File folder;
 File[] files;
 Table zitate, bildTexte, durationMap;
-int  picIndex, beatNumber, rScale, globalCounter, newglobalCounter, startTime, elapsedTime;
-String currentBeat, currentScaleName, knockMessage, scaleType, audioPath;
-PGraphics audio;
+int  beatNumber, rScale, globalCounter, newglobalCounter, startTime, elapsedTime;
+String currentBeat, currentScaleName, scaleType, audioPath;
 String [] fileNames;
 HashMap<String, Scale> scaleMap = new HashMap<String, Scale>();
-ArrayList<Object> scaleValues, klopfValues;
-IntList weightList; 
+// ArrayList<Object> scaleValues, klopfValues;
+// IntList weightList; 
 PFont Arial;
 ArrayList<ArrayList<Float>> newRythms = new ArrayList<ArrayList<Float>>();
 float factor = 1.0;
@@ -39,15 +38,13 @@ void setup() {
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Arial", 16, true);
   audioPath = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Skalen_Animation/data/rec";
+  loading = true;
+  thread("loadScales");
   message = false;
-  scaleMap.put("singer", new Scale("PlanscheSinger", "singer", "augmented"));
-  scaleMap.put("weyde", new Scale("PlanscheWeyde", "weyde", "augmented"));
-  scaleMap.put("klopf", new Scale("Klopfen", "klopfen", "message"));
-  picIndex = 0;
   beatNumber = 0;
   rScale = 1;
   newglobalCounter = -1;
-  currentScaleName = "singer";
+  currentScaleName = "Klopf";
   knock = false;
   globalStop = false;
   frameRate(20);
@@ -57,27 +54,33 @@ void setup() {
 }
 
 void draw() {
-    klopfen.analyseInput();
-    if (hasFinished && !knock) {
-    getRythm();
-    // println("beatnumber: " + beatNumber + "   rythm size:  " + newRythms.get(rScale).size() + "   rhythm segment: " +newRythms.get(rScale).get(beatNumber) );
-    float waitTime = newRythms.get(rScale).get(beatNumber);
-    createScheduleTimer(waitTime);
-    // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
-    scale = scaleMap.get(currentScaleName);
-    beatNumber += 1;
-    beatNumber = beatNumber % newRythms.get(rScale).size(); 
-    if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
-    if (globalCounter > 0 && globalCounter%7 == 0) {
-       println("Update pause because:  " + globalCounter);
-       updatePause(); 
-     }
-     scale.selectImage(waitTime, scaleType);
-  }
-  
-   scale.display();
+    if (!loading) {
+      if (hasFinished && !knock) {
+        getRythm();
+        selectImage();
+       }
+       klopfen.analyseInput();
+       scale.display();
+      } else {
+      background(100);
+      text("loading image..  " + currentScaleName, width/2, height/2);
+      }
 }
 
+void selectImage() {
+  // println("beatNumber: " + beatNumber + "   rythm size:  " + newRythms.get(rScale).size() + "   rhythm segment: " +newRythms.get(rScale).get(beatNumber) );
+  float waitTime = newRythms.get(rScale).get(beatNumber);
+  createScheduleTimer(waitTime);
+  // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
+  scale.selectImage(waitTime, scaleType);
+  beatNumber += 1;
+  beatNumber = beatNumber % newRythms.get(rScale).size(); 
+  if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
+  if (globalCounter > 0 && globalCounter%7 == 0) {
+     println("Update pause because:  " + globalCounter);
+     updatePause(); 
+  }
+}
 void createScheduleTimer(final float ms) {
   hasFinished = false;
   t.schedule(new TimerTask() {
@@ -90,4 +93,13 @@ void createScheduleTimer(final float ms) {
 }
 void stop() {
   globalStop = true;
+}
+
+void loadScales() {
+  loading = true;
+  scaleMap.put("Klopf", new Scale("Klopfen", "klopfen", "simple"));
+  scaleMap.put("PlanscheSinger", new Scale("PlanscheSinger", "PlanscheSinger", "augmented"));
+  scaleMap.put("PlanscheWeyde", new Scale("PlanscheWeyde", "PlanscheWeyde", "augmented"));
+  getRythm();
+  hasFinished = true;
 }
