@@ -7,9 +7,6 @@ class Klopfen {
   PGraphics audioIn;
   float pause, previousTime;
   int index = 0;
-  int recNumber = 1;
- 
-  FloatList pauses = new FloatList();
 
   Klopfen(Minim minim) {
     this.minim = minim;
@@ -27,14 +24,12 @@ class Klopfen {
     this.klopfLog.addColumn("mm:ss");
     this.klopfLog.addColumn("pause");
   }
+  
   void analyseInput() {
     this.fft.forward(this.in.mix);
-    this.audioIn.beginDraw();
-    this.audioIn.textFont(Arial, 50);
-    this.audioIn.textAlign(CENTER);
-    this.audioIn.clear();
+    updateSurface(this.fft);
     float elapsedTime = millis() - startTime; //vergangene Zeit seit run
-    if (this.fft.getBand(5) > 3.0) {
+    if (this.fft.getBand(5) > 2.4) {
       println("\nindex to freq(5): " + this.fft.indexToFreq(5) + " volume: " + this.fft.getBand(5));
       knock = true;
       createRecorder();
@@ -44,19 +39,9 @@ class Klopfen {
       writeLog(this.pause);
       this.previousTime = elapsedTime; 
       }   
-    
-    
     // println("elapsed: " + elapsedTime + "  previous: " + this.previousTime + "  pause: " + this.pause);
     if (knock) {checkTime();}
-    for(int i = 0; i < fft.specSize(); i++) {
-    // draw the line for frequency band i, scaling it up a bit so we can see it
-      this.audioIn.beginDraw();
-      this.audioIn.stroke(255);
-      this.audioIn.line( i, this.audioIn.height, i, this.audioIn.height - fft.getBand(i)*5 );
-      this.audioIn.text(str(knock), this.audioIn.width/2, this.audioIn.height/2);
-      this.audioIn.endDraw();
-    }
-    // scale.surface = this.audioIn;
+      scale.surface = this.audioIn;
   }
   
   void createRecorder() {
@@ -72,7 +57,6 @@ class Klopfen {
       println("\t\t5 sec !!  " + knock);
       this.recorder.stopRec = true;
       this.recorder.timedRecording();
-      this.recNumber += 1;
       this.recorder = null;
     } 
   }
@@ -82,6 +66,23 @@ class Klopfen {
     newRow.setString("mm:ss", log +"\t");
     newRow.setFloat("pause", pause);
     saveTable(this.klopfLog, audioPath + "/log.csv");
+  }
+  
+  void updateSurface(FFT fft) {
+   if (knock) {
+    this.audioIn.beginDraw();
+    this.audioIn.textFont(Arial, 50);
+    this.audioIn.textAlign(CENTER);
+    this.audioIn.clear();
+    for(int i = 0; i < fft.specSize(); i++) {
+  // draw the line for frequency band i, scaling it up a bit so we can see it
+    this.audioIn.beginDraw();
+    this.audioIn.stroke(255);
+    this.audioIn.line( i, this.audioIn.height, i, this.audioIn.height - fft.getBand(i)*5 );
+    this.audioIn.text(str(knock), this.audioIn.width/2, this.audioIn.height/2);
+    this.audioIn.endDraw();
+    }
+   }
   }
 }
 
