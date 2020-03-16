@@ -5,8 +5,11 @@ class Klopfen {
   Recorder recorder;
   FFT fft;
   PGraphics audioIn;
-  float pause, previousTime;
+  float pause, previousTime, textPosX;
   int index = 0;
+  int recNumber = 1;
+ 
+  FloatList pauses = new FloatList();
 
   Klopfen(Minim minim) {
     this.minim = minim;
@@ -16,7 +19,9 @@ class Klopfen {
     this.audioIn.smooth();
     this.previousTime = 0;
     this.recorder = null;
+    this.textPosX = -this.audioIn.width/2;
     buildLog();
+    
   }
   
   void buildLog() {
@@ -27,24 +32,51 @@ class Klopfen {
   
   void analyseInput() {
     this.fft.forward(this.in.mix);
-    // updateSurface(this.fft);
     float elapsedTime = millis() - startTime; //vergangene Zeit seit run
-    if (this.fft.getBand(3) > 2.4) {
-      println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
+    if (this.fft.getBand(3) > 7.8) {
+      // println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
       knock = true;
       createRecorder();
-      getScaleName();
-      scale = scaleMap.get(currentScaleName);
-      this.pause = elapsedTime - this.previousTime;
-      scale.selectImage(random(scale.imageArray.size()), "klopf");
+      this.previousTime = elapsedTime; 
+      scale.selectImage(float(this.index), "klopf");
       this.index ++;
       writeLog(this.pause);
       this.previousTime = elapsedTime; 
       }   
+<<<<<<< Updated upstream
+      }   
+=======
+>>>>>>> Stashed changes
+      this.pause = elapsedTime - this.previousTime;
+      audioInfo();
+    
     // println("elapsed: " + elapsedTime + "  previous: " + this.previousTime + "  pause: " + this.pause);
     if (knock) {checkTime();}
-    scale.surface = this.audioIn;
-  }
+    
+    }
+    void audioInfo() {
+      if (this.textPosX < this.audioIn.width) {
+        this.textPosX += 7;
+        this.audioIn.beginDraw();
+        this.audioIn.textFont(Arial, 45);
+        this.audioIn.textAlign(LEFT);
+        this.audioIn.background(color(245, 66, 245));
+        this.audioIn.text("klopf, KLOPF an die Scheibe !", this.textPosX, this.audioIn.height/2);
+        this.audioIn.endDraw();
+        // this.audioIn.clear();
+        for(int i = 0; i < this.fft.specSize(); i++) {
+      // draw the line for frequency band i, scaling it up a bit so we can see it
+          this.audioIn.beginDraw();
+          this.audioIn.stroke(255);
+          this.audioIn.line(i, this.audioIn.height, i, this.audioIn.height - this.fft.getBand(i)*5 );
+          this.audioIn.endDraw();
+          }
+      } else {
+      
+      this.textPosX = -this.audioIn.width/2;
+      } 
+      audio = this.audioIn;
+    }
   
   void createRecorder() {
     if (knock && this.recorder == null) {

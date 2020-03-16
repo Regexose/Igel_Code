@@ -15,6 +15,7 @@ void getRythm() {
     currentScaleName = "weyde";
     // println("currentScaleName:  " + currentScaleName + "\nweigths: " + (IntList)scaleMap.get(currentScaleName).get(2));
   }
+  scaleType = "augmented";
   timedEvents();
   if (beatNumber >= newRythms.get(rScale).size()) {
     println("beatNumber set to 0!: " + beatNumber);
@@ -64,7 +65,4 @@ void updatePause() {
    }
    globalCounter = 0;
    printArray("r_list:   " + r_list + "\n ryhtmlist: " + newRythms.get(rScale));
-}
-
-void changeRythms() {
 }
