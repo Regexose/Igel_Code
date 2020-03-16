@@ -38,7 +38,7 @@ void setup() {
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Courier", 16, true);
-  audioPath = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Skalen_Animation/data/rec";
+  audioPath = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code/Skalen_Animation/data/rec";
   message = "Klopf mal an !";
   thread("loadScales");
   loadStatus = 0.0;
@@ -84,8 +84,8 @@ void selectImage() {
   beatNumber = beatNumber % newRythms.get(rScale).size(); 
   if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
   if (globalCounter > 0 && globalCounter%7 == 0) {
-     println("Update pause because:  " + globalCounter);
-     updatePause(); 
+     println("Update pause because:  " + globalCounter + " but suspended im moment");
+     // updatePause(); 
   }
 }
 

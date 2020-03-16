@@ -132,11 +132,7 @@ class Scale {
           updateSurface(message, messageTime);
           this.flicker = !this.flicker;
       } else  {
-        println("scaleType " + tempScaleType + "   pause: " + pause + "   scalename  " + currentScaleName);
-        int index = int(pause % this.imageArray.size());
-        println("image name: " + this.imageArray.get(index).name);
-        this.pic2Show = this.imageArray.get(index).image;
-        this.pic2ShowName = this.imageArray.get(index).name;
+        selectKlopf(pause);
       }
       // updateSurface(str(knock) + "  " + this.pic2ShowName, false);
   }
@@ -206,6 +202,16 @@ class Message {
     this.name = name;
     this.image = image;
   }
+}
+
+void selectKlopf(float pause) {
+  getScaleName();
+  scale = scaleMap.get(currentScaleName);
+  println("   scalename  " + currentScaleName + "  array size: " + scale.imageArray);
+  int index = int(pause % scale.imageArray.size());
+  println("image name: " + scale.imageArray.get(index).name);
+  scale.pic2Show = scale.imageArray.get(index).image;
+  scale.pic2ShowName = scale.imageArray.get(index).name;
 }
 
 void loadCites(AugmentedImage augImage) {

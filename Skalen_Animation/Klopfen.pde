@@ -37,15 +37,16 @@ class Klopfen {
       // println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
       knock = true;
       createRecorder();
+      this.pause = elapsedTime - this.previousTime;
       this.previousTime = elapsedTime; 
       scale.selectImage(float(this.index), "klopf");
       this.index ++;
       writeLog(this.pause);
       }   
-      this.pause = elapsedTime - this.previousTime;
       audioInfo();
     
     // println("elapsed: " + elapsedTime + "  previous: " + this.previousTime + "  pause: " + this.pause);
+    this.pause = elapsedTime - this.previousTime;
     if (knock) {checkTime();}
     
     }
@@ -70,7 +71,7 @@ class Klopfen {
       
       this.textPosX = -this.audioIn.width/2;
       } 
-      audio = this.audioIn;
+      // scale.surface = this.audioIn;
     }
   
   void createRecorder() {
@@ -81,8 +82,7 @@ class Klopfen {
   }
   
   void checkTime() {
-    this.pause = elapsedTime - this.previousTime;
-    // println("this.pause: " + this.pause);
+    println("this.pause: " + this.pause);
     if (this.pause > 5000.0) {
       knock = false;
       println("\t\t5 sec !!  " + knock);
