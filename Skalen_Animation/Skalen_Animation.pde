@@ -7,70 +7,86 @@ import java.util.Timer;
 import java.util.TimerTask;
 // timer tutorial: https://forum.processing.org/two/discussion/1725/millis-and-timer
 final Timer t = new Timer();
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+
+Minim minim;
 
 boolean hasFinished = true;
-boolean flicker30sec, flicker3min, flicker7min, timetoUpdate;
+boolean pleaseKnock, flicker3min, flicker7min, timetoUpdate, messageTime, knock, globalStop, loading;
 
+Klopfen klopfen;
+Scale scale;
 File folder;
 File[] files;
 Table zitate, bildTexte, durationMap;
-int  picIndex, beatNumber, rScale, globalCounter, newglobalCounter;
-String currentBeat, currentScaleName;
-PImage pic1, noMatch, picWhite;
-PImage[] imgArray;
-String [] fileNames;
-ArrayList<ImageClass> genericScale, currentScale, imageClassArray;
-// HashMap<String,IntList> counterLists = new HashMap<String,IntList>();
-HashMap<String, ArrayList> scaleMap = new HashMap<String, ArrayList>();
-ArrayList<Object> scaleValues;
-IntList weightList; 
+int  beatNumber, rScale, globalCounter, newglobalCounter, startTime, elapsedTime;
+String currentBeat, currentScaleName, scaleType, audioPath, message;
+String[] areaNames;
+StringList restFiles, restFileNames;
+HashMap<String, Scale> scaleMap = new HashMap<String, Scale>();
 PFont Arial;
+PGraphics surface;
 ArrayList<ArrayList<Float>> newRythms = new ArrayList<ArrayList<Float>>();
-float factor = 1.0;
-
+float factor, loadStatus, messageX, messageY, messageSize;
 
 void setup() {
-  fullScreen();
-  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 1202.0, 580.0, 1202.0, 580.0, 1800.0, 78.0,  1100.0, 250.0, 1100.0, 250.0, 120.0)));
-  newRythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 750.0, 330.0, 750.0, 330.0, 750.0, 500.0, 1100.0, 500.0, 1100.0, 210.0, 820.0)));
-  newRythms.add(new ArrayList<Float>(Arrays.asList(50.0, 10.0)));
+  size(1000, 700);
+  surface = createGraphics(width,height);
+  buildRythms(newRythms);
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
-  Arial = createFont("Arial", 16, true);
-  loadScales("singer");
-  loadScales("weyde");
-  pic1 = createImage(width, height, RGB);
-  picIndex = 0;
+  Arial = createFont("Courier", 16, true);
+  audioPath = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code/Skalen_Animation/data/rec";
+  message = "Klopf mal an !";
+  thread("loadScales");
+  loadStatus = 0.0;
+  messageTime = false;
   beatNumber = 0;
   rScale = 1;
   newglobalCounter = -1;
-  currentScaleName = "singer";
-  currentScale = (ArrayList)scaleMap.get(currentScaleName).get(0);
-  noMatch = (PImage)scaleMap.get(currentScaleName).get(1);
+  currentScaleName = "Klopf";
+  knock = false;
+  globalStop = false;
   frameRate(20);
-  
+  minim = new Minim(this);
+  klopfen = new Klopfen(minim);
+  startTime = millis();  
 }
 
 void draw() {
-   
-  if (hasFinished) {
-    getRythm();
-    println("beatnumber: " + beatNumber + "   rythm size:  " + newRythms.get(rScale).size() + "   rhythm segment: " +newRythms.get(rScale).get(beatNumber) );
-    float waitTime = newRythms.get(rScale).get(beatNumber);
-    createScheduleTimer(waitTime);
-    // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
-    selectImage(currentScaleName, currentScale, newRythms.get(rScale), noMatch);
-    beatNumber += 1;
-    beatNumber = beatNumber % newRythms.get(rScale).size(); 
-    if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
-    if (globalCounter > 0 && globalCounter%7 == 0) {
-       println("Update pause because:  " + globalCounter);
-       updatePause(); }
-    // println("new Minute with:  " + currentScaleName);
+    if (!loading) {
+      if (hasFinished && !knock) {
+        getRythm();
+        selectImage();
+       } 
+       klopfen.analyseInput();
+       scale.display();
+      } else {
+      background(100);
+      textFont(Arial, 25);
+      textAlign(CENTER);
+      text("loading images..  " + currentScaleName, width/2, height/2);
+      strokeWeight(5);
+      stroke(250);
+      line(10, height - 50, 10 + loadStatus, height-50);
+      }
+}
+
+void selectImage() {
+  // println("beatNumber: " + beatNumber + "   rythm size:  " + newRythms.get(rScale).size() + "   rhythm segment: " +newRythms.get(rScale).get(beatNumber) );
+  float waitTime = newRythms.get(rScale).get(beatNumber);
+  createScheduleTimer(waitTime);
+  // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
+  scale.selectImage(waitTime, scaleType);
+  beatNumber += 1;
+  beatNumber = beatNumber % newRythms.get(rScale).size(); 
+  if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
+  if (globalCounter > 0 && globalCounter%7 == 0) {
+     println("Update pause because:  " + globalCounter + " but suspended im moment");
+     // updatePause(); 
   }
-    imageMode(CENTER);
-    image(pic1, width/2, height/2, width*7/5, height*7/5);
 }
 
 void createScheduleTimer(final float ms) {
@@ -84,53 +100,28 @@ void createScheduleTimer(final float ms) {
   , (long) (ms));
 }
 
-void getRythm() {
-  if(minute()%2 == 0) {
-    rScale = 0;
-    currentScaleName = "singer";
-  }  else {
-    rScale = 1;
-    currentScaleName = "weyde";
-    // println("currentScaleName:  " + currentScaleName + "\nweigths: " + (IntList)scaleMap.get(currentScaleName).get(2));
-  }
-  checkFlicker();
-  
-  if (beatNumber >= newRythms.get(rScale).size()) {
-    println("beatNumber set to 0!: " + beatNumber);
-    beatNumber = 0;
- }
-  if (globalCounter != newglobalCounter) {
-    println("globalCounter: " + globalCounter);
-    newglobalCounter = globalCounter;
- }
-   currentScale = (ArrayList)scaleMap.get(currentScaleName).get(0);
-   noMatch = (PImage)scaleMap.get(currentScaleName).get(1);
+void stop() {
+  globalStop = true;
 }
 
-void checkFlicker() {
-  flicker30sec = (second()>=30 && second() <= 35);
-  flicker3min = (minute()%3 ==0 && (second()>=15 && second() <= 18));
-  flicker7min = (minute()% 7 == 0 &&  (second()>=49 && second() <= 54));
-  if (flicker3min || flicker7min) {
-    println( "flicker?  " + (flicker3min || flicker7min) + "   at beat:  " + beatNumber);
-    rScale = 2;
-  } 
+void loadScales() {
+  loading = true;
+  scaleMap.put("Klopf", new Scale("Klopfen", "klopfen", "simple"));
+  scaleMap.put("PlanscheSinger", new Scale("PlanscheSinger", "PlanscheSinger", "augmented"));
+  scaleMap.put("PlanscheWeyde", new Scale("PlanscheWeyde", "PlanscheWeyde", "augmented"));
+  getRythm();
+  loading = false;
+  hasFinished = true;
 }
 
-void updatePause() {
-  ArrayList<Float> r_list = newRythms.get(rScale);
-  if (minute()%3 == 0) {
-  factor = 1.05;
-  } else {
-    factor = 0.95;
+void loadRest() {
+    println("loadRest for scale: " + currentScaleName);
+    for (int i=0; i<restFileNames.size(); i++) {
+      PImage img = loadImage(restFiles.get(i));
+      AugmentedImage aI = new AugmentedImage(restFileNames.get(i), img, i);
+      scale = scaleMap.get(currentScaleName);
+      scale.imageArray.add(aI);
+      println("scale.imageArray Size: " + scale.imageArray.size());
+    }
+    
   }
-  println("factor  " + factor);
-  for (int i=0; i<r_list.size(); i++) {
-      float pause = (float)r_list.get(i);
-      float newPause = pause * factor;
-      // println("new Pause  " + newPause + "for element " + i);
-      r_list.set(i, newPause);
-   }
-   globalCounter = 0;
-   printArray("r_list:   " + r_list + "\n ryhtmlist: " + newRythms.get(rScale));
-}
