@@ -43,7 +43,7 @@ class Klopfen {
       this.index ++;
       writeLog(this.pause);
       }   
-      audioInfo();
+      // audioInfo();
     
     // println("elapsed: " + elapsedTime + "  previous: " + this.previousTime + "  pause: " + this.pause);
     this.pause = elapsedTime - this.previousTime;

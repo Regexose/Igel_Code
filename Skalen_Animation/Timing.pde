@@ -17,7 +17,7 @@ void getRythm() {
     println("globalCounter: " + globalCounter);
     newglobalCounter = globalCounter;
  }
-   println("scalename timing: " + currentScaleName); 
+   // println("scalename timing: " + currentScaleName); 
    scale = scaleMap.get(currentScaleName);
 }
 

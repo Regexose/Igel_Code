@@ -11,7 +11,7 @@ class Scale {
   
   Scale(String name, String folderName, String arrayType){
     this.name = name;
-    this.surface = createGraphics(width, height/5);
+    this.surface = createGraphics(width, height);
     this.arrayType = arrayType;
     this.imageWeights = new IntList();
     loadImages(folderName, this.arrayType);
@@ -25,7 +25,7 @@ class Scale {
     imageMode(CENTER);
     image(this.pic2Show, width/2, height/2, width, height);
     imageMode(CORNER);
-    image(this.surface, 0, height/3);
+    image(this.surface, 0, 0);
   }
   
   void loadImages(String folderName, String arrayType) {
@@ -122,11 +122,11 @@ class Scale {
           // printArray("messages: " + this.messages + " current Scalename: " + currentScaleName);
           if (this.flicker) {
             this.pic2Show = this.messageImages.get(1).image;
-            messageX = width /4;
+            messageX = width /8;
             this.pic2ShowName = this.messageImages.get(1).name;
           } else {
             this.pic2Show = this.messageImages.get(0).image;
-            messageX = width *3/4;
+            messageX = width *3/7;
             this.pic2ShowName = this.messageImages.get(0).name;
           }
           updateSurface(message, messageTime);
@@ -137,19 +137,30 @@ class Scale {
       // updateSurface(str(knock) + "  " + this.pic2ShowName, false);
   }
     void updateSurface(String text, boolean msgTime) {
-      this.surface.beginDraw();
+      
       if (msgTime) {
+       
         String[] words = text.split(" ");
         println("  x: " + messageX + "  y: " + messageY);
         int index = int(random(words.length));
         String word = words[index];
-        messageSize = int(random(50, 80));
+        messageSize = int(random(50, 100));
+        textSize(messageSize);
+        float textHeight = textAscent() * 0.8;
+        PGraphics wordSurf = createGraphics(int(textWidth(word) * 2) , int(textHeight) * 2);
+        wordSurf.smooth();
         messageY = this.surface.height/2;
+        
+        wordSurf.beginDraw();
+        wordSurf.textAlign(CENTER);
+        wordSurf.textFont(Arial, messageSize);
+        wordSurf.background(200);
+        wordSurf.fill(10);
+        wordSurf.text(word, wordSurf.width/2, wordSurf.height/2 + 10);
+        wordSurf.endDraw();
+        this.surface.beginDraw();
         this.surface.clear();
-        this.surface.textAlign(CENTER);
-        this.surface.textFont(Arial, messageSize);
-        this.surface.fill(20);
-        this.surface.text(word, messageX, messageY);
+        this.surface.image(wordSurf, messageX, messageY);
         this.surface.endDraw();
           } else {
             this.surface.beginDraw();
@@ -207,8 +218,9 @@ class Message {
 void selectKlopf(float pause) {
   getScaleName();
   scale = scaleMap.get(currentScaleName);
-  println("   scalename  " + currentScaleName + "  array size: " + scale.imageArray);
+  // println("   scalename  " + currentScaleName + "  array size: " + scale.imageArray);
   int index = int(pause % scale.imageArray.size());
+  index = int(random(index, scale.imageArray.size()));
   println("image name: " + scale.imageArray.get(index).name);
   scale.pic2Show = scale.imageArray.get(index).image;
   scale.pic2ShowName = scale.imageArray.get(index).name;
