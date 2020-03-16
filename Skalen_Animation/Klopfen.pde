@@ -27,21 +27,23 @@ class Klopfen {
   
   void analyseInput() {
     this.fft.forward(this.in.mix);
-    updateSurface(this.fft);
+    // updateSurface(this.fft);
     float elapsedTime = millis() - startTime; //vergangene Zeit seit run
-    if (this.fft.getBand(5) > 2.4) {
-      println("\nindex to freq(5): " + this.fft.indexToFreq(5) + " volume: " + this.fft.getBand(5));
+    if (this.fft.getBand(3) > 2.4) {
+      println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
       knock = true;
       createRecorder();
+      getScaleName();
+      scale = scaleMap.get(currentScaleName);
       this.pause = elapsedTime - this.previousTime;
-      scale.selectImage(float(this.index), "klopf");
+      scale.selectImage(random(scale.imageArray.size()), "klopf");
       this.index ++;
       writeLog(this.pause);
       this.previousTime = elapsedTime; 
       }   
     // println("elapsed: " + elapsedTime + "  previous: " + this.previousTime + "  pause: " + this.pause);
     if (knock) {checkTime();}
-      scale.surface = this.audioIn;
+    scale.surface = this.audioIn;
   }
   
   void createRecorder() {
@@ -52,6 +54,8 @@ class Klopfen {
   }
   
   void checkTime() {
+    this.pause = elapsedTime - this.previousTime;
+    // println("this.pause: " + this.pause);
     if (this.pause > 5000.0) {
       knock = false;
       println("\t\t5 sec !!  " + knock);

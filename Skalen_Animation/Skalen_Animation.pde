@@ -23,6 +23,7 @@ Table zitate, bildTexte, durationMap;
 int  beatNumber, rScale, globalCounter, newglobalCounter, startTime, elapsedTime;
 String currentBeat, currentScaleName, scaleType, audioPath, message;
 String[] areaNames;
+StringList restFiles, restFileNames;
 HashMap<String, Scale> scaleMap = new HashMap<String, Scale>();
 PFont Arial;
 PGraphics surface;
@@ -36,10 +37,9 @@ void setup() {
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
-  Arial = createFont("Arial", 16, true);
+  Arial = createFont("Courier", 16, true);
   audioPath = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Skalen_Animation/data/rec";
   message = "Klopf mal an !";
-  loading = true;
   thread("loadScales");
   loadStatus = 0.0;
   messageTime = false;
@@ -110,5 +110,18 @@ void loadScales() {
   scaleMap.put("PlanscheSinger", new Scale("PlanscheSinger", "PlanscheSinger", "augmented"));
   scaleMap.put("PlanscheWeyde", new Scale("PlanscheWeyde", "PlanscheWeyde", "augmented"));
   getRythm();
+  loading = false;
   hasFinished = true;
 }
+
+void loadRest() {
+    println("loadRest for scale: " + currentScaleName);
+    for (int i=0; i<restFileNames.size(); i++) {
+      PImage img = loadImage(restFiles.get(i));
+      AugmentedImage aI = new AugmentedImage(restFileNames.get(i), img, i);
+      scale = scaleMap.get(currentScaleName);
+      scale.imageArray.add(aI);
+      println("scale.imageArray Size: " + scale.imageArray.size());
+    }
+    
+  }
