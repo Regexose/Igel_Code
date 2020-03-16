@@ -41,12 +41,7 @@ class Klopfen {
       scale.selectImage(float(this.index), "klopf");
       this.index ++;
       writeLog(this.pause);
-      this.previousTime = elapsedTime; 
       }   
-<<<<<<< Updated upstream
-      }   
-=======
->>>>>>> Stashed changes
       this.pause = elapsedTime - this.previousTime;
       audioInfo();
     
