@@ -36,12 +36,12 @@ class Klopfen {
     if (this.fft.getBand(3) > 7.8) {
       // println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
       knock = true;
-      createRecorder();
       this.pause = elapsedTime - this.previousTime;
       this.previousTime = elapsedTime; 
+      writeLog(this.pause);
+      createRecorder();
       scale.selectImage(float(this.index), "klopf");
       this.index ++;
-      writeLog(this.pause);
       }   
       // audioInfo();
     
@@ -92,11 +92,20 @@ class Klopfen {
     } 
   }
   void writeLog (float pause) {
+    
     String log = minute() + ":" + second() ;
     TableRow newRow = this.klopfLog.addRow();
-    newRow.setString("mm:ss", log +"\t");
-    newRow.setFloat("pause", pause);
-    saveTable(this.klopfLog, audioPath + "/log.csv");
+    if (this.recorder == null) {
+      TableRow newRow2 = this.klopfLog.addRow();
+        newRow.setString("mm:ss", "new klopf period");
+        newRow.setFloat("pause", pause);
+        newRow2.setString("mm:ss", log +"\t");
+        newRow2.setFloat("pause", pause);
+    } else {
+        newRow.setString("mm:ss", log +"\t");
+        newRow.setFloat("pause", pause);
+    }
+    saveTable(this.klopfLog, audioPath + "/log.csv"); 
   }
   
   void updateSurface(FFT fft) {
