@@ -125,9 +125,9 @@ class Scale {
             messageX = width /8;
             this.pic2ShowName = this.messageImages.get(1).name;
           } else {
-            this.pic2Show = this.messageImages.get(0).image;
+            this.pic2Show = this.messageImages.get(2).image;
             messageX = width *3/7;
-            this.pic2ShowName = this.messageImages.get(0).name;
+            this.pic2ShowName = this.messageImages.get(2).name;
           }
           updateSurface(message, messageTime);
           this.flicker = !this.flicker;
