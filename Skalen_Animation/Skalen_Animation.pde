@@ -11,10 +11,7 @@ import ddf.minim.*;
 import ddf.minim.analysis.*;
 
 Minim minim;
-/* Die Idee ist, den Klopf Check zu verbessern, sodaß einmal Klopfen nicht wie zwei Klopfer interpretiert wird
-dies geschiet wahrscheinlich durch schnell aufeinanderfolgende klopfen.analyseInput
-Evtl eine kurze Sperre einbauen, die 10-20 ms anhält, bevor der nächste Klopfpeak erfasst werden kann
-*/
+
 boolean hasFinished = true;
 boolean knocklock = false;
 boolean pleaseKnock, timetoUpdate, messageTime, knock, globalStop, loading;

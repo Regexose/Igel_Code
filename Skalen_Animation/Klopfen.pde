@@ -46,7 +46,6 @@ class Klopfen {
       this.index ++;
       }   
       // audioInfo();
-    
     // println("elapsed: " + elapsedTime + "  previous: " + this.previousTime + "  pause: " + this.pause);
     this.pause = elapsedTime - this.previousTime;
     if (knock) {checkTime();}
@@ -57,7 +56,7 @@ class Klopfen {
       knocklock = true;
       t2.schedule(new TimerTask() {
       public void run() {
-      print("   dong   " + nf(ms, 0, 2));
+      // print("   dong   " + nf(ms, 0, 2));
       knocklock = false;
           }
         }
@@ -96,7 +95,7 @@ class Klopfen {
   }
   
   void checkTime() {
-    println("this.pause: " + this.pause);
+    // println("this.pause: " + this.pause);
     if (this.pause > 5000.0) {
       knock = false;
       println("\t\t5 sec !!  " + knock);
@@ -146,7 +145,7 @@ class Recorder {
   String date;
   
   Recorder(Minim minim) {
-    this.date = month() + "." + day() + "_" +hour() + ":" +minute() + ":" + second();
+    this.date = month() + "." + day() + "_" + hour() + ":" + minute() + ":" + second();
     this.recorder = minim.createRecorder(minim.getLineIn(), audioPath + this.date + ".wav");
     this.stopRec = false;
   }
