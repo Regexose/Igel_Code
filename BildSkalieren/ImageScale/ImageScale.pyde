@@ -16,8 +16,9 @@ def changePixels():
     for x in range(width):
         for y in range(height):
             loc = x + y * width
-            if (x % 2 == 0):
-                pixels[loc] = color(255 - mouseX)
-            else:
-                pixels[loc] = color(0 + mouseY)
+            r = red(pixels[loc])
+            g = green(pixels[loc])
+            b = blue(pixels[loc])
+            pixels[loc] = color(r-mouseX, g, b)
+
     updatePixels()
