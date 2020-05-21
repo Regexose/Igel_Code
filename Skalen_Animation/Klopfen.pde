@@ -1,5 +1,6 @@
 class Klopfen {
   Minim minim;
+  final Timer t2 = new Timer();
   Table klopfLog;
   AudioInput in;
   Recorder recorder;
@@ -33,9 +34,10 @@ class Klopfen {
   void analyseInput() {
     this.fft.forward(this.in.mix);
     float elapsedTime = millis() - startTime; //vergangene Zeit seit run
-    if (this.fft.getBand(3) > 7.8) {
+    if (this.fft.getBand(3) > 7.8  && !knocklock) {
       // println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
       knock = true;
+      knockTimer(100.0);
       this.pause = elapsedTime - this.previousTime;
       this.previousTime = elapsedTime; 
       writeLog(this.pause);
@@ -50,6 +52,18 @@ class Klopfen {
     if (knock) {checkTime();}
     
     }
+    
+    void knockTimer(final float ms) {
+      knocklock = true;
+      t2.schedule(new TimerTask() {
+      public void run() {
+      print("   dong   " + nf(ms, 0, 2));
+      knocklock = false;
+          }
+        }
+        , (long) (ms));
+    }
+    
     void audioInfo() {
       if (this.textPosX < this.audioIn.width) {
         this.textPosX += 7;
