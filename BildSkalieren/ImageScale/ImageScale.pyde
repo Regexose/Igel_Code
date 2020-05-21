@@ -19,6 +19,7 @@ def changePixels():
             r = red(pixels[loc])
             g = green(pixels[loc])
             b = blue(pixels[loc])
-            pixels[loc] = color(r-mouseX, g, b)
-
+            
+            if r < 83 and g < 83 and b < 83:
+                pixels[loc] = color(255, 0, 0)
     updatePixels()
