@@ -14,7 +14,7 @@ void getRythm() {
     beatNumber = 0;
  }
   if (globalCounter != newglobalCounter) {
-    println("globalCounter: " + globalCounter);
+    // println("globalCounter: " + globalCounter);
     newglobalCounter = globalCounter;
  }
    // println("scalename timing: " + currentScaleName); 
@@ -34,8 +34,6 @@ void getScaleName() {
 
 void timedEvents() {
   pleaseKnock = (second()>=25 && second() <= 45);
-  // flicker3min = (minute()%3 ==0 && (second()>=15 && second() <= 18));
-  // flicker7min = (minute()% 7 == 0 &&  (second()>=49 && second() <= 54));
   if (pleaseKnock) {
     rScale = 3;
     currentScaleName = "Klopf";

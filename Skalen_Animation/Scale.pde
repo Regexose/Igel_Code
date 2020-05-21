@@ -141,7 +141,7 @@ class Scale {
       if (msgTime) {
        
         String[] words = text.split(" ");
-        println("  x: " + messageX + "  y: " + messageY);
+        // println("  x: " + messageX + "  y: " + messageY);
         int index = int(random(words.length));
         String word = words[index];
         messageSize = int(random(50, 100));

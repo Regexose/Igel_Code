@@ -13,7 +13,8 @@ import ddf.minim.analysis.*;
 Minim minim;
 
 boolean hasFinished = true;
-boolean pleaseKnock, flicker3min, flicker7min, timetoUpdate, messageTime, knock, globalStop, loading;
+boolean knocklock = false;
+boolean pleaseKnock, timetoUpdate, messageTime, knock, globalStop, loading;
 
 Klopfen klopfen;
 Scale scale;
