@@ -4,15 +4,15 @@ coords = [(518, 118), (575, 313), (605, 306), (545, 113)]
 global v
 
 class Vertex:
+    vert_surface = None
+    xs, ys = [], [] # cordinates splitted
     def __init__(self, name, coords, v_col):
         self.name = name
         self.coords = coords
         self.v_col = v_col
         self.surface = createGraphics(width, height)
         self.build_vertex()
-        self.locations = self.vertex_locations()
-
-        
+        self.locations, self.vertex_locs = self.vertex_locations()
 
     def build_vertex(self):
         with self.surface.beginDraw():
@@ -22,23 +22,29 @@ class Vertex:
             for i in range(len(self.coords)):
                 x = self.coords[i][0]
                 y = self.coords[i][1]
+                self.xs.append(x)
+                self.ys.append(y)
                 self.surface.vertex(x, y)
             self.surface.endShape(CLOSE)
+            vert_width = max(self.xs) - min(self.xs)
+            vert_height = max(self.ys) - min(self.ys)
+            self.vert_surface = createGraphics(vert_width, vert_height)
+
     
     def vertex_locations(self):
-        locs = []
+        locs, small_locs = [], []
         self.surface.loadPixels()
         with self.surface.beginDraw():
             for x in range(self.surface.width):
                 for y in range(self.surface.height):
                     loc = x + y*width
                     c = self.surface.pixels[loc]
-                    # r = c >> 16 & 0xFF
-                    # g = c >> 8 & 0xFF
-                    # b = c & 0xFF 
                     if c == self.v_col:
                         locs.append(x + y*width)
-        return locs
+                        x1 = x - min(self.xs)
+                        y1 = y - min(self.ys)
+                        small_locs.append(x1 + y1 * self.vert_surface.width)
+        return locs, small_locs
 
 def setup():
     size(1500, 1000, P2D)
@@ -46,11 +52,9 @@ def setup():
     pic = loadImage("DSC05212.JPG")
     v_color = color(0, 180, 12)
     v = Vertex('zitat1', coords, v_color)
-    # loc_v = [(coords[i][0] + coords[i][1] * width) for i in range(len(coords))]
-    copy_surface = createGraphics(width, height, P2D)
+    copy_surface = createGraphics(v.vert_surface.width, v.vert_surface.height)
     with copy_surface.beginDraw():
-        copy_surface.background(color(12, 100, 200, 100))
-    
+        copy_surface.noFill()
     frameRate(12)
 
     
@@ -64,13 +68,12 @@ def draw():
 
 def copyPixels(v):
     global pic, copy_surface
-    copy_surface.loadPixels()
-    loadPixels()
-    print("invertex: ",  len(v.locations))
-    for loc in v.locations:
-        with copy_surface.beginDraw():
-             copy_surface.pixels[loc] = pixels[loc]
-    copy_surface.updatePixels()  
+    with copy_surface.beginDraw():
+        copy_surface.loadPixels()
+        loadPixels()
+        for index, loc in enumerate(v.locations):
+            copy_surface.pixels[v.vertex_locs[index]] = pixels[loc]
+        copy_surface.updatePixels()  
 
 def changePixels():
     global key_color
