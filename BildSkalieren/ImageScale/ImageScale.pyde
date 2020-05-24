@@ -29,7 +29,8 @@ class Vertex:
             vert_width = max(self.xs) - min(self.xs)
             vert_height = max(self.ys) - min(self.ys)
             self.vert_surface = createGraphics(vert_width, vert_height)
-
+            with self.vert_surface.beginDraw():
+                self.vert_surface.noFill()
     
     def vertex_locations(self):
         locs, small_locs = [], []
@@ -45,26 +46,34 @@ class Vertex:
                         y1 = y - min(self.ys)
                         small_locs.append(x1 + y1 * self.vert_surface.width)
         return locs, small_locs
+    
+    def copyPixels(self, pic):
+        with self.vert_surface.beginDraw():
+            self.vert_surface.noFill()
+            self.vert_surface.loadPixels()
+            loadPixels()
+            for index, loc in enumerate(v.locations):
+                self.vert_surface.pixels[v.vertex_locs[index]] = pixels[loc]
+            self.vert_surface.updatePixels()  
 
 def setup():
     size(1500, 1000, P2D)
     global pic, v, loc_v, copy_surface, v_color
+    # pic = loadImage("Ort_DSC05036_plWeyde.jpg")
     pic = loadImage("DSC05212.JPG")
     v_color = color(0, 180, 12)
     v = Vertex('zitat1', coords, v_color)
-    copy_surface = createGraphics(v.vert_surface.width, v.vert_surface.height)
-    with copy_surface.beginDraw():
-        copy_surface.noFill()
     frameRate(12)
 
     
 def draw():
-    global pic, v, copy_surface
+    global pic, v
     image(pic, 0, 0, width, height)
     if keyPressed :
-        copyPixels(v)
-    # image(v.surface, 0, 0)
-    image(copy_surface, mouseX, mouseY)
+        v.copyPixels(pic)
+    print("73")
+    image(v.vert_surface, mouseX, mouseY)
+    print("75")
 
 def copyPixels(v):
     global pic, copy_surface
