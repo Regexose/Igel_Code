@@ -39,7 +39,7 @@ void setup() {
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Courier", 16, true);
-  audioPath = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code/Skalen_Animation/data/rec";
+  audioPath = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Skalen_Animation/data/rec";
   message = "Klopf mal an !";
   thread("loadScales");
   loadStatus = 0.0;
