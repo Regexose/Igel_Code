@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 // timer tutorial: https://forum.processing.org/two/discussion/1725/millis-and-timer
 final Timer t = new Timer();
+import ddf.minim.analysis.FFT;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 
@@ -39,6 +40,7 @@ void setup() {
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Courier", 16, true);
+  audioPath = "/home/pi/Igel_Code/Igel_Code/SkalenAnimation/data/rec";
   audioPath = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code/Skalen_Animation/data/rec";
   message = "Klopf mal an !";
   thread("loadScales");
