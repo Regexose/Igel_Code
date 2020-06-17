@@ -106,7 +106,7 @@ class Klopfen {
   }
   void writeLog (float pause) {
     
-    String log = minute() + ":" + second() ;
+    String log = hour() + ":" + minute();
     TableRow newRow = this.klopfLog.addRow();
     if (this.recorder == null) {
       TableRow newRow2 = this.klopfLog.addRow();
@@ -145,7 +145,7 @@ class Recorder {
   String date;
   
   Recorder(Minim minim) {
-    this.date = month() + "." + day() + "_" + hour() + ":" + minute() + ":" + second();
+    this.date = month() + "." + day() + "._" + hour() + ":" + minute() + ":" + second();
     this.recorder = minim.createRecorder(minim.getLineIn(), audioPath + this.date + ".wav");
     this.stopRec = false;
   }
