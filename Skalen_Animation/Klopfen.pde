@@ -118,7 +118,7 @@ class Klopfen {
         newRow.setString("mm:ss", log +"\t");
         newRow.setFloat("pause", pause);
     }
-    saveTable(this.klopfLog, audioPath + "/log.csv"); 
+    saveTable(this.klopfLog, audioPath + "/log" + log + ".csv"); 
   }
   
   void updateSurface(FFT fft) {

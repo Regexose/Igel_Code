@@ -41,7 +41,7 @@ void setup() {
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Courier", 16, true);
   audioPath = "/home/pi/Igel_Code/Igel_Code/SkalenAnimation/data/rec";
-  audioPath = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code/Skalen_Animation/data/rec";
+  // audioPath = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code/Skalen_Animation/data/rec";
   message = "Klopf mal an !";
   thread("loadScales");
   loadStatus = 0.0;
