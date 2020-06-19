@@ -29,6 +29,7 @@ class Scale {
   }
   
   void loadImages(String folderName, String arrayType) {
+    // print("arrayType: " + arrayType);
     loadStatus = 0.0;
     loading = true;
     hasFinished = false;
@@ -37,6 +38,7 @@ class Scale {
     folder = new File(sketchPath("data/" + folderName));
     files = folder.listFiles(); // need for absolut path
     fileNames = folder.list();
+    printArray(fileNames);
     restFiles = new StringList();
     restFileNames = new StringList();
     if (arrayType == "augmented") {
@@ -44,9 +46,12 @@ class Scale {
       // i muss bei 1 anfangen, sonst liest der loop nur das .DS_Store, warum auch immer...
       for (int i=1; i<fileNames.length; i++) {
         if (fileNames[i].toLowerCase().endsWith(".jpg")){  
+          println("filename: " + fileNames[i]);
           if (fileNames[i].indexOf("Ort_") == -1) {
+            // if filename doesnt contain "Ort_"
             PImage img = loadImage(files[i].toString());
             AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
+            println("ai!  " + aI.name);
             imageArray.add(aI);
             loadCites(aI);
             this.imageWeights.append(aI.weight);
@@ -63,7 +68,6 @@ class Scale {
           } loadStatus += width/(fileNames.length +1);
         } else {
           println("else: " +  "i: " + i + "  fileNames[i]:  " + fileNames[i]);
-          return;
         }
       } 
       
@@ -125,9 +129,9 @@ class Scale {
             messageX = width /8;
             this.pic2ShowName = this.messageImages.get(1).name;
           } else {
-            this.pic2Show = this.messageImages.get(2).image;
+            this.pic2Show = this.messageImages.get(0).image;
             messageX = width *3/7;
-            this.pic2ShowName = this.messageImages.get(2).name;
+            this.pic2ShowName = this.messageImages.get(0).name;
           }
           updateSurface(message, messageTime);
           this.flicker = !this.flicker;
@@ -187,11 +191,12 @@ class AugmentedImage {
     this.minMatch = 0;
     this.maxMatch = 100;
     this.counter = 0;
+    println("\nai.name" + this.name);
   }
   
   void updateWeight(int value) {
     this.weight += value;
-    // println("updated aI: " + this.name + "  to: " + this.weight);
+    println("updated aI: " + this.name + "  to: " + this.weight);
   }
   
   void textAcquire(String cite) {

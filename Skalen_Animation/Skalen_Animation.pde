@@ -33,7 +33,7 @@ ArrayList<ArrayList<Float>> newRythms = new ArrayList<ArrayList<Float>>();
 float factor, loadStatus, messageX, messageY, messageSize;
 
 void setup() {
-  size(1000, 700);
+  fullScreen() ;
   surface = createGraphics(width,height);
   buildRythms(newRythms);
   zitate = loadTable("Igel_Zitate.csv", "header");
