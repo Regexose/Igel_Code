@@ -1,7 +1,24 @@
 from Surfaces import *
+import os
 
 add_library('opencv_processing')
 
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = str(this.dataFile(''))
+SKETCH_PATH = os.listdir('.')
+DATA_FOLDER = this.dataPath('') + '/'
+# image_path = this.listPaths(BASE_DIR.path, 'extensions=,jpg, png')
+
+print('base: ', BASE_DIR)
+print('sketch: ', SKETCH_PATH)
+print('data folder: ', DATA_FOLDER)
+
+for name in os.listdir(BASE_DIR):
+    path = os.path.join(BASE_DIR, name)
+    if os.path.isdir(path):
+        print(path)
+
+scales = {}
 
 threshold = 180
 vert = 0
@@ -22,8 +39,6 @@ def setup():
     dst = opencv.getOutput()
     contours = opencv.findContours()
     print("found {} contours".format(len(contours)))
-    
-
 
 def draw():
     global img_zitat, threshold, vert, horiz, opencv, contours
@@ -66,5 +81,17 @@ def stop():
     saveFrame("Zitate2.png")
     pass
 
+def loadScales(folder):
+    pass
+    '''
+    pseudocode
+    # filenames = list(folder)
+    for file in folder:
+        name = file.name
+        opencv = OpenCV(this, img)
+        scales[file.name] = AugmentedImage(name, img, opencv) 
+    '''
+        
+    
       
       
