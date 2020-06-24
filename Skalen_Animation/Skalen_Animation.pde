@@ -9,8 +9,10 @@ import java.util.TimerTask;
 final Timer t = new Timer();
 import ddf.minim.*;
 import ddf.minim.analysis.*;
+import gab.opencv.*;
 
 Minim minim;
+OpenCV opencv;
 
 boolean hasFinished = true;
 boolean knocklock = false;
@@ -115,14 +117,20 @@ void loadScales() {
   hasFinished = true;
 }
 
-void loadRest() {
-    println("loadRest for scale: " + currentScaleName);
-    for (int i=0; i<restFileNames.size(); i++) {
-      PImage img = loadImage(restFiles.get(i));
-      AugmentedImage aI = new AugmentedImage(restFileNames.get(i), img, i);
-      scale = scaleMap.get(currentScaleName);
-      scale.imageArray.add(aI);
-      println("scale.imageArray Size: " + scale.imageArray.size());
-    }
-    
+ArrayList<Contour> makeContours(String name, PImage img) {
+   opencv = new OpenCV(this, img);
+   ArrayList<Contour> contours = opencv.findContours();
+   
+   for (Contour contour : contours) {
+        color fill_color = color(random(250), random(250), random(250));
+        beginShape();
+        contour.setPolygonApproximationFactor(3.0);
+        for (PVector p : contour.getPolygonApproximation().getPoints()) {
+            fill(fill_color);
+            vertex(p.x, p.y);
+        endShape(CLOSE);
+        }
+   }
+   printArray("name: " + name + "  contours: " + contours);
+   return contours;
   }

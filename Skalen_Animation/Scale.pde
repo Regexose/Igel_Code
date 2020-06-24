@@ -63,7 +63,6 @@ class Scale {
           } loadStatus += width/(fileNames.length +1);
         } else {
           println("else: " +  "i: " + i + "  fileNames[i]:  " + fileNames[i]);
-          return;
         }
       } 
       
@@ -178,6 +177,7 @@ class AugmentedImage {
   PImage image;
   int index, weight, minMatch, maxMatch, counter;
   ArrayList<String> cites = new ArrayList<String>();
+  ArrayList<Contour> contours;
   
   AugmentedImage(String name, PImage image, int index) {
     this.name = name;
@@ -187,6 +187,7 @@ class AugmentedImage {
     this.minMatch = 0;
     this.maxMatch = 100;
     this.counter = 0;
+    this.contours = makeContours(this.name, this.image);
   }
   
   void updateWeight(int value) {
@@ -214,6 +215,7 @@ class Message {
     this.image = image;
   }
 }
+
 
 void selectKlopf(float pause) {
   getScaleName();
