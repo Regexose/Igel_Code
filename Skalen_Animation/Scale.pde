@@ -6,9 +6,9 @@ class Scale {
   AugmentedImage aI;
   PShape z_shape;
   String name, arrayType, pic2ShowName;
-  PImage noMatch, pic2Show, pic4Flicker;
+  PImage noMatch, pic2Show, pic4Flicker, messagePic;
   IntList imageWeights;
-  boolean flicker, loaded;
+  boolean flicker, loaded, augmented;
 
   Scale(String name, String folderName, String arrayType) {
     this.name = name;
@@ -19,6 +19,7 @@ class Scale {
     this.pic2Show = this.noMatch;
     this.loaded = false;
     this.flicker = false;
+    this.augmented = false;
     this.z_shape = createShape(RECT, 0, 0, 50, 50);
     this.pic4Flicker = createImage(width, height, RGB);
   }
@@ -26,10 +27,10 @@ class Scale {
   public void display() {
     imageMode(CENTER);
     image(this.pic2Show, width/2, height/2, width, height);
+    if (this.augmented) {image(this.aI.dst, width/2, height/2, width, height);} 
     imageMode(CORNER);
     image(this.surface, 0, 0);
-    println("this.shape: " + this.z_shape.getVertexCount());
-    shape(this.z_shape, 100, 100);
+    // shape(this.z_shape, 100, 100);
   }
 
   void loadImages(String folderName, String arrayType) {
@@ -45,6 +46,7 @@ class Scale {
     restFileNames = new StringList();
     if (arrayType == "augmented") {
       imageArray = new ArrayList<AugmentedImage>();
+      this.augmented = true;
       // i muss bei 1 anfangen, sonst liest der loop nur das .DS_Store, warum auch immer...
       for (int i=1; i<fileNames.length; i++) {
         if (fileNames[i].toLowerCase().endsWith(".jpg")) {  
@@ -88,6 +90,7 @@ class Scale {
   void selectImage(float pause, String tempScaleType) {
     // println(" pause: " + pause + "  type:  " + tempScaleType + "  beatNumber: " + beatNumber);
     if (tempScaleType == "augmented") {
+      this.augmented = true;
       IntList tempList = new IntList();
       for (int i=0; i< this.imageArray.size(); i++) {
         AugmentedImage aI = this.imageArray.get(i);
@@ -97,7 +100,7 @@ class Scale {
         if (beatNumber == 0  && aI.weight == maxWeight) {
           this.pic2Show = aI.image; 
           this.pic2ShowName = aI.name;
-          println("image: " + aI.name + " weight  " + aI.weight);
+          // println("image: " + aI.name + " weight  " + aI.weight);
         } else if (beatNumber > 0 && pauseMatch && aI.weight != maxWeight) {
           tempList.append(aI.index);
         } else if (this.flicker) {
@@ -110,6 +113,7 @@ class Scale {
         }
         this.aI = aI;
       }
+      
       if (tempList.size() >= 1) {
         tempList.shuffle();
         // printArray("tempList  " + tempList);
@@ -117,17 +121,19 @@ class Scale {
           if (this.imageArray.get(t).index == tempList.get(0)) {
             // println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
             this.pic2Show = this.imageArray.get(t).image;
+            this.aI = this.imageArray.get(t);
             this.pic2ShowName = this.imageArray.get(t).name;
             this.imageArray.get(t).counter += 1;
           }
         }
+        showBiggestShapes(this.aI);
       }
     } else if (tempScaleType == "message") {
       // printArray("messages: " + this.messages + " current Scalename: " + currentScaleName);
       if (this.flicker) {
-        this.pic2Show = this.messageImages.get(1).image;
+        this.pic2Show = this.messageImages.get(0).image;
         messageX = width /8;
-        this.pic2ShowName = this.messageImages.get(1).name;
+        this.pic2ShowName = this.messageImages.get(0).name;
       } else {
         this.pic2Show = this.messageImages.get(2).image;
         messageX = width *3/7;

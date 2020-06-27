@@ -29,6 +29,7 @@ String[] areaNames;
 StringList restFiles, restFileNames;
 HashMap<String, Scale> scaleMap = new HashMap<String, Scale>();
 PFont Arial;
+PImage dst;
 PGraphics surface;
 ArrayList<ArrayList<Float>> newRythms = new ArrayList<ArrayList<Float>>();
 float factor, loadStatus, messageX, messageY, messageSize;
@@ -77,7 +78,7 @@ void selectImage() {
   createScheduleTimer(waitTime);
   // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
   scale.selectImage(waitTime, scaleType);
-  selectShape();
+  //selectShape();
   beatNumber += 1;
   beatNumber = beatNumber % newRythms.get(rScale).size(); 
   if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
@@ -87,10 +88,27 @@ void selectImage() {
   }
 }
 
+void showBiggestShapes(AugmentedImage aI) {
+  println("91 aIname: " + aI.name); 
+  println("\nshapes size: " + aI.shapes.size());
+  scale.surface.beginDraw();
+  for (ZitatShape s : aI.shapes) {
+    if(s.numPoints > 10) {
+      println("s.numPoints: " + s.numPoints);
+      scale.surface.shape(s.z_shape, s.z_shape.getVertex(0).x, s.z_shape.getVertex(0).y);
+    }
+  } 
+  scale.surface.endDraw();
+}
+
 void selectShape() {
-  println("91 scalename: " + scale.name + "\ncontours size: " + scale.aI.shapes.size() );
+  if (scale.augmented) {
+  println("91 scalename: " + scale.name); 
+  println("\nshapes size: " + scale.aI.shapes.size());
   int index = int(random(scale.aI.shapes.size()));
-  scale.z_shape = scale.aI.shapes.get(index).z_shape;
+  PShape z_shape = scale.aI.shapes.get(index).z_shape;
+  shape(z_shape, 100, 100);
+  } else {return;}
 }
 
 void createScheduleTimer(final float ms) {
@@ -126,12 +144,21 @@ void loadDisplay() {
   strokeWeight(5);
   stroke(250);
   line(10, height - 50, 10 + loadStatus, height-50);
+  
 }
 
 ArrayList<Contour> makeContours(String name, PImage img) {
    opencv = new OpenCV(this, img);
-   opencv.threshold(70);
+   opencv.threshold(100);
    ArrayList<Contour> contours = opencv.findContours();
    println("contours: " + contours.size());
    return contours;
   }
+ 
+PImage dstMaker(PImage img) {
+   opencv = new OpenCV(this, img);
+   opencv.gray();
+   opencv.threshold(100);
+   dst = opencv.getOutput();
+   return dst;
+}

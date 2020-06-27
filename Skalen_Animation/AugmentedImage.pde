@@ -1,6 +1,6 @@
 class AugmentedImage {
   String type, name;
-  PImage image;
+  PImage image, dst;
   int index, weight, minMatch, maxMatch, counter;
   ArrayList<String> cites = new ArrayList<String>();
   ArrayList<Contour> contours;
@@ -14,7 +14,8 @@ class AugmentedImage {
     this.minMatch = 0;
     this.maxMatch = 100;
     this.counter = 0;
-    this.contours = makeContours(this.name, this.image);
+    this.contours = makeContours(name, image);
+    this.dst = dstMaker(image);
     makeShape();
   }
 
@@ -52,6 +53,7 @@ class AugmentedImage {
 class ZitatShape {
   PShape z_shape;
   String name;
+  int numPoints = 0;
  
   ZitatShape(String name, Contour contour) {
     this.name = name;
@@ -67,6 +69,7 @@ class ZitatShape {
        // z_shape.fill(fill_color);
        z_shape.noStroke();
        z_shape.vertex(p.x, p.y);
+       this.numPoints ++;
         // println("p.x " + p.x + "  p.y: " + p.y);
       }
     z_shape.endShape(CLOSE);
@@ -78,11 +81,12 @@ class ZitatShape {
 
 class Message {
   String name, message;
-  PImage image;
+  PImage image, dst;
 
   Message(String name, PImage image) {
     this.name = name;
     this.image = image;
+    this.dst = dstMaker(image);
   }
 }
 
