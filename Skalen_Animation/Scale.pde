@@ -90,25 +90,25 @@ class Scale {
     if (tempScaleType == "augmented") {
       IntList tempList = new IntList();
       for (int i=0; i< this.imageArray.size(); i++) {
-        AugmentedImage element = this.imageArray.get(i);
-        boolean pauseMatch = (element.minMatch <= pause && element.maxMatch >= pause);
+        AugmentedImage aI = this.imageArray.get(i);
+        boolean pauseMatch = (aI.minMatch <= pause && aI.maxMatch >= pause);
         // println("  element weight: " + element.weight + "  weightlist" + this.imageWeights);
         int maxWeight = this.imageWeights.max();
-        if (beatNumber == 0  && element.weight == maxWeight) {
-          this.pic2Show = element.image; 
-          this.pic2ShowName = element.name;
-          println("image: " + element.name + " weight  " + element.weight);
-        } else if (beatNumber > 0 && pauseMatch && element.weight != maxWeight) {
-          tempList.append(element.index);
+        if (beatNumber == 0  && aI.weight == maxWeight) {
+          this.pic2Show = aI.image; 
+          this.pic2ShowName = aI.name;
+          println("image: " + aI.name + " weight  " + aI.weight);
+        } else if (beatNumber > 0 && pauseMatch && aI.weight != maxWeight) {
+          tempList.append(aI.index);
         } else if (this.flicker) {
           this.pic2Show = this.pic4Flicker;
           this.flicker = !this.flicker;
         } else if (beatNumber != 0 && !pauseMatch) {
           // println(" else image: " + element.name + "  weight: " + element.weight);
-          this.pic2ShowName = element.name;
+          this.pic2ShowName = aI.name;
           this.pic2Show = this.noMatch;
         }
-        this.aI = element;
+        this.aI = aI;
       }
       if (tempList.size() >= 1) {
         tempList.shuffle();

@@ -88,8 +88,8 @@ void selectImage() {
 }
 
 void selectShape() {
-  println("91 scalename: " + scale.name + "\ncontours size: " + scale.aI.contours.size() );
-  int index = int(random(scale.aI.contours.size()));
+  println("91 scalename: " + scale.name + "\ncontours size: " + scale.aI.shapes.size() );
+  int index = int(random(scale.aI.shapes.size()));
   scale.z_shape = scale.aI.shapes.get(index).z_shape;
 }
 
