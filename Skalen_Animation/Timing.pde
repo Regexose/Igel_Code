@@ -33,7 +33,7 @@ void getScaleName() {
 }
 
 void timedEvents() {
-  pleaseKnock = (second()>=25 && second() <= 45);
+  pleaseKnock = (second()>=25 && second() <= 30);
   if (pleaseKnock) {
     rScale = 3;
     currentScaleName = "Klopf";

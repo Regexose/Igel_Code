@@ -41,7 +41,7 @@ void setup() {
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Courier", 16, true);
-  audioPath = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code/Skalen_Animation/data/rec";
+  audioPath = sketchPath("data/rec/");
   message = "Klopf mal an !";
   thread("loadScales");
   loadStatus = 0.0;
@@ -67,13 +67,7 @@ void draw() {
        klopfen.analyseInput();
        scale.display();
       } else {
-      background(100);
-      textFont(Arial, 25);
-      textAlign(CENTER);
-      text("loading images..  " + currentScaleName, width/2, height/2);
-      strokeWeight(5);
-      stroke(250);
-      line(10, height - 50, 10 + loadStatus, height-50);
+      loadDisplay();
       }
 }
 
@@ -83,6 +77,7 @@ void selectImage() {
   createScheduleTimer(waitTime);
   // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
   scale.selectImage(waitTime, scaleType);
+  selectShape();
   beatNumber += 1;
   beatNumber = beatNumber % newRythms.get(rScale).size(); 
   if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
@@ -90,6 +85,12 @@ void selectImage() {
      println("Update pause because:  " + globalCounter + " but suspended im moment");
      // updatePause(); 
   }
+}
+
+void selectShape() {
+  println("91 scalename: " + scale.name + "\ncontours size: " + scale.aI.contours.size() );
+  int index = int(random(scale.aI.contours.size()));
+  scale.z_shape = scale.aI.shapes.get(index).z_shape;
 }
 
 void createScheduleTimer(final float ms) {
@@ -117,20 +118,20 @@ void loadScales() {
   hasFinished = true;
 }
 
+void loadDisplay() {
+  background(100);
+  textFont(Arial, 25);
+  textAlign(CENTER);
+  text("loading images..  " + currentScaleName, width/2, height/2);
+  strokeWeight(5);
+  stroke(250);
+  line(10, height - 50, 10 + loadStatus, height-50);
+}
+
 ArrayList<Contour> makeContours(String name, PImage img) {
    opencv = new OpenCV(this, img);
+   opencv.threshold(70);
    ArrayList<Contour> contours = opencv.findContours();
-   
-   for (Contour contour : contours) {
-        color fill_color = color(random(250), random(250), random(250));
-        beginShape();
-        contour.setPolygonApproximationFactor(3.0);
-        for (PVector p : contour.getPolygonApproximation().getPoints()) {
-            fill(fill_color);
-            vertex(p.x, p.y);
-        endShape(CLOSE);
-        }
-   }
-   printArray("name: " + name + "  contours: " + contours);
+   println("contours: " + contours.size());
    return contours;
   }

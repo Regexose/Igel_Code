@@ -34,7 +34,7 @@ class Klopfen {
   void analyseInput() {
     this.fft.forward(this.in.mix);
     float elapsedTime = millis() - startTime; //vergangene Zeit seit run
-    if (this.fft.getBand(3) > 7.8  && !knocklock) {
+    if (this.fft.getBand(3) > 50.9  && !knocklock) {
       // println("\nindex to freq(3): " + this.fft.indexToFreq(3) + " volume: " + this.fft.getBand(3));
       knock = true;
       knockTimer(100.0);
