@@ -143,7 +143,7 @@ ArrayList<Contour> makeContours(String name, PImage img) {
      img.resize(width, height);
      opencv = new OpenCV(this, img);
      opencv.gray();
-     opencv.threshold(50);
+     opencv.threshold(80);
      ArrayList<Contour> contours = opencv.findContours();
      // println("name" + name + "  contours: " + contours.size());
      return contours; //<>//
@@ -152,7 +152,7 @@ ArrayList<Contour> makeContours(String name, PImage img) {
 PImage dstMaker(PImage img) {
    opencv = new OpenCV(this, img);
    opencv.gray();
-   opencv.threshold(90);
+   opencv.threshold(80);
    dst = opencv.getOutput();
    return dst;
 }

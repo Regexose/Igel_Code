@@ -27,8 +27,10 @@ class Scale {
   public void display() {
     imageMode(CENTER);
     image(this.pic2Show, width/2, height/2, width, height);
-    for (PShape ps : this.aI.shapes) {
-      shape(ps, 0, 0);
+    if (this.augmented) {
+      for (PShape ps : this.aI.shapes) {
+        shape(ps, 0, 0);
+      }
     }
     //shape(this.z_shape, 0, 0);
     // if (this.augmented) {image(this.aI.dst, width/2, height/2, width, height);} 
@@ -134,6 +136,7 @@ class Scale {
       // showBiggestShapes(this.aI);
       
     } else if (tempScaleType == "message") {
+      this.augmented = false;
       // printArray("messages: " + this.messages + " current Scalename: " + currentScaleName);
       if (this.flicker) {
         this.pic2Show = this.messageImages.get(0).image;

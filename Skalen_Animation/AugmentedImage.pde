@@ -31,7 +31,7 @@ class AugmentedImage {
           // ZitatShape z = new ZitatShape(str(i) + "_" + this.name, contour);
           z_shape.beginShape();
           noStroke();
-          contour.setPolygonApproximationFactor(1.0);
+          contour.setPolygonApproximationFactor(0.5);
           for (PVector p : contour.getPolygonApproximation().getPoints()) 
             z_shape.vertex(p.x, p.y);
           z_shape.endShape(CLOSE);
