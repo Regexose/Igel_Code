@@ -27,10 +27,9 @@ class Scale {
   public void display() {
     imageMode(CENTER);
     image(this.pic2Show, width/2, height/2, width, height);
-    if (this.augmented) {image(this.aI.dst, width/2, height/2, width, height);} 
-    imageMode(CORNER);
+    shape(this.z_shape, 0, 0);
+    // if (this.augmented) {image(this.aI.dst, width/2, height/2, width, height);} 
     image(this.surface, 0, 0);
-    // shape(this.z_shape, 100, 100);
   }
 
   void loadImages(String folderName, String arrayType) {
@@ -50,7 +49,7 @@ class Scale {
       // i muss bei 1 anfangen, sonst liest der loop nur das .DS_Store, warum auch immer...
       for (int i=1; i<fileNames.length; i++) {
         if (fileNames[i].toLowerCase().endsWith(".jpg")) {  
-          if (fileNames[i].indexOf("Ort_") == -1) {
+          if (fileNames[i].indexOf("Ort_") == -1 ) {
             PImage img = loadImage(files[i].toString());
             AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
             imageArray.add(aI);
@@ -60,13 +59,13 @@ class Scale {
           } else if (fileNames[i].indexOf("Ort_Totale") != -1) {
             PImage img = loadImage(files[i].toString());
             this.noMatch = img;
-          } else if (fileNames[i].indexOf("Ort_DSC") != -1) {
-            //restFiles.append(files[i].toString());
-            //restFileNames.append(fileNames[i]);
-            PImage img = loadImage(files[i].toString());
-            AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
-            imageArray.add(aI);
-          } 
+          }
+          //} else if (fileNames[i].indexOf("Ort_DSC") != -1) {
+          ////bilder der Orte
+          //  PImage img = loadImage(files[i].toString());
+          //  AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
+          //  imageArray.add(aI);
+          //} 
           loadStatus += width/(fileNames.length +1);
         } else {
           println("else: " +  "i: " + i + "  fileNames[i]:  " + fileNames[i]);
@@ -100,6 +99,7 @@ class Scale {
         if (beatNumber == 0  && aI.weight == maxWeight) {
           this.pic2Show = aI.image; 
           this.pic2ShowName = aI.name;
+          this.aI = aI;
           // println("image: " + aI.name + " weight  " + aI.weight);
         } else if (beatNumber > 0 && pauseMatch && aI.weight != maxWeight) {
           tempList.append(aI.index);
@@ -110,8 +110,8 @@ class Scale {
           // println(" else image: " + element.name + "  weight: " + element.weight);
           this.pic2ShowName = aI.name;
           this.pic2Show = this.noMatch;
+          this.aI = aI;
         }
-        this.aI = aI;
       }
       
       if (tempList.size() >= 1) {
@@ -126,8 +126,10 @@ class Scale {
             this.imageArray.get(t).counter += 1;
           }
         }
-        showBiggestShapes(this.aI);
+        
       }
+      // showBiggestShapes(this.aI);
+      
     } else if (tempScaleType == "message") {
       // printArray("messages: " + this.messages + " current Scalename: " + currentScaleName);
       if (this.flicker) {
@@ -139,7 +141,7 @@ class Scale {
         messageX = width *3/7;
         this.pic2ShowName = this.messageImages.get(2).name;
       }
-      updateSurface(message, messageTime);
+      // updateSurface(message, messageTime);
       this.flicker = !this.flicker;
     } else {
       selectKlopf(pause);
@@ -147,6 +149,15 @@ class Scale {
     // updateSurface(str(knock) + "  " + this.pic2ShowName, false);
     
   }
+  
+  void selectShape() {
+  if (this.augmented && (this.aI.name.indexOf("Ort_DSC") == -1)) {
+    println("107 image name: " + this.aI.name); 
+    // printArray("\nshapes: " + scale.aI.shapes);
+    int index = int(random(this.aI.shapes.size()));
+    this.z_shape = this.aI.shapes.get(index);
+    } else {return;}
+}
 
   
   void updateSurface(String text, boolean msgTime) {

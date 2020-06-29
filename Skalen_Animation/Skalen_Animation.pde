@@ -33,6 +33,7 @@ PImage dst;
 PGraphics surface;
 ArrayList<ArrayList<Float>> newRythms = new ArrayList<ArrayList<Float>>();
 float factor, loadStatus, messageX, messageY, messageSize;
+PShape s;
 
 void setup() {
   size(1000, 700);
@@ -78,7 +79,7 @@ void selectImage() {
   createScheduleTimer(waitTime);
   // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
   scale.selectImage(waitTime, scaleType);
-  //selectShape();
+  scale.selectShape();
   beatNumber += 1;
   beatNumber = beatNumber % newRythms.get(rScale).size(); 
   if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
@@ -92,24 +93,34 @@ void showBiggestShapes(AugmentedImage aI) {
   println("91 aIname: " + aI.name); 
   println("\nshapes size: " + aI.shapes.size());
   scale.surface.beginDraw();
-  for (ZitatShape s : aI.shapes) {
-    if(s.numPoints > 10) {
-      println("s.numPoints: " + s.numPoints);
-      scale.surface.shape(s.z_shape, s.z_shape.getVertex(0).x, s.z_shape.getVertex(0).y);
+  for (PShape s : aI.shapes) {
+    if(s.getVertexCount() > 10) {
+      println("s.numPoints: " + s.getVertexCount());
+      scale.surface.shape(s, 100, 100);
     }
   } 
   scale.surface.endDraw();
+  
 }
 
-void selectShape() {
-  if (scale.augmented) {
-  println("91 scalename: " + scale.name); 
-  println("\nshapes size: " + scale.aI.shapes.size());
-  int index = int(random(scale.aI.shapes.size()));
-  PShape z_shape = scale.aI.shapes.get(index).z_shape;
-  shape(z_shape, 100, 100);
-  } else {return;}
-}
+//void selectShape() {
+//  if (scale.augmented && (scale.aI.name.indexOf("Ort_DSC") == -1)) {
+//    println("107 image name: " + scale.aI.name); 
+//    // printArray("\nshapes: " + scale.aI.shapes);
+//    int index = int(random(scale.aI.shapes.size()));
+//    PShape s = scale.aI.shapes.get(index).z_shape;
+//    println("shape name?:  " + s.getName()); //<>//
+//    println("shape position?:  " + s.getVertex(1).x + "   " +  s.getVertex(1).y);
+//    // println("scale:  " + scale.name + " surface: " + scale.surface);
+    
+//    scale.surface.beginDraw();
+//      // scale.surface.text("es ist ein brunnengeschäft", 100, 100);
+//      scale.surface.shape(s, s.getVertex(1).x, s.getVertex(1).y);
+//      // scale.surface.shape(s, 100, 100);
+    
+//  } else {return;}
+//  scale.surface.endDraw();
+//}
 
 void createScheduleTimer(final float ms) {
   hasFinished = false;
@@ -148,17 +159,18 @@ void loadDisplay() {
 }
 
 ArrayList<Contour> makeContours(String name, PImage img) {
-   opencv = new OpenCV(this, img);
-   opencv.threshold(100);
-   ArrayList<Contour> contours = opencv.findContours();
-   println("contours: " + contours.size());
-   return contours;
-  }
+     opencv = new OpenCV(this, img);
+     opencv.gray();
+     opencv.threshold(50);
+     ArrayList<Contour> contours = opencv.findContours();
+     // println("name" + name + "  contours: " + contours.size());
+     return contours; //<>//
+}
  
 PImage dstMaker(PImage img) {
    opencv = new OpenCV(this, img);
    opencv.gray();
-   opencv.threshold(100);
+   opencv.threshold(90);
    dst = opencv.getOutput();
    return dst;
 }

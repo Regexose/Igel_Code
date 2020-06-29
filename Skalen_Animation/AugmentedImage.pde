@@ -4,7 +4,7 @@ class AugmentedImage {
   int index, weight, minMatch, maxMatch, counter;
   ArrayList<String> cites = new ArrayList<String>();
   ArrayList<Contour> contours;
-  ArrayList<ZitatShape> shapes;
+  ArrayList<PShape> shapes;
 
   AugmentedImage(String name, PImage image, int index) {
     this.name = name;
@@ -16,67 +16,48 @@ class AugmentedImage {
     this.counter = 0;
     this.contours = makeContours(name, image);
     this.dst = dstMaker(image);
-    makeShape();
+    makeShapes();
   }
 
-  void makeShape() {
-    this.shapes = new ArrayList<ZitatShape>();
+  void makeShapes() {
+    this.shapes = new ArrayList<PShape>();
     int i = 0;
-    for (Contour contour : this.contours) {
-      ArrayList<PVector> points = contour.getPolygonApproximation().getPoints();
-      if (points.size() > 20) {
-        ZitatShape z = new ZitatShape(str(i), contour);
-        // println("z vertices: " + z.z_shape.getVertexCount());
-        this.shapes.add(z);
-        i++;
-     }
-    }
-    println("name: " + this.name + "\ncontours: " + this.contours.size() + "\nshapes: " + this.shapes.size());
-  }
-
-  void updateWeight(int value) {
-    this.weight += value;
-    // println("updated aI: " + this.name + "  to: " + this.weight);
-  }
-
-  void textAcquire(String cite) {
-    this.cites.add(cite);
-  }
-
-  void mapBeatValue(int minVal, int maxVal) {
-    this.minMatch =  minVal;
-    this.maxMatch =  maxVal;
-    // println("matching iC " + this.name + " with " + value + " value");
-  }
+    // exclude fotoa
+    if (name.indexOf("Ort_DSC") == -1) {
+        for (Contour contour : this.contours) {
+          PShape z_shape = createShape();
+          //println("31 name  " + this.name + "   points: " + points.size());
+          // ZitatShape z = new ZitatShape(str(i) + "_" + this.name, contour);
+          z_shape.beginShape();
+          contour.setPolygonApproximationFactor(1.0);
+          for (PVector p : contour.getPolygonApproximation().getPoints()) 
+            z_shape.vertex(p.x, p.y);
+          z_shape.endShape(CLOSE);
+          z_shape.setFill(color(random(255), random(255), random(255)));
+          z_shape.setName(str(i) + "_" + this.name);
+          if (z_shape.getVertexCount() > 6) {
+            this.shapes.add(z_shape);
+          }
+          i++;
+        }
+      }
+  printArray("38 name: " + this.name + "\nshapes: " + this.shapes.size());
 }
 
-class ZitatShape {
-  PShape z_shape;
-  String name;
-  int numPoints = 0;
- 
-  ZitatShape(String name, Contour contour) {
-    this.name = name;
-    this.z_shape = makeShape(contour);
-  }
+void updateWeight(int value) {
+  this.weight += value;
+  // println("updated aI: " + this.name + "  to: " + this.weight);
+}
 
-  PShape makeShape(Contour contour) {
-    color fill_color = color(random(250), random(250), random(250));
-    PShape z_shape = createShape();
-    contour.setPolygonApproximationFactor(3.0);
-    z_shape.beginShape();
-    for (PVector p : contour.getPolygonApproximation().getPoints()) {
-       // z_shape.fill(fill_color);
-       z_shape.noStroke();
-       z_shape.vertex(p.x, p.y);
-       this.numPoints ++;
-        // println("p.x " + p.x + "  p.y: " + p.y);
-      }
-    z_shape.endShape(CLOSE);
-    z_shape.setFill(fill_color);
-    // println("z_Shape vertex Count: " + z_shape.getVertexCount());
-    return z_shape;
-  }
+void textAcquire(String cite) {
+  this.cites.add(cite);
+}
+
+void mapBeatValue(int minVal, int maxVal) {
+  this.minMatch =  minVal;
+  this.maxMatch =  maxVal;
+  // println("matching iC " + this.name + " with " + value + " value");
+}
 }
 
 class Message {
