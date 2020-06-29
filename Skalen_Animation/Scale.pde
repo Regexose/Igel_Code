@@ -27,9 +27,12 @@ class Scale {
   public void display() {
     imageMode(CENTER);
     image(this.pic2Show, width/2, height/2, width, height);
-    shape(this.z_shape, 0, 0);
+    for (PShape ps : this.aI.shapes) {
+      shape(ps, 0, 0);
+    }
+    //shape(this.z_shape, 0, 0);
     // if (this.augmented) {image(this.aI.dst, width/2, height/2, width, height);} 
-    image(this.surface, 0, 0);
+    //image(this.surface, 0, 0);
   }
 
   void loadImages(String folderName, String arrayType) {
@@ -152,10 +155,12 @@ class Scale {
   
   void selectShape() {
   if (this.augmented && (this.aI.name.indexOf("Ort_DSC") == -1)) {
-    println("107 image name: " + this.aI.name); 
+    println("155 image name: " + this.aI.name); 
     // printArray("\nshapes: " + scale.aI.shapes);
     int index = int(random(this.aI.shapes.size()));
     this.z_shape = this.aI.shapes.get(index);
+    println("159 vertexCount: " + this.z_shape.getVertexCount()); 
+
     } else {return;}
 }
 

@@ -22,13 +22,15 @@ class AugmentedImage {
   void makeShapes() {
     this.shapes = new ArrayList<PShape>();
     int i = 0;
-    // exclude fotoa
+    // exclude fotos
     if (name.indexOf("Ort_DSC") == -1) {
         for (Contour contour : this.contours) {
           PShape z_shape = createShape();
+          
           //println("31 name  " + this.name + "   points: " + points.size());
           // ZitatShape z = new ZitatShape(str(i) + "_" + this.name, contour);
           z_shape.beginShape();
+          noStroke();
           contour.setPolygonApproximationFactor(1.0);
           for (PVector p : contour.getPolygonApproximation().getPoints()) 
             z_shape.vertex(p.x, p.y);

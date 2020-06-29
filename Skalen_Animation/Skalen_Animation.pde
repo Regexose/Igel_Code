@@ -66,7 +66,7 @@ void draw() {
         getRythm();
         selectImage();
        } 
-       klopfen.analyseInput();
+       // klopfen.analyseInput();
        scale.display();
       } else {
       loadDisplay();
@@ -101,26 +101,7 @@ void showBiggestShapes(AugmentedImage aI) {
   } 
   scale.surface.endDraw();
   
-}
-
-//void selectShape() {
-//  if (scale.augmented && (scale.aI.name.indexOf("Ort_DSC") == -1)) {
-//    println("107 image name: " + scale.aI.name); 
-//    // printArray("\nshapes: " + scale.aI.shapes);
-//    int index = int(random(scale.aI.shapes.size()));
-//    PShape s = scale.aI.shapes.get(index).z_shape;
-//    println("shape name?:  " + s.getName()); //<>//
-//    println("shape position?:  " + s.getVertex(1).x + "   " +  s.getVertex(1).y);
-//    // println("scale:  " + scale.name + " surface: " + scale.surface);
-    
-//    scale.surface.beginDraw();
-//      // scale.surface.text("es ist ein brunnengeschäft", 100, 100);
-//      scale.surface.shape(s, s.getVertex(1).x, s.getVertex(1).y);
-//      // scale.surface.shape(s, 100, 100);
-    
-//  } else {return;}
-//  scale.surface.endDraw();
-//}
+} //<>//
 
 void createScheduleTimer(final float ms) {
   hasFinished = false;
@@ -159,6 +140,7 @@ void loadDisplay() {
 }
 
 ArrayList<Contour> makeContours(String name, PImage img) {
+     img.resize(width, height);
      opencv = new OpenCV(this, img);
      opencv.gray();
      opencv.threshold(50);
