@@ -28,14 +28,13 @@ class Scale {
     imageMode(CENTER);
     image(this.pic2Show, width/2, height/2, width, height);
     if (this.augmented) {
-      for (PShape ps : this.aI.shapes) {
-        shape(ps, 0, 0);
+      //for (PShape ps : this.aI.shapes) {
+      //  shape(ps, 0, 0);
+      shape(this.z_shape, 0, 0);
       }
-    }
-    //shape(this.z_shape, 0, 0);
-    // if (this.augmented) {image(this.aI.dst, width/2, height/2, width, height);} 
+    }  
     //image(this.surface, 0, 0);
-  }
+
 
   void loadImages(String folderName, String arrayType) {
     loadStatus = 0.0;
@@ -65,12 +64,13 @@ class Scale {
             PImage img = loadImage(files[i].toString());
             this.noMatch = img;
           }
-          //} else if (fileNames[i].indexOf("Ort_DSC") != -1) {
-          ////bilder der Orte
-          //  PImage img = loadImage(files[i].toString());
-          //  AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
-          //  imageArray.add(aI);
-          //} 
+           else if (fileNames[i].indexOf("Ort_DSC") != -1) {
+          //bilder der Orte
+            PImage img = loadImage(files[i].toString());
+            AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
+            imageArray.add(aI);
+           }
+ 
           loadStatus += width/(fileNames.length +1);
         } else {
           println("else: " +  "i: " + i + "  fileNames[i]:  " + fileNames[i]);
