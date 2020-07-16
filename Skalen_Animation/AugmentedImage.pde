@@ -20,6 +20,8 @@ class AugmentedImage {
   }
 
   void makeShapes() {
+    // jede Shape sollte eine Position abspeichern, wenn möglich auch eine Breite und Höhe
+    // so können gezielt shapes wieder abgefragt bzw herausgefiltert werden.
     this.shapes = new ArrayList<PShape>();
     int i = 0;
     // exclude fotos

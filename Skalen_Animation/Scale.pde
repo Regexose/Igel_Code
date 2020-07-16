@@ -79,7 +79,6 @@ class Scale {
     } else if (arrayType == "simple") {
       messageImages = new ArrayList<Message>();
       for (int i=0; i<fileNames.length; i++) {
-        // println("36 filename " + fileNames[i].toUpperCase() + " i " + i);
         PImage img = loadImage(files[i].toString());
         Message msg = new Message(fileNames[i], img);
         messageImages.add(msg);
@@ -105,7 +104,6 @@ class Scale {
           this.pic2Show = aI.image; 
           this.pic2ShowName = aI.name;
           this.aI = aI;
-          // println("image: " + aI.name + " weight  " + aI.weight);
         } else if (beatNumber > 0 && pauseMatch && aI.weight != maxWeight) {
           tempList.append(aI.index);
         } else if (this.flicker) {
@@ -121,7 +119,6 @@ class Scale {
       
       if (tempList.size() >= 1) {
         tempList.shuffle();
-        // printArray("tempList  " + tempList);
         for (int t=0; t<this.imageArray.size(); t++) {
           if (this.imageArray.get(t).index == tempList.get(0)) {
             // println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
@@ -157,12 +154,14 @@ class Scale {
   }
   
   void selectShape() {
+    // jede Shape sollte eine Position abspeichern, wenn möglich auch eine Breite und Höhe
+    // so können gezielt shapes wieder abgefragt bzw herausgefiltert werden.
   if (this.augmented && (this.aI.name.indexOf("Ort_DSC") == -1)) {
-    println("155 image name: " + this.aI.name); 
+    // println("158 image name: " + this.aI.name); 
     // printArray("\nshapes: " + scale.aI.shapes);
     int index = int(random(this.aI.shapes.size()));
     this.z_shape = this.aI.shapes.get(index);
-    println("159 vertexCount: " + this.z_shape.getVertexCount()); 
+    // println("162 vertexCount: " + this.z_shape.getVertexCount()); 
 
     } else {return;}
 }
