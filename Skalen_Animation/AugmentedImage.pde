@@ -4,7 +4,8 @@ class AugmentedImage {
   int index, weight, minMatch, maxMatch, counter;
   ArrayList<String> cites = new ArrayList<String>();
   ArrayList<Contour> contours;
-  ArrayList<PShape> shapes;
+  HashMap<String, PShape> shapeMap;
+  HashMap<String, Rectangle> shapeBox;
 
   AugmentedImage(String name, PImage image, int index) {
     this.name = name;
@@ -22,31 +23,37 @@ class AugmentedImage {
   void makeShapes() {
     // jede Shape sollte eine Position abspeichern, wenn möglich auch eine Breite und Höhe
     // so können gezielt shapes wieder abgefragt bzw herausgefiltert werden.
-    this.shapes = new ArrayList<PShape>();
+    // am besten eine HashMap leicht zu adressierenden shapes
+    // this.shapes = new ArrayList<PShape>();
     int i = 0;
     // exclude fotos
     if (name.indexOf("Ort_DSC") == -1) {
+      this.shapeMap = new HashMap<String, PShape>(this.contours.size());
+      this.shapeBox = new HashMap<String, Rectangle>(this.contours.size());
         for (Contour contour : this.contours) {
           PShape z_shape = createShape();
-          
-          //println("31 name  " + this.name + "   points: " + points.size());
-          // ZitatShape z = new ZitatShape(str(i) + "_" + this.name, contour);
           z_shape.beginShape();
           noStroke();
           contour.setPolygonApproximationFactor(0.5);
-          for (PVector p : contour.getPolygonApproximation().getPoints()) 
+          Rectangle box = contour.getBoundingBox();
+          if ( box.getWidth() > 4) {
+            this.shapeBox.put(str(i) + "_" + this.name, box);
+          }
+          for (PVector p : contour.getPolygonApproximation().getPoints())
             z_shape.vertex(p.x, p.y);
           z_shape.endShape(CLOSE);
           z_shape.setFill(color(random(255), random(255), random(255)));
           z_shape.setName(str(i) + "_" + this.name);
+          // add only shapes with more than 6 vertices
           if (z_shape.getVertexCount() > 6) {
-            this.shapes.add(z_shape);
+            this.shapeMap.put(str(i) + "_" + this.name, z_shape);
           }
           i++;
+          
         }
       }
-  printArray("38 name: " + this.name + "\nshapes: " + this.shapes.size());
-}
+  }
+ 
 
 void updateWeight(int value) {
   this.weight += value;

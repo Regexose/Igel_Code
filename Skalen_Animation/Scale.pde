@@ -5,6 +5,7 @@ class Scale {
   ArrayList<Object> values;
   AugmentedImage aI;
   PShape z_shape;
+  Rectangle shapeBox;
   String name, arrayType, pic2ShowName;
   PImage noMatch, pic2Show, pic4Flicker, messagePic;
   IntList imageWeights;
@@ -31,6 +32,10 @@ class Scale {
       //for (PShape ps : this.aI.shapes) {
       //  shape(ps, 0, 0);
       shape(this.z_shape, 0, 0);
+      strokeWeight(1);
+      stroke(0, 255, 0);
+      noFill();
+      rect(shapeBox.x, shapeBox.y, shapeBox.width, shapeBox.height);
       }
     }  
     //image(this.surface, 0, 0);
@@ -130,7 +135,6 @@ class Scale {
         }
         
       }
-      // showBiggestShapes(this.aI);
       
     } else if (tempScaleType == "message") {
       this.augmented = false;
@@ -154,14 +158,15 @@ class Scale {
   }
   
   void selectShape() {
-    // jede Shape sollte eine Position abspeichern, wenn möglich auch eine Breite und Höhe
-    // so können gezielt shapes wieder abgefragt bzw herausgefiltert werden.
+    // jede aI hat zwei HashMaps: shapeMap und shapeBox
+    // für jeden Key wird sowohl die PShape = this.z_shape, als auch eine BoundingBox this.shapeBox zurückgegeben
+    // die shapeBox ist ein Java Rectangle, welches die Position (x,y) und width, height zugänglich macht
   if (this.augmented && (this.aI.name.indexOf("Ort_DSC") == -1)) {
-    // println("158 image name: " + this.aI.name); 
-    // printArray("\nshapes: " + scale.aI.shapes);
-    int index = int(random(this.aI.shapes.size()));
-    this.z_shape = this.aI.shapes.get(index);
-    // println("162 vertexCount: " + this.z_shape.getVertexCount()); 
+    Random random = new Random();
+    ArrayList<String> keyNames = new ArrayList<String>(this.aI.shapeMap.keySet());
+    String randomShapeName = keyNames.get(random.nextInt(keyNames.size()));
+    this.z_shape = this.aI.shapeMap.get(randomShapeName);
+    this.shapeBox = this.aI.shapeBox.get(randomShapeName);
 
     } else {return;}
 }

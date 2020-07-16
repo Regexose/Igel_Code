@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.awt.Rectangle;
+import java.util.Random;
 // more directory stuff: https://processing.org/examples/directorylist.html
 import java.util.Timer;
 import java.util.TimerTask;
@@ -89,19 +91,19 @@ void selectImage() {
   }
 }
 
-void showBiggestShapes(AugmentedImage aI) {
-  println("91 aIname: " + aI.name); 
-  println("\nshapes size: " + aI.shapes.size());
-  scale.surface.beginDraw();
-  for (PShape s : aI.shapes) {
-    if(s.getVertexCount() > 10) {
-      println("s.numPoints: " + s.getVertexCount());
-      scale.surface.shape(s, 100, 100);
-    }
-  } 
-  scale.surface.endDraw();
+//void showBiggestShapes(AugmentedImage aI) {
+//  println("91 aIname: " + aI.name); 
+//  println("\nshapes size: " + aI.shapes.size());
+//  scale.surface.beginDraw();
+//  for (PShape s : aI.shapes) {
+//    if(s.getVertexCount() > 10) {
+//      println("s.numPoints: " + s.getVertexCount());
+//      scale.surface.shape(s, 100, 100);
+//    }
+//  } 
+//  scale.surface.endDraw();
   
-} //<>//
+//} //<>//
 
 void createScheduleTimer(final float ms) {
   hasFinished = false;
