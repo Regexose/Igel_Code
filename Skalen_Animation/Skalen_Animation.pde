@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.awt.Rectangle;
+import java.util.Random;
 // more directory stuff: https://processing.org/examples/directorylist.html
 import java.util.Timer;
 import java.util.TimerTask;
@@ -10,8 +12,10 @@ final Timer t = new Timer();
 import ddf.minim.analysis.FFT;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
+import gab.opencv.*;
 
 Minim minim;
+OpenCV opencv;
 
 boolean hasFinished = true;
 boolean knocklock = false;
@@ -25,12 +29,13 @@ Table zitate, bildTexte, durationMap;
 int  beatNumber, rScale, globalCounter, newglobalCounter, startTime, elapsedTime;
 String currentBeat, currentScaleName, scaleType, audioPath, message;
 String[] areaNames;
-StringList restFiles, restFileNames;
 HashMap<String, Scale> scaleMap = new HashMap<String, Scale>();
 PFont Arial;
+PImage dst;
 PGraphics surface;
 ArrayList<ArrayList<Float>> newRythms = new ArrayList<ArrayList<Float>>();
 float factor, loadStatus, messageX, messageY, messageSize;
+PShape s;
 
 void setup() {
   fullScreen() ;
@@ -41,7 +46,6 @@ void setup() {
   durationMap = loadTable("durationMappings.csv", "header");
   Arial = createFont("Courier", 16, true);
   audioPath = sketchPath("data/rec/");
-  // audioPath = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code/Skalen_Animation/data/rec";
   message = "Klopf mal an !";
   thread("loadScales");
   loadStatus = 0.0;
@@ -64,16 +68,10 @@ void draw() {
         getRythm();
         selectImage();
        } 
-       klopfen.analyseInput();
+       // klopfen.analyseInput();
        scale.display();
       } else {
-      background(100);
-      textFont(Arial, 25);
-      textAlign(CENTER);
-      text("loading images..  " + currentScaleName, width/2, height/2);
-      strokeWeight(5);
-      stroke(250);
-      line(10, height - 50, 10 + loadStatus, height-50);
+      loadDisplay();
       }
 }
 
@@ -83,6 +81,9 @@ void selectImage() {
   createScheduleTimer(waitTime);
   // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
   scale.selectImage(waitTime, scaleType);
+  if (scale.aI.hasShapes) {
+      scale.selectShape();
+  }
   beatNumber += 1;
   beatNumber = beatNumber % newRythms.get(rScale).size(); 
   if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
@@ -91,6 +92,7 @@ void selectImage() {
      // updatePause(); 
   }
 }
+ //<>//
 
 void createScheduleTimer(final float ms) {
   hasFinished = false;
@@ -111,20 +113,37 @@ void loadScales() {
   loading = true;
   scaleMap.put("Klopf", new Scale("Klopfen", "klopfen", "simple"));
   scaleMap.put("PlanscheSinger", new Scale("PlanscheSinger", "PlanscheSinger", "augmented"));
-  scaleMap.put("PlanscheWeyde", new Scale("PlanscheWeyde", "PlanscheWeyde", "augmented"));
+  scaleMap.put("test", new Scale("test", "test", "noText"));
   getRythm();
   loading = false;
   hasFinished = true;
 }
 
-void loadRest() {
-    println("loadRest for scale: " + currentScaleName);
-    for (int i=0; i<restFileNames.size(); i++) {
-      PImage img = loadImage(restFiles.get(i));
-      AugmentedImage aI = new AugmentedImage(restFileNames.get(i), img, i);
-      scale = scaleMap.get(currentScaleName);
-      scale.imageArray.add(aI);
-      println("scale.imageArray Size: " + scale.imageArray.size());
-    }
-    
-  }
+void loadDisplay() {
+  background(100);
+  textFont(Arial, 25);
+  textAlign(CENTER);
+  text("loading images..  " + currentScaleName, width/2, height/2);
+  strokeWeight(5);
+  stroke(250);
+  line(10, height - 50, 10 + loadStatus, height-50);
+  
+}
+
+ArrayList<Contour> makeContours(String name, PImage img) {
+     img.resize(width, height);
+     opencv = new OpenCV(this, img);
+     opencv.gray();
+     opencv.threshold(80);
+     ArrayList<Contour> contours = opencv.findContours();
+     // println("name" + name + "  contours: " + contours.size());
+     return contours; //<>//
+}
+ 
+PImage dstMaker(PImage img) {
+   opencv = new OpenCV(this, img);
+   opencv.gray();
+   opencv.threshold(80);
+   dst = opencv.getOutput();
+   return dst;
+}

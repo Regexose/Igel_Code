@@ -7,8 +7,8 @@ void buildRythms(ArrayList<ArrayList<Float>> rythms) {
 }
 
 void getRythm() {
-  getScaleName();
   timedEvents();
+  getScaleName();
   if (beatNumber >= newRythms.get(rScale).size()) {
     println("beatNumber set to 0!: " + beatNumber);
     beatNumber = 0;
@@ -25,15 +25,17 @@ void getScaleName() {
   if(minute()%2 == 0) {
     rScale = 0;
     currentScaleName = "PlanscheSinger";
+    scaleType = "augmented";
   }  else {
     rScale = 1;
-    currentScaleName = "PlanscheWeyde";
+    currentScaleName = "test";
+    scaleType = "noText";
     // println("currentScaleName:  " + currentScaleName + "\nweigths: " + (IntList)scaleMap.get(currentScaleName).get(2));
   }
 }
 
 void timedEvents() {
-  pleaseKnock = (second()>=25 && second() <= 45);
+  pleaseKnock = (second()>=25 && second() <= 30);
   if (pleaseKnock) {
     rScale = 3;
     currentScaleName = "Klopf";
