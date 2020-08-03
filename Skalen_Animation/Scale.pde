@@ -27,17 +27,19 @@ class Scale {
   public void display() {
     imageMode(CENTER);
     image(this.pic2Show, width/2, height/2, width, height);
-    //if (this.aI.hasShapes) {
-      //for (PShape ps : this.aI.shapes) {
-      //  shape(ps, 0, 0);
-      //}
-    
-      shape(this.z_shape, 0, 0);
-      strokeWeight(1);
-      stroke(0, 255, 0);
-      noFill();
-      rect(this.shapeBox.x, this.shapeBox.y, this.shapeBox.width, this.shapeBox.height);
-    }  
+    shape(this.z_shape, 0, 0);
+    strokeWeight(1);
+    stroke(0, 255, 0);
+    noFill();
+    rect(this.shapeBox.x, this.shapeBox.y, this.shapeBox.width, this.shapeBox.height);
+    if (keyPressed && this.aI.hasShapes) {
+     println("ahapes: " + this.aI.shapeMap.size());
+     for (PShape s : this.aI.shapeMap.values()) {
+       shape(s, 0, 0);
+     }
+    }
+  }
+  
     //image(this.surface, 0, 0);
 
 
@@ -184,6 +186,6 @@ class Scale {
     this.shapeBox = this.aI.shapeBox.get(randomShapeName);
     println("shape name " + randomShapeName + " shapeBox x: " + this.shapeBox.x + "  y: " + this.shapeBox.y);
     } else {return;}
-}
+ }
 
 }
