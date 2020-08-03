@@ -6,12 +6,13 @@ class AugmentedImage {
   ArrayList<Contour> contours;
   HashMap<String, PShape> shapeMap;
   HashMap<String, Rectangle> shapeBox;
-  boolean hasText;
+  boolean hasText, hasShapes;
 
-  AugmentedImage(String name, PImage image, int index) {
+  AugmentedImage(String name, PImage image, int index, boolean hasShapes) {
     this.name = name;
     this.image = image;
     this.index = index;
+    this.hasShapes = hasShapes;
     this.weight = 20;
     this.minMatch = 100;
     this.maxMatch = 4000;

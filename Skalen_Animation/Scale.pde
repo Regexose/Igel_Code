@@ -9,7 +9,7 @@ class Scale {
   String name, arrayType, pic2ShowName;
   PImage noMatch, pic2Show, pic4Flicker, messagePic;
   IntList imageWeights;
-  boolean flicker, loaded, augmented;
+  boolean flicker, loaded;
 
   Scale(String name, String folderName, String arrayType) {
     this.name = name;
@@ -20,7 +20,6 @@ class Scale {
     this.pic2Show = this.noMatch;
     this.loaded = false;
     this.flicker = false;
-    this.augmented = false;
     this.z_shape = createShape(RECT, 0, 0, 50, 50);
     this.pic4Flicker = createImage(width, height, RGB);
   }
@@ -28,16 +27,16 @@ class Scale {
   public void display() {
     imageMode(CENTER);
     image(this.pic2Show, width/2, height/2, width, height);
-    if (this.augmented) {
+    //if (this.aI.hasShapes) {
       //for (PShape ps : this.aI.shapes) {
       //  shape(ps, 0, 0);
-      // this.z_shape.setFill(color(255,0,0));
+      //}
+    
       shape(this.z_shape, 0, 0);
       strokeWeight(1);
       stroke(0, 255, 0);
       noFill();
       rect(this.shapeBox.x, this.shapeBox.y, this.shapeBox.width, this.shapeBox.height);
-      }
     }  
     //image(this.surface, 0, 0);
 
@@ -51,17 +50,14 @@ class Scale {
     folder = new File(sketchPath("data/" + folderName));
     files = folder.listFiles(); // need for absolut path
     fileNames = folder.list();
-    restFiles = new StringList();
-    restFileNames = new StringList();
     if (arrayType == "augmented") {
       imageArray = new ArrayList<AugmentedImage>();
-      this.augmented = true;
       // i muss bei 1 anfangen, sonst liest der loop nur das .DS_Store, warum auch immer...
       for (int i=1; i<fileNames.length; i++) {
         if (fileNames[i].toLowerCase().endsWith(".jpg")) {  
           if (fileNames[i].indexOf("Ort_") == -1 ) {
             PImage img = loadImage(files[i].toString());
-            AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
+            AugmentedImage aI = new AugmentedImage(fileNames[i], img, i, true);
             // aI.setHasText(true);
             this.imageArray.add(aI);
             loadCites(aI);
@@ -74,7 +70,7 @@ class Scale {
            else if (fileNames[i].indexOf("Ort_DSC") != -1 ) {
           //bilder der Orte
             PImage img = loadImage(files[i].toString());
-            AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
+            AugmentedImage aI = new AugmentedImage(fileNames[i], img, i, false);
             imageArray.add(aI);
            }
  
@@ -88,7 +84,7 @@ class Scale {
       for (int i=1; i<fileNames.length; i++) {
          //bilder ohne Text
           PImage img = loadImage(files[i].toString());
-          AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
+          AugmentedImage aI = new AugmentedImage(fileNames[i], img, i, true);
           // aI.setHasText(false);
           this.imageArray.add(aI);
           this.imageWeights.append(aI.weight);
@@ -113,7 +109,6 @@ class Scale {
   void selectImage(float pause, String tempScaleType) {
     // println(" pause: " + pause + "  scalename: " + tempScaleType);
     if (tempScaleType == "augmented") {
-      this.augmented = true;
       IntList tempList = new IntList();
       for (int i=0; i< this.imageArray.size(); i++) {
         AugmentedImage aI = this.imageArray.get(i);
@@ -152,15 +147,12 @@ class Scale {
       }
       
     } else if (tempScaleType == "noText") {
-      this.augmented = true;
       Random random = new Random();
       int index = random.nextInt(this.imageArray.size());
       this.aI = this.imageArray.get(index);
       this.pic2Show = aI.image;
-      println("selected non text: " + this.aI.name);
       
       }  else if (tempScaleType == "message") {
-      this.augmented = false;
       // printArray("messages: " + this.messages + " current Scalename: " + currentScaleName);
       if (this.flicker) {
         this.pic2Show = this.messageImages.get(0).image;
@@ -173,10 +165,10 @@ class Scale {
       }
       // updateSurface(message, messageTime);
       this.flicker = !this.flicker;
-    } else {
-      selectKlopf(pause);
-    }
-    // updateSurface(str(knock) + "  " + this.pic2ShowName, false);
+      } else {
+        selectKlopf(pause);
+      }
+       println("aI name  " + this.aI.name);
     
   }
   
@@ -184,14 +176,13 @@ class Scale {
     // jede aI hat zwei HashMaps: shapeMap und shapeBox
     // für jeden Key wird sowohl die PShape = this.z_shape, als auch eine BoundingBox this.shapeBox zurückgegeben
     // die shapeBox ist ein Java Rectangle, welches die Position (x,y) und width, height zugänglich macht
-  //println("true?: " + (this.augmented && (this.aI.name.indexOf("Ort_") == -1) || this.aI.name.startsWith("DSC")));
-  if (this.augmented && (this.aI.name.indexOf("Ort_") == -1) || this.aI.name.startsWith("DSC") ) {
+  if ((this.aI.name.indexOf("Ort_") == -1) || this.aI.name.startsWith("DSC"))  {
     Random random = new Random();
     ArrayList<String> keyNames = new ArrayList<String>(this.aI.shapeMap.keySet());
     String randomShapeName = keyNames.get(random.nextInt(keyNames.size()));
     this.z_shape = this.aI.shapeMap.get(randomShapeName);
     this.shapeBox = this.aI.shapeBox.get(randomShapeName);
-    println("shapeBox x: " + this.shapeBox.x + "  y: " + this.shapeBox.y);
+    println("shape name " + randomShapeName + " shapeBox x: " + this.shapeBox.x + "  y: " + this.shapeBox.y);
     } else {return;}
 }
 

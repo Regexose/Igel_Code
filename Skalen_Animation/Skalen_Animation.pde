@@ -28,7 +28,6 @@ Table zitate, bildTexte, durationMap;
 int  beatNumber, rScale, globalCounter, newglobalCounter, startTime, elapsedTime;
 String currentBeat, currentScaleName, scaleType, audioPath, message;
 String[] areaNames;
-StringList restFiles, restFileNames;
 HashMap<String, Scale> scaleMap = new HashMap<String, Scale>();
 PFont Arial;
 PImage dst;
@@ -81,7 +80,9 @@ void selectImage() {
   createScheduleTimer(waitTime);
   // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
   scale.selectImage(waitTime, scaleType);
-  scale.selectShape();
+  if (scale.aI.hasShapes) {
+      scale.selectShape();
+  }
   beatNumber += 1;
   beatNumber = beatNumber % newRythms.get(rScale).size(); 
   if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
