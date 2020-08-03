@@ -6,14 +6,15 @@ class AugmentedImage {
   ArrayList<Contour> contours;
   HashMap<String, PShape> shapeMap;
   HashMap<String, Rectangle> shapeBox;
+  boolean hasText;
 
   AugmentedImage(String name, PImage image, int index) {
     this.name = name;
     this.image = image;
     this.index = index;
-    this.weight = 0;
-    this.minMatch = 0;
-    this.maxMatch = 100;
+    this.weight = 20;
+    this.minMatch = 100;
+    this.maxMatch = 4000;
     this.counter = 0;
     this.contours = makeContours(name, image);
     this.dst = dstMaker(image);
@@ -27,7 +28,7 @@ class AugmentedImage {
     // this.shapes = new ArrayList<PShape>();
     int i = 0;
     // exclude fotos
-    if (name.indexOf("Ort_DSC") == -1) {
+    if (this.name.indexOf("Ort_") == -1) {
       this.shapeMap = new HashMap<String, PShape>(this.contours.size());
       this.shapeBox = new HashMap<String, Rectangle>(this.contours.size());
         for (Contour contour : this.contours) {
@@ -36,15 +37,16 @@ class AugmentedImage {
           noStroke();
           contour.setPolygonApproximationFactor(0.5);
           Rectangle box = contour.getBoundingBox();
-          if ( box.getWidth() > 4) {
-            this.shapeBox.put(str(i) + "_" + this.name, box);
-          }
+          //if ( box.getWidth() > 4) {
+          this.shapeBox.put(str(i) + "_" + this.name, box);
+          //}
           for (PVector p : contour.getPolygonApproximation().getPoints())
             z_shape.vertex(p.x, p.y);
           z_shape.endShape(CLOSE);
           z_shape.setFill(color(random(255), random(255), random(255)));
           z_shape.setName(str(i) + "_" + this.name);
           // add only shapes with more than 6 vertices
+          // println("vertCount: " + z_shape.getVertexCount());
           if (z_shape.getVertexCount() > 6) {
             this.shapeMap.put(str(i) + "_" + this.name, z_shape);
           }
@@ -52,8 +54,13 @@ class AugmentedImage {
           
         }
       }
+      println("name: " + this.name + "    contours: " + this.contours.size());
   }
- 
+
+void setHasText(boolean has) {
+  this.hasText = has;
+}
+
 
 void updateWeight(int value) {
   this.weight += value;
@@ -67,7 +74,7 @@ void textAcquire(String cite) {
 void mapBeatValue(int minVal, int maxVal) {
   this.minMatch =  minVal;
   this.maxMatch =  maxVal;
-  // println("matching iC " + this.name + " with " + value + " value");
+  // println("matching iC " + this.name + " with " + maxVal + " maxVal");
 }
 }
 

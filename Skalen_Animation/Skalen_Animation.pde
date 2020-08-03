@@ -90,20 +90,7 @@ void selectImage() {
      // updatePause(); 
   }
 }
-
-//void showBiggestShapes(AugmentedImage aI) {
-//  println("91 aIname: " + aI.name); 
-//  println("\nshapes size: " + aI.shapes.size());
-//  scale.surface.beginDraw();
-//  for (PShape s : aI.shapes) {
-//    if(s.getVertexCount() > 10) {
-//      println("s.numPoints: " + s.getVertexCount());
-//      scale.surface.shape(s, 100, 100);
-//    }
-//  } 
-//  scale.surface.endDraw();
-  
-//} //<>//
+ //<>//
 
 void createScheduleTimer(final float ms) {
   hasFinished = false;
@@ -124,7 +111,7 @@ void loadScales() {
   loading = true;
   scaleMap.put("Klopf", new Scale("Klopfen", "klopfen", "simple"));
   scaleMap.put("PlanscheSinger", new Scale("PlanscheSinger", "PlanscheSinger", "augmented"));
-  scaleMap.put("PlanscheWeyde", new Scale("PlanscheWeyde", "PlanscheWeyde", "augmented"));
+  scaleMap.put("test", new Scale("test", "test", "noText"));
   getRythm();
   loading = false;
   hasFinished = true;

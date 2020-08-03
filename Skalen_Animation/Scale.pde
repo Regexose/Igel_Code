@@ -31,11 +31,12 @@ class Scale {
     if (this.augmented) {
       //for (PShape ps : this.aI.shapes) {
       //  shape(ps, 0, 0);
+      // this.z_shape.setFill(color(255,0,0));
       shape(this.z_shape, 0, 0);
       strokeWeight(1);
       stroke(0, 255, 0);
       noFill();
-      rect(shapeBox.x, shapeBox.y, shapeBox.width, shapeBox.height);
+      rect(this.shapeBox.x, this.shapeBox.y, this.shapeBox.width, this.shapeBox.height);
       }
     }  
     //image(this.surface, 0, 0);
@@ -61,7 +62,8 @@ class Scale {
           if (fileNames[i].indexOf("Ort_") == -1 ) {
             PImage img = loadImage(files[i].toString());
             AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
-            imageArray.add(aI);
+            // aI.setHasText(true);
+            this.imageArray.add(aI);
             loadCites(aI);
             this.imageWeights.append(aI.weight);
             loadDurations(aI);
@@ -69,7 +71,7 @@ class Scale {
             PImage img = loadImage(files[i].toString());
             this.noMatch = img;
           }
-           else if (fileNames[i].indexOf("Ort_DSC") != -1) {
+           else if (fileNames[i].indexOf("Ort_DSC") != -1 ) {
           //bilder der Orte
             PImage img = loadImage(files[i].toString());
             AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
@@ -81,6 +83,19 @@ class Scale {
           println("else: " +  "i: " + i + "  fileNames[i]:  " + fileNames[i]);
         }
       }
+    } else if (arrayType == "noText") {
+      imageArray = new ArrayList<AugmentedImage>();
+      for (int i=1; i<fileNames.length; i++) {
+         //bilder ohne Text
+          PImage img = loadImage(files[i].toString());
+          AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
+          // aI.setHasText(false);
+          this.imageArray.add(aI);
+          this.imageWeights.append(aI.weight);
+          loadStatus += width/(fileNames.length +1);
+          
+      }
+        
     } else if (arrayType == "simple") {
       messageImages = new ArrayList<Message>();
       for (int i=0; i<fileNames.length; i++) {
@@ -96,14 +111,14 @@ class Scale {
   }
 
   void selectImage(float pause, String tempScaleType) {
-    // println(" pause: " + pause + "  type:  " + tempScaleType + "  beatNumber: " + beatNumber);
+    // println(" pause: " + pause + "  scalename: " + tempScaleType);
     if (tempScaleType == "augmented") {
       this.augmented = true;
       IntList tempList = new IntList();
       for (int i=0; i< this.imageArray.size(); i++) {
         AugmentedImage aI = this.imageArray.get(i);
         boolean pauseMatch = (aI.minMatch <= pause && aI.maxMatch >= pause);
-        // println("  element weight: " + element.weight + "  weightlist" + this.imageWeights);
+        // println("  aI name: " + aI.name + "  aI weight: " + aI.weight + " aI.maxMatch: " + aI.maxMatch);
         int maxWeight = this.imageWeights.max();
         if (beatNumber == 0  && aI.weight == maxWeight) {
           this.pic2Show = aI.image; 
@@ -119,7 +134,7 @@ class Scale {
           this.pic2ShowName = aI.name;
           this.pic2Show = this.noMatch;
           this.aI = aI;
-        }
+        } 
       }
       
       if (tempList.size() >= 1) {
@@ -136,7 +151,15 @@ class Scale {
         
       }
       
-    } else if (tempScaleType == "message") {
+    } else if (tempScaleType == "noText") {
+      this.augmented = true;
+      Random random = new Random();
+      int index = random.nextInt(this.imageArray.size());
+      this.aI = this.imageArray.get(index);
+      this.pic2Show = aI.image;
+      println("selected non text: " + this.aI.name);
+      
+      }  else if (tempScaleType == "message") {
       this.augmented = false;
       // printArray("messages: " + this.messages + " current Scalename: " + currentScaleName);
       if (this.flicker) {
@@ -161,50 +184,15 @@ class Scale {
     // jede aI hat zwei HashMaps: shapeMap und shapeBox
     // für jeden Key wird sowohl die PShape = this.z_shape, als auch eine BoundingBox this.shapeBox zurückgegeben
     // die shapeBox ist ein Java Rectangle, welches die Position (x,y) und width, height zugänglich macht
-  if (this.augmented && (this.aI.name.indexOf("Ort_DSC") == -1)) {
+  //println("true?: " + (this.augmented && (this.aI.name.indexOf("Ort_") == -1) || this.aI.name.startsWith("DSC")));
+  if (this.augmented && (this.aI.name.indexOf("Ort_") == -1) || this.aI.name.startsWith("DSC") ) {
     Random random = new Random();
     ArrayList<String> keyNames = new ArrayList<String>(this.aI.shapeMap.keySet());
     String randomShapeName = keyNames.get(random.nextInt(keyNames.size()));
     this.z_shape = this.aI.shapeMap.get(randomShapeName);
     this.shapeBox = this.aI.shapeBox.get(randomShapeName);
-
+    println("shapeBox x: " + this.shapeBox.x + "  y: " + this.shapeBox.y);
     } else {return;}
 }
 
-  
-  void updateSurface(String text, boolean msgTime) {
-
-    if (msgTime) {
-
-      String[] words = text.split(" ");
-      // println("  x: " + messageX + "  y: " + messageY);
-      int index = int(random(words.length));
-      String word = words[index];
-      messageSize = int(random(50, 100));
-      textSize(messageSize);
-      float textHeight = textAscent() * 0.8;
-      PGraphics wordSurf = createGraphics(int(textWidth(word) * 2), int(textHeight) * 2);
-      wordSurf.smooth();
-      messageY = this.surface.height/2;
-
-      wordSurf.beginDraw();
-      wordSurf.textAlign(CENTER);
-      wordSurf.textFont(Arial, messageSize);
-      wordSurf.background(200);
-      wordSurf.fill(10);
-      wordSurf.text(word, wordSurf.width/2, wordSurf.height/2 + 10);
-      wordSurf.endDraw();
-      this.surface.beginDraw();
-      this.surface.clear();
-      this.surface.image(wordSurf, messageX, messageY);
-      this.surface.endDraw();
-    } else {
-      this.surface.beginDraw();
-      this.surface.textAlign(CENTER);
-      this.surface.background(color(245, 66, 233));
-      this.surface.textFont(Arial, 20);
-      this.surface.text(text, this.surface.width/2, this.surface.height/2);
-      this.surface.endDraw();
-    }
-  }
 }
