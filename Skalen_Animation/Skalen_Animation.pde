@@ -9,6 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 // timer tutorial: https://forum.processing.org/two/discussion/1725/millis-and-timer
 final Timer t = new Timer();
+import ddf.minim.analysis.FFT;
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 import gab.opencv.*;
@@ -37,7 +38,7 @@ float factor, loadStatus, messageX, messageY, messageSize;
 PShape s;
 
 void setup() {
-  size(1000, 700);
+  fullScreen() ;
   surface = createGraphics(width,height);
   buildRythms(newRythms);
   zitate = loadTable("Igel_Zitate.csv", "header");

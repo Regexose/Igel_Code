@@ -1,7 +1,7 @@
 
 void buildRythms(ArrayList<ArrayList<Float>> rythms) {
-  rythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 1202.0, 580.0, 1202.0, 580.0, 1800.0, 78.0,  1100.0, 250.0, 1100.0, 250.0, 120.0)));
-  rythms.add(new ArrayList<Float>(Arrays.asList(4000.0, 750.0, 330.0, 750.0, 330.0, 750.0, 500.0, 1100.0, 500.0, 1100.0, 210.0, 820.0)));
+  rythms.add(new ArrayList<Float>(Arrays.asList(16000.0, 4800.0, 2320.0, 4800.0, 2320.0, 7200.0, 312.0,  4400.0, 1000.0, 4400.0, 1000.0, 480.0)));
+  rythms.add(new ArrayList<Float>(Arrays.asList(16000.0, 3000.0, 1320.0, 3000.0, 1320.0, 3000.0, 2000.0, 4400.0, 2000.0, 4400.0, 840.0, 3280.0)));
   rythms.add(new ArrayList<Float>(Arrays.asList(50.0, 10.0)));
   rythms.add(new ArrayList<Float>(Arrays.asList(300.0, 400.0)));
 }

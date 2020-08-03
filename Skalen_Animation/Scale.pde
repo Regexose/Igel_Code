@@ -44,6 +44,7 @@ class Scale {
 
 
   void loadImages(String folderName, String arrayType) {
+    // print("arrayType: " + arrayType);
     loadStatus = 0.0;
     loading = true;
     hasFinished = false;
@@ -52,16 +53,19 @@ class Scale {
     folder = new File(sketchPath("data/" + folderName));
     files = folder.listFiles(); // need for absolut path
     fileNames = folder.list();
+
     if (arrayType == "augmented") {
       imageArray = new ArrayList<AugmentedImage>();
       // i muss bei 1 anfangen, sonst liest der loop nur das .DS_Store, warum auch immer...
       for (int i=1; i<fileNames.length; i++) {
+
         if (fileNames[i].toLowerCase().endsWith(".jpg")) {  
           if (fileNames[i].indexOf("Ort_") == -1 ) {
             PImage img = loadImage(files[i].toString());
             AugmentedImage aI = new AugmentedImage(fileNames[i], img, i, true);
             // aI.setHasText(true);
             this.imageArray.add(aI);
+
             loadCites(aI);
             this.imageWeights.append(aI.weight);
             loadDurations(aI);
@@ -124,7 +128,9 @@ class Scale {
         } else if (beatNumber > 0 && pauseMatch && aI.weight != maxWeight) {
           tempList.append(aI.index);
         } else if (this.flicker) {
+
           this.pic2Show = this.pic4Flicker;
+
           this.flicker = !this.flicker;
         } else if (beatNumber != 0 && !pauseMatch) {
           // println(" else image: " + element.name + "  weight: " + element.weight);
@@ -144,6 +150,7 @@ class Scale {
             this.pic2ShowName = this.imageArray.get(t).name;
             this.imageArray.get(t).counter += 1;
           }
+
         }
         
       }
@@ -172,6 +179,72 @@ class Scale {
       }
        println("aI name  " + this.aI.name);
     
+    }
+}
+
+class AugmentedImage {
+  String type, name;
+  PImage image;
+  int index, weight, minMatch, maxMatch, counter;
+  ArrayList<String> cites = new ArrayList<String>();
+  
+  AugmentedImage(String name, PImage image, int index) {
+    this.name = name;
+    this.image = image;
+    this.index = index;
+    this.weight = 0;
+    this.minMatch = 0;
+    this.maxMatch = 100;
+    this.counter = 0;
+    println("\nai.name" + this.name);
+  }
+  
+  void updateWeight(int value) {
+    this.weight += value;
+    println("updated aI: " + this.name + "  to: " + this.weight);
+  }
+  
+  void textAcquire(String cite) {
+      this.cites.add(cite);
+  }
+  
+  void mapBeatValue(int minVal, int maxVal) {
+    this.minMatch =  minVal;
+    this.maxMatch =  maxVal;
+    // println("matching iC " + this.name + " with " + value + " value");
+  }
+}
+
+class Message {
+  String name, message;
+  PImage image;
+  
+  Message(String name, PImage image) {
+    this.name = name;
+    this.image = image;
+  }
+}
+
+void selectKlopf(float pause) {
+  getScaleName();
+  scale = scaleMap.get(currentScaleName);
+  // println("   scalename  " + currentScaleName + "  array size: " + scale.imageArray);
+  int index = int(pause % scale.imageArray.size());
+  index = int(random(index, scale.imageArray.size()));
+  println("image name: " + scale.imageArray.get(index).name);
+  scale.pic2Show = scale.imageArray.get(index).image;
+  scale.pic2ShowName = scale.imageArray.get(index).name;
+}
+
+void loadCites(AugmentedImage augImage) {
+  // println("checking:    " +augImage.name); 
+  for (TableRow row : bildTexte.rows()) {
+    String bildName = row.getString("BildName");
+     if (bildName.equals(augImage.name) == true) {
+      String quote = row.getString("Zitat");
+      // println("bildName:   " + bildName + "   iC:image:   " + augImage.name + "\n cite: " + quote);
+      augImage.textAcquire(quote);
+    }
   }
   
   void selectShape() {
