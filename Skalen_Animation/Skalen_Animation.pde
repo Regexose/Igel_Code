@@ -38,7 +38,7 @@ float factor, loadStatus, messageX, messageY, messageSize;
 PShape s;
 
 void setup() {
-  fullScreen() ;
+  size(1200,900);
   surface = createGraphics(width,height);
   buildRythms(newRythms);
   zitate = loadTable("Igel_Zitate.csv", "header");
@@ -82,7 +82,7 @@ void selectImage() {
   // println("\n\nTimer scheduled for " + nf(waitTime, 0, 2) + " msecs.\n");
   scale.selectImage(waitTime, scaleType);
   if (scale.aI.hasShapes) {
-      scale.selectShape();
+      selectShape(scale.aI);
   }
   beatNumber += 1;
   beatNumber = beatNumber % newRythms.get(rScale).size(); 

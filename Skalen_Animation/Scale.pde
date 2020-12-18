@@ -42,7 +42,6 @@ class Scale {
   
     //image(this.surface, 0, 0);
 
-
   void loadImages(String folderName, String arrayType) {
     // print("arrayType: " + arrayType);
     loadStatus = 0.0;
@@ -182,48 +181,6 @@ class Scale {
     }
 }
 
-class AugmentedImage {
-  String type, name;
-  PImage image;
-  int index, weight, minMatch, maxMatch, counter;
-  ArrayList<String> cites = new ArrayList<String>();
-  
-  AugmentedImage(String name, PImage image, int index) {
-    this.name = name;
-    this.image = image;
-    this.index = index;
-    this.weight = 0;
-    this.minMatch = 0;
-    this.maxMatch = 100;
-    this.counter = 0;
-    println("\nai.name" + this.name);
-  }
-  
-  void updateWeight(int value) {
-    this.weight += value;
-    println("updated aI: " + this.name + "  to: " + this.weight);
-  }
-  
-  void textAcquire(String cite) {
-      this.cites.add(cite);
-  }
-  
-  void mapBeatValue(int minVal, int maxVal) {
-    this.minMatch =  minVal;
-    this.maxMatch =  maxVal;
-    // println("matching iC " + this.name + " with " + value + " value");
-  }
-}
-
-class Message {
-  String name, message;
-  PImage image;
-  
-  Message(String name, PImage image) {
-    this.name = name;
-    this.image = image;
-  }
-}
 
 void selectKlopf(float pause) {
   getScaleName();
@@ -246,19 +203,18 @@ void loadCites(AugmentedImage augImage) {
       augImage.textAcquire(quote);
     }
   }
+}
   
-  void selectShape() {
+void selectShape(AugmentedImage aI) {
     // jede aI hat zwei HashMaps: shapeMap und shapeBox
     // für jeden Key wird sowohl die PShape = this.z_shape, als auch eine BoundingBox this.shapeBox zurückgegeben
     // die shapeBox ist ein Java Rectangle, welches die Position (x,y) und width, height zugänglich macht
-  if ((this.aI.name.indexOf("Ort_") == -1) || this.aI.name.startsWith("DSC"))  {
+  if ((aI.name.indexOf("Ort_") == -1) || aI.name.startsWith("DSC"))  {
     Random random = new Random();
-    ArrayList<String> keyNames = new ArrayList<String>(this.aI.shapeMap.keySet());
+    ArrayList<String> keyNames = new ArrayList<String>(aI.shapeMap.keySet());
     String randomShapeName = keyNames.get(random.nextInt(keyNames.size()));
-    this.z_shape = this.aI.shapeMap.get(randomShapeName);
-    this.shapeBox = this.aI.shapeBox.get(randomShapeName);
-    println("shape name " + randomShapeName + " shapeBox x: " + this.shapeBox.x + "  y: " + this.shapeBox.y);
+    PShape z_shape = aI.shapeMap.get(randomShapeName);
+    scale.shapeBox = aI.shapeBox.get(randomShapeName);
+    // println("shape name " + randomShapeName + " shapeBox x: " + scale.shapeBox.x + "  y: " + scale.shapeBox.y);
     } else {return;}
  }
-
-}

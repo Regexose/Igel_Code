@@ -91,30 +91,6 @@ class Message {
 }
 
 
-void selectKlopf(float pause) {
-  getScaleName();
-  scale = scaleMap.get(currentScaleName);
-  // println("   scalename  " + currentScaleName + "  array size: " + scale.imageArray);
-  int index = int(pause % scale.imageArray.size());
-  index = int(random(index, scale.imageArray.size()));
-  println("image name: " + scale.imageArray.get(index).name);
-  scale.pic2Show = scale.imageArray.get(index).image;
-  scale.pic2ShowName = scale.imageArray.get(index).name;
-}
-
-void loadCites(AugmentedImage augImage) {
-  // println("checking:    " +augImage.name); 
-  for (TableRow row : bildTexte.rows()) {
-    String bildName = row.getString("BildName");
-    if (bildName.equals(augImage.name) == true) {
-      String quote = row.getString("Zitat");
-      // println("bildName:   " + bildName + "   iC:image:   " + augImage.name + "\n cite: " + quote);
-      augImage.textAcquire(quote);
-    }
-  }
-  augImage.updateWeight(augImage.cites.size());
-}
-
 void loadDurations (AugmentedImage aI) {
   for (TableRow row : durationMap.rows()) {
     int min = row.getInt("min");
