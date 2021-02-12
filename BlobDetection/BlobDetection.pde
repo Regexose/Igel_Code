@@ -1,106 +1,86 @@
+/*
+Idee einer automatischen Zitaterkennung, die 
+1. aus einem grossen Bild allen Zitaten Koordinaten zuweist
+2. alle Zitate freistellt und als png sichert
+3. in einem Raster anordnet
+4. per mouseKlick vergrößert
+
+*/
 import gab.opencv.*;
 import java.awt.Rectangle;
 import java.awt.Point;
+import java.util.Map;
 
 OpenCV opencv;
-PImage pic, pic_crop, pic2;
+PImage pic, pic_crop, pic1, pic2;
 ArrayList<Contour> blobs;
 ArrayList<Contour> bigContours;
-ArrayList<PVector> points;
+ArrayList<Zitat> zitatList;
+Zitat zitatNow;
 int i = 0;
-FloatList xs, ys;
+float noiseT = 0;
+float xOff, yOff;
 PGraphics surface;
 
 void setup() {
-  size(900, 600);
-  pic = loadImage("DSC05212.JPG");
+  size(1200, 900);
+  pic1 = loadImage("DSC05212.JPG");
   pic2 = loadImage("FabianAileen_DSC05217.jpg");
-  opencv = new OpenCV(this, pic2);
+  pic = pic2;
+  opencv = new OpenCV(this, pic);
   opencv.gray();
-  opencv.threshold(110);
+  opencv.threshold(120);
   blobs = opencv.findContours(true, true);
   bigContours = new ArrayList<Contour>();
+  zitatList = new ArrayList<Zitat>();
   for (Contour contour : blobs) {
-  if (contour.numPoints() > 400) {
-    bigContours.add(contour);
-    }
+    if (contour.numPoints() > 300) {
+      Zitat zitat = new Zitat(i+1, contour, "vorläufiger Text des Zitats");
+      // crop pic to zitat.box
+      PImage pic_crop = pic.get(zitat.box.x, zitat.box.y, zitat.box.width, zitat.box.height);
+      zitat.fillSurface(pic_crop);
+      // new openCV with cropped Pic to find its lines
+      OpenCV picCrop = new OpenCV(this, pic_crop);
+      picCrop.findCannyEdges(20,75);
+      ArrayList<Line> lines = picCrop.findLines(100, 30, 20);
+      zitat.lines = lines;
+      // show lines
+      zitat.calcAngles(lines);
+      
+      zitatList.add(zitat);
+      bigContours.add(contour);
+      i ++;
+      }
   }
-  fillSurface(0);
-
+   i = 0;
 }
 
 void draw() {
-background(222);
-// scale(0.15);
-  image(pic2, 0, 0);
-  Contour contour = bigContours.get(i % bigContours.size());
-  // contour.getBoundingBox();
-   fill(255, 0, 0, 100);
-   noStroke();
-   contour.draw();
-   points = contour.getPoints();
-   xs = new FloatList();
-   ys = new FloatList();
-   ArrayList<PVector> outline = new ArrayList<PVector>();
-   for (PVector point : points) {
-     xs.append(point.x);
-     ys.append(point.y);
-     }
-     for (PVector point : points) {
-       if (point.x == xs.min() || point.x == xs.max() || point.y == ys.min() || point.y == ys.max()) {
-         outline.add(point);
-       }
-     }
-     
-     pushMatrix();
-     // scale(1.0);
-     // translate(width/3, height/3);
-     image(surface, mouseX, mouseY);
-     
-     image(pic_crop, mouseX + 200, mouseY);
-     popMatrix();
-     
-     if (keyPressed) {
-     i ++; 
-     fillSurface(i%bigContours.size());
-     }
-}
-
-void fillSurface(int j) {
-  Contour contour = bigContours.get(j);
-  java.awt.Rectangle box = contour.getBoundingBox();
-  println("box: " + box);
-  for (int i=0; i<10; i++) {println("contour points:   " + contour.getPoints().get(i));}
-  surface = createGraphics(box.width, box.height);
-  pic_crop = pic2.get(box.x, box.y, box.width, box.height);
-  pic_crop.loadPixels();
-  surface.beginDraw();
-  surface.background(150);
-  surface.loadPixels();
-  for (int x= box.x; x < box.x + box.width; x++) {
-    for  (int y= box.y; y< box.y + box.height; y++){
-      // println("x   " + x  + "   y   " + y);
-      int loc = (x - box.x) + (y - box.y) * box.width;
-      if (contour.containsPoint(x, y)) {
-        println("x   " + x  + "   y   " + y + "  color  " +  pic_crop.get((x - box.x),(y - box.y)));
-        println("points: " + contour.getPoints().get((y - box.y)) + " y  " + (y - box.y));
-        surface.background(100, 100, 0);
-        surface.pixels[loc] = pic_crop.pixels[loc];
-      }
-      surface.updatePixels();
-    }
-  }
-  surface.endDraw();
   
-  // draw a vertex with contour Points
-  //stroke(20);
-  //strokeWeight(15);
-  //contour.setPolygonApproximationFactor(95);
-  //ArrayList<PVector> zPoints = contour.getPolygonApproximation().getPoints();
-  //beginShape();
-  //for (PVector point : contour.getPolygonApproximation().getPoints()) {
-  //    vertex(point.x, point.y);
-  //    zPoints.add(point);
-  //  }
-  //endShape(CLOSE);
+  background(222);
+  // scale(0.15);
+  image(pic, 0, 0);
+  for (Zitat zitat : zitatList) {
+    fill(255, 0, 0, 100);
+    noStroke();
+    // zitat.contour.draw();
+    pushMatrix();
+   // translate(xOff, yOff);
+   // fill(255, 0, 0, 100);
+   //stroke(0, 255,0);
+   //strokeWeight(1);
+   rotate(zitat.evenAngle);
+   xOff = noise(noiseT);
+   yOff = noise(noiseT);
+   //xOff = map(xOff, 0, 1, zitat.position.x -20, zitat.position.x +20 );
+   //yOff = map(yOff, 0, 1, zitat.position.y-20, zitat.position.y+20);
+   xOff = random(zitat.position.x -10, zitat.position.x +10 );
+   yOff = random(zitat.position.y-10, zitat.position.y+10);
+   image(zitat.surface, xOff, yOff);
+   popMatrix();
+  }
+   noiseT += 0.02;
+   if (keyPressed) {
+   i ++; 
+   }
 }
