@@ -29,7 +29,7 @@ class Zitat { //<>// //<>// //<>//
     this.surface.loadPixels(); //<>//
     // all pixels in the box are checked if they are inside the contour
     for (int x= this.box.x; x < this.box.x + this.box.width; x++) {
-      // println("x   " + x + "   Noch " + ((this.box.x + this.box.width) -x) + " spalten");
+      println("rendered   " + (x -this.box.x)  + "   remaining " + ((this.box.x + this.box.width) -x) + " spalten");
       for  (int y= this.box.y; y< this.box.y + this.box.height; y++) {
         int loc = (x - this.box.x) + (y - this.box.y) * this.box.width;
         if (this.contour.containsPoint(x, y)) {
@@ -46,7 +46,12 @@ class Zitat { //<>// //<>// //<>//
 
     this.surface.endDraw();
     pic_crop = this.surface.get();
-    pic_crop.save("st11" + index + ".png");
+    String sIndex = str(this.index);
+    if (index <10) {
+      sIndex = "0" + index;
+    }
+     
+    pic_crop.save("st11_z" + sIndex + ".png");
     schnipsel.add(pic_crop);
   }
 

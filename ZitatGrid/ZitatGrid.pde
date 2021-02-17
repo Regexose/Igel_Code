@@ -7,6 +7,7 @@ AugmentedImage z;
 Table bildTexte;
 String scaleName;
 int z_idx;
+boolean setOff= false;
 
 
 void setup() {
@@ -21,7 +22,7 @@ void setup() {
     String pngName = row.getString("png_name");
     String iStr = pngName.substring(6, 8);
     int i = int(iStr);
-    println(" png " + pngName + " i " + i + " iStr  " + iStr);
+    // println(" png " + pngName + " i " + i + " iStr  " + iStr);
     String zitat = row.getString("Zitat");
     float angle = row.getFloat("angle_deg");
     String fileName = "st11_z" + iStr +".png";
@@ -31,7 +32,7 @@ void setup() {
   }
   yGrid = 0;
   xGrid = 0;
-  s = 1.0;
+  s = 0.2;
   i = 1;
   angle = 0;
 }
@@ -40,14 +41,18 @@ void draw() {
   background(pic);
   z = schnipsel.get(i%schnipsel.size());
   pick = z.img;
+  if (!setOff) {
+    widthOffset = pick.width/2;
+    heightOffset = pick.height/2;
+    angle = radians(z.angle);
+  } 
   grid(pick);
 }
 
 void grid(PImage p) {
   yGrid = 0;
   xGrid = 0;
-  widthOffset = p.width -50;
-  heightOffset = p.height -50;
+
 
   while (yGrid < height) {
 
@@ -58,7 +63,7 @@ void grid(PImage p) {
     pushMatrix();
     translate(xGrid, yGrid);
     imageMode(CENTER);
-    rotate(radians(z.angle));
+    rotate(angle);
     scale(s);
     image(z.img, 0, 0);
     popMatrix();
@@ -80,15 +85,19 @@ void keyPressed() {
     i --;
   }
   if (key == 'a') {
-    angle += 0.01;
+    setOff = true;
+    angle += 0.1;
   }
   if (key == 'b') {
-    angle -= 0.01;
+    setOff = true;
+    angle -= 0.1;
   }
   if (key == 'w') {
+    setOff = true;
     widthOffset -= 10;
   }
   if (key == 'h') {
+    setOff = true;
     heightOffset -= 10;
   }
 

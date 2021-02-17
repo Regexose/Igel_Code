@@ -28,9 +28,8 @@ boolean drawGrid = false;
 
 void setup() {
   size(1200, 900);
-  pic1 = loadImage("DSC05212.JPG");
+  pic1 = loadImage("PlanscheWeydemeyer_DSC05212.jpg");
   pic2 = loadImage("FabianAileen_DSC05217.jpg");
-  bildTexte = loadTable("Texte_im_Bild.csv", "header");
   pic = pic1;
   opencv = new OpenCV(this, pic);
   opencv.gray();
@@ -40,7 +39,7 @@ void setup() {
   zitatList = new ArrayList<Zitat>();
   for (Contour contour : blobs) {
     schnipsel = new ArrayList<PImage>();
-    if (contour.numPoints() > 250 && contour.numPoints() < 11000 ) {
+    if (contour.numPoints() > 280 && contour.numPoints() < 11000 ) {
       println("numpoits " + contour.numPoints());
       Zitat zitat = new Zitat(i+1, contour);
       // crop pic to zitat.box
@@ -50,7 +49,7 @@ void setup() {
       // new openCV with cropped Pic to find its lines
       // OpenCV picCrop = new OpenCV(this, pic_crop);
       zitat.calcAngles();
-      // zitat.fillSurface(pic_crop);
+      zitat.fillSurface(pic_crop);
       zitatList.add(zitat);
       bigContours.add(contour);
       i ++;
