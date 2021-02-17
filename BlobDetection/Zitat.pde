@@ -1,75 +1,133 @@
-class Zitat {
-  PVector position;
+class Zitat { //<>// //<>// //<>//
+  PImage pic_crop;
   float angle, evenAngle;
   int index;
-  ArrayList<PVector> coords;
+  ArrayList<PVector> points;
+  ArrayList<Edge> edges;
   ArrayList<Line> lines;
   java.awt.Rectangle box;
   Contour contour, hull;
   PGraphics surface;
   String content;
-  ArrayList<PVector> points;
-  HashMap<String, PVector> boxEdges;
-  ArrayList<PVector> edges;
- 
+  PVector firstPos, baseLine, vertLine;
+
   Zitat(int index, Contour contour, String content) {
     this.index = index;
     this.contour = contour;
     this.content = content;
     this.box = contour.getBoundingBox();
-    this.boxEdges = makeBoxEdges();
-    this.position = new PVector(this.box.x, this.box.y);
+    makeEdges();
     this.surface = createGraphics(box.width, box.height);
     this.hull = this.contour.getConvexHull();
+    // pointsTest();
   }
-  
-  void fillSurface(PImage pic){
-    pic.loadPixels();
+
+  void fillSurface(PImage pic) {
+    this.pic_crop = pic;
+    this.pic_crop.loadPixels();
     this.surface.beginDraw();
+    // this.surface.background(120,150); //<>//
     this.surface.loadPixels();
+    // all pixels in the box are checked if they are inside the contour
     for (int x= this.box.x; x < this.box.x + this.box.width; x++) {
-      println("Noch " + ((this.box.x + this.box.width) -x) + " spalten");
-      for  (int y= this.box.y; y< this.box.y + this.box.height; y++){
+      // println("x   " + x + "   Noch " + ((this.box.x + this.box.width) -x) + " spalten");
+      for  (int y= this.box.y; y< this.box.y + this.box.height; y++) {
         int loc = (x - this.box.x) + (y - this.box.y) * this.box.width;
         if (this.contour.containsPoint(x, y)) {
           // println("x   " + x  + "   y   " + y + "  color  " +  pic.get((x - this.box.x),(y - this.box.y)));
           //println("points: " + contour.getPoints().get((y - this.box.y)) + " y  " + (y - this.box.y));
           // this.surface.background(100, 100, 0);
-          
-          this.surface.pixels[loc] = pic.pixels[loc];
+          // arraycopy() schneller?
+
+          this.surface.pixels[loc] = this.pic_crop.pixels[loc];
         }
         this.surface.updatePixels();
       }
     }
+
     this.surface.endDraw();
-    }
-    
-    void calcAngles(ArrayList<Line> lines) {
-      this.lines = lines;
-      // find longest line for angle_calc
-      FloatList lengths = new FloatList();
-      for (Line line : this.lines){
-        float lineLength = dist(line.start.x, line.start.y,line.end.x, line.end.y);
-        lengths.append(lineLength);
-      }
-      float longest = lengths.max();
-      for (Line line : this.lines){
-        float lineLength = dist(line.start.x, line.start.y,line.end.x, line.end.y);
-        if (lineLength == longest) {
-          this.angle = (float) line.angle ;
-          this.evenAngle = - this.angle + HALF_PI;
+    pic_crop = this.surface.get();
+    pic_crop.save("pic_crop" + index + ".png");
+    schnipsel.add(pic_crop);
+  }
+
+  void makeEdges() {
+    points = this.contour.getPoints();
+    edges = new ArrayList();
+    StringList edgeNames = new StringList();
+    for (PVector point : points) {
+      if (point.y == this.box.y) {
+        if (!edgeNames.hasValue("y_min")) {
+          Edge edge = new Edge(point, 1, "y_min", color(255, 0, 0));
+          // println("index " + edge.index + "   name   " + edge.name + "   point   " + point);
+          edgeNames.append(edge.name);
+          edges.add(edge);
         }
+      } else if (point.x == this.box.x) {
+        if (!edgeNames.hasValue("x_min")) {
+          Edge edge = new Edge(point, 2, "x_min", color(0, 255, 0));
+          // println("index " + edge.index + "   name   " + edge.name + "   point   " + point);
+          edgeNames.append(edge.name);
+          edges.add(edge);
+        }
+      } else if (dist(point.x, point.y, point.x, this.box.y + this.box.height) < 2) {
+        if (!edgeNames.hasValue("y_max")) {
+          Edge edge = new Edge(point, 3, "y_max", color(0, 0, 255));
+          // println("index " + edge.index + "   name   " + edge.name + "   point   " + point);
+
+          edgeNames.append(edge.name);
+          edges.add(edge);
+        }
+      } else if (dist(point.x, point.y, this.box.x +this.box.width, point.y) < 2) {
+        if (!edgeNames.hasValue("x_max")) {
+          Edge edge = new Edge(point, 4, "x_max", color(100, 100, 200));
+          // println("index " + edge.index + "   name   " + edge.name + "   point   " + point);
+          edgeNames.append(edge.name);
+          edges.add(edge);
+        }
+      }
     }
+
+    this.firstPos = edges.get(1).point.copy();
+  }
+  void calcAngles() {
+    PVector straight = new PVector(10, 0);
+    if (this.firstPos.x < width/2) {
+      // y_max is second point
+      PVector secondPoint = edges.get(2).point;
+      // lower line of zitat
+      // was passiert hier mit der ersten und zweiten Edge?
+      baseLine = secondPoint.sub(this.firstPos);
+      PVector thirdPoint = edges.get(0).point;
+      vertLine = thirdPoint.sub(this.firstPos);
+      this.angle = PVector.angleBetween(straight, baseLine);
+      this.evenAngle = - this.angle;
+    } else {
+
+      //y_min is second Point
+      PVector secondPoint = edges.get(3).point;
+      // upper line of zitat
+      baseLine = secondPoint.sub(this.firstPos);
+      this.angle = PVector.angleBetween(baseLine, straight);
+      this.evenAngle = this.angle;
+      PVector thirdPoint = edges.get(2).point;
+      vertLine = thirdPoint.sub(this.firstPos);
+      // zitat ist gedreht, daher mus firstPos höher liegen, ergo mit der box höhe subtrahiert werden
     }
-    
-    HashMap<String, PVector> makeBoxEdges() {
-      HashMap<String, PVector> edges = new HashMap<String, PVector>();
-      edges.put("1", new PVector(this.box.x, this.box.y));
-      edges.put("2", new PVector(this.box.x , this.box.y + this.box.height));
-      edges.put("3", new PVector(this.box.x + this.box.width, this.box.y + this.box.height));
-      edges.put("4", new PVector(this.box.x +this.box.width, this.box.y));
-      print("\nprocessing shape  " + this.index + "  with box   " + edges);
-      return edges;
-    }
-  
+    println("angle   "+ this.angle + " zitat   "+ this.index);
+  }
+}
+
+class Edge {
+  PVector point;
+  int index;
+  String name;
+  color col;
+
+  Edge(PVector point, int index, String name, color col) {
+    this.point = point;
+    this.index = index;
+    this.name = name;
+    this.col = col;
+  }
 }
