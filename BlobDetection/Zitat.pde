@@ -11,10 +11,9 @@ class Zitat { //<>// //<>// //<>//
   String content;
   PVector firstPos, baseLine, vertLine;
 
-  Zitat(int index, Contour contour, String content) {
+  Zitat(int index, Contour contour) {
     this.index = index;
     this.contour = contour;
-    this.content = content;
     this.box = contour.getBoundingBox();
     makeEdges();
     this.surface = createGraphics(box.width, box.height);
@@ -26,8 +25,8 @@ class Zitat { //<>// //<>// //<>//
     this.pic_crop = pic;
     this.pic_crop.loadPixels();
     this.surface.beginDraw();
-    // this.surface.background(120,150); //<>//
-    this.surface.loadPixels();
+    // this.surface.background(120,150);
+    this.surface.loadPixels(); //<>//
     // all pixels in the box are checked if they are inside the contour
     for (int x= this.box.x; x < this.box.x + this.box.width; x++) {
       // println("x   " + x + "   Noch " + ((this.box.x + this.box.width) -x) + " spalten");
@@ -47,7 +46,7 @@ class Zitat { //<>// //<>// //<>//
 
     this.surface.endDraw();
     pic_crop = this.surface.get();
-    pic_crop.save("pic_crop" + index + ".png");
+    pic_crop.save("st11" + index + ".png");
     schnipsel.add(pic_crop);
   }
 
@@ -114,7 +113,7 @@ class Zitat { //<>// //<>// //<>//
       vertLine = thirdPoint.sub(this.firstPos);
       // zitat ist gedreht, daher mus firstPos höher liegen, ergo mit der box höhe subtrahiert werden
     }
-    println("angle   "+ this.angle + " zitat   "+ this.index);
+    println("angle   "+ degrees(this.angle) + "  of st11_z" + index + ".png");
   }
 }
 
