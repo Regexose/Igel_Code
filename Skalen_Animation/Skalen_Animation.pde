@@ -38,8 +38,9 @@ float factor, loadStatus, messageX, messageY, messageSize;
 PShape s;
 
 void setup() {
-  size(1200,900);
-  surface = createGraphics(width,height);
+
+  size(1000, 700);
+  surface = createGraphics(width, height);
   buildRythms(newRythms);
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
@@ -59,20 +60,27 @@ void setup() {
   frameRate(20);
   minim = new Minim(this);
   klopfen = new Klopfen(minim);
-  startTime = millis();  
+  startTime = millis();
 }
 
 void draw() {
-    if (!loading) {
-      if (hasFinished && !knock) {
-        getRythm();
-        selectImage();
-       } 
-       // klopfen.analyseInput();
-       scale.display();
-      } else {
-      loadDisplay();
-      }
+
+  if (!loading) {
+    if (hasFinished && !knock) {
+      getRythm();
+      selectImage();
+    } 
+    klopfen.analyseInput();
+    scale.display();
+  } else {
+    background(100);
+    textFont(Arial, 25);
+    textAlign(CENTER);
+    text("loading images..  " + currentScaleName, width/2, height/2);
+    strokeWeight(5);
+    stroke(250);
+    line(10, height - 50, 10 + loadStatus, height-50);
+  }
 }
 
 void selectImage() {
@@ -86,10 +94,12 @@ void selectImage() {
   }
   beatNumber += 1;
   beatNumber = beatNumber % newRythms.get(rScale).size(); 
-  if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
+  if (beatNumber % newRythms.get(rScale).size() == 0) {
+    globalCounter += 1;
+  }
   if (globalCounter > 0 && globalCounter%7 == 0) {
-     println("Update pause because:  " + globalCounter + " but suspended im moment");
-     // updatePause(); 
+    println("Update pause because:  " + globalCounter + " but suspended im moment");
+    // updatePause();
   }
 }
  //<>//
@@ -146,4 +156,5 @@ PImage dstMaker(PImage img) {
    opencv.threshold(80);
    dst = opencv.getOutput();
    return dst;
+
 }

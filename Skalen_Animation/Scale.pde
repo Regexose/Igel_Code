@@ -39,8 +39,6 @@ class Scale {
      }
     }
   }
-  
-    //image(this.surface, 0, 0);
 
   void loadImages(String folderName, String arrayType) {
     // print("arrayType: " + arrayType);
@@ -57,9 +55,8 @@ class Scale {
       imageArray = new ArrayList<AugmentedImage>();
       // i muss bei 1 anfangen, sonst liest der loop nur das .DS_Store, warum auch immer...
       for (int i=1; i<fileNames.length; i++) {
-
         if (fileNames[i].toLowerCase().endsWith(".jpg")) {  
-          if (fileNames[i].indexOf("Ort_") == -1 ) {
+          if (fileNames[i].indexOf("Ort_") == -1) {
             PImage img = loadImage(files[i].toString());
             AugmentedImage aI = new AugmentedImage(fileNames[i], img, i, true);
             // aI.setHasText(true);
@@ -71,6 +68,7 @@ class Scale {
           } else if (fileNames[i].indexOf("Ort_Totale") != -1) {
             PImage img = loadImage(files[i].toString());
             this.noMatch = img;
+
           }
            else if (fileNames[i].indexOf("Ort_DSC") != -1 ) {
           //bilder der Orte
@@ -116,69 +114,132 @@ class Scale {
     if (tempScaleType == "augmented") {
       IntList tempList = new IntList();
       for (int i=0; i< this.imageArray.size(); i++) {
-        AugmentedImage aI = this.imageArray.get(i);
-        boolean pauseMatch = (aI.minMatch <= pause && aI.maxMatch >= pause);
-        // println("  aI name: " + aI.name + "  aI weight: " + aI.weight + " aI.maxMatch: " + aI.maxMatch);
+        AugmentedImage element = this.imageArray.get(i);
+        boolean pauseMatch = (element.minMatch <= pause && element.maxMatch >= pause);
+        // println("  element weight: " + element.weight + "  weightlist" + this.imageWeights);
         int maxWeight = this.imageWeights.max();
-        if (beatNumber == 0  && aI.weight == maxWeight) {
-          this.pic2Show = aI.image; 
-          this.pic2ShowName = aI.name;
-          this.aI = aI;
-        } else if (beatNumber > 0 && pauseMatch && aI.weight != maxWeight) {
-          tempList.append(aI.index);
+        if (beatNumber == 0  && element.weight == maxWeight) {
+          this.pic2Show = element.image; 
+          this.pic2ShowName = element.name;
+          println("image: " + element.name + " weight  " + element.weight);
+        } else if (beatNumber > 0 && pauseMatch && element.weight != maxWeight) {
+          tempList.append(element.index);
         } else if (this.flicker) {
-
           this.pic2Show = this.pic4Flicker;
-
           this.flicker = !this.flicker;
         } else if (beatNumber != 0 && !pauseMatch) {
           // println(" else image: " + element.name + "  weight: " + element.weight);
-          this.pic2ShowName = aI.name;
+          this.pic2ShowName = element.name;
           this.pic2Show = this.noMatch;
-          this.aI = aI;
-        } 
+        }
       }
-      
       if (tempList.size() >= 1) {
         tempList.shuffle();
+        // printArray("tempList  " + tempList);
         for (int t=0; t<this.imageArray.size(); t++) {
           if (this.imageArray.get(t).index == tempList.get(0)) {
             // println("t- element  " + scale.get(t).name + "  element matching:   " + scale.get(t).matchingBeatValue + "  element index:   " + scale.get(t).index);
             this.pic2Show = this.imageArray.get(t).image;
-            this.aI = this.imageArray.get(t);
             this.pic2ShowName = this.imageArray.get(t).name;
             this.imageArray.get(t).counter += 1;
           }
-
         }
-        
       }
-      
-    } else if (tempScaleType == "noText") {
-      Random random = new Random();
-      int index = random.nextInt(this.imageArray.size());
-      this.aI = this.imageArray.get(index);
-      this.pic2Show = aI.image;
-      
-      }  else if (tempScaleType == "message") {
+    } else if (tempScaleType == "message") {
       // printArray("messages: " + this.messages + " current Scalename: " + currentScaleName);
       if (this.flicker) {
-        this.pic2Show = this.messageImages.get(0).image;
+        this.pic2Show = this.messageImages.get(1).image;
         messageX = width /8;
-        this.pic2ShowName = this.messageImages.get(0).name;
+        this.pic2ShowName = this.messageImages.get(1).name;
       } else {
         this.pic2Show = this.messageImages.get(2).image;
         messageX = width *3/7;
         this.pic2ShowName = this.messageImages.get(2).name;
       }
-      // updateSurface(message, messageTime);
+      updateSurface(message, messageTime);
       this.flicker = !this.flicker;
-      } else {
-        selectKlopf(pause);
-      }
-       println("aI name  " + this.aI.name);
-    
+    } else {
+      selectKlopf(pause);
     }
+    // updateSurface(str(knock) + "  " + this.pic2ShowName, false);
+  }
+  void updateSurface(String text, boolean msgTime) {
+
+    if (msgTime) {
+
+      String[] words = text.split(" ");
+      // println("  x: " + messageX + "  y: " + messageY);
+      int index = int(random(words.length));
+      String word = words[index];
+      messageSize = int(random(50, 100));
+      textSize(messageSize);
+      float textHeight = textAscent() * 0.8;
+      PGraphics wordSurf = createGraphics(int(textWidth(word) * 2), int(textHeight) * 2);
+      wordSurf.smooth();
+      messageY = this.surface.height/2;
+
+      wordSurf.beginDraw();
+      wordSurf.textAlign(CENTER);
+      wordSurf.textFont(Arial, messageSize);
+      wordSurf.background(200);
+      wordSurf.fill(10);
+      wordSurf.text(word, wordSurf.width/2, wordSurf.height/2 + 10);
+      wordSurf.endDraw();
+      this.surface.beginDraw();
+      this.surface.clear();
+      this.surface.image(wordSurf, messageX, messageY);
+      this.surface.endDraw();
+    } else {
+      this.surface.beginDraw();
+      this.surface.textAlign(CENTER);
+      this.surface.background(color(245, 66, 233));
+      this.surface.textFont(Arial, 20);
+      this.surface.text(text, this.surface.width/2, this.surface.height/2);
+      this.surface.endDraw();
+    }
+  }
+}
+
+class AugmentedImage {
+  String type, name;
+  PImage image;
+  int index, weight, minMatch, maxMatch, counter;
+  ArrayList<String> cites = new ArrayList<String>();
+
+  AugmentedImage(String name, PImage image, int index) {
+    this.name = name;
+    this.image = image;
+    this.index = index;
+    this.weight = 0;
+    this.minMatch = 0;
+    this.maxMatch = 100;
+    this.counter = 0;
+  }
+
+  void updateWeight(int value) {
+    this.weight += value;
+    // println("updated aI: " + this.name + "  to: " + this.weight);
+  }
+
+  void textAcquire(String cite) {
+    this.cites.add(cite);
+  }
+
+  void mapBeatValue(int minVal, int maxVal) {
+    this.minMatch =  minVal;
+    this.maxMatch =  maxVal;
+    // println("matching iC " + this.name + " with " + value + " value");
+  }
+}
+
+class Message {
+  String name, message;
+  PImage image;
+
+  Message(String name, PImage image) {
+    this.name = name;
+    this.image = image;
+  }
 }
 
 
@@ -197,13 +258,14 @@ void loadCites(AugmentedImage augImage) {
   // println("checking:    " +augImage.name); 
   for (TableRow row : bildTexte.rows()) {
     String bildName = row.getString("BildName");
-     if (bildName.equals(augImage.name) == true) {
+    if (bildName.equals(augImage.name) == true) {
       String quote = row.getString("Zitat");
       // println("bildName:   " + bildName + "   iC:image:   " + augImage.name + "\n cite: " + quote);
       augImage.textAcquire(quote);
     }
   }
 }
+
   
 void selectShape(AugmentedImage aI) {
     // jede aI hat zwei HashMaps: shapeMap und shapeBox
@@ -218,3 +280,17 @@ void selectShape(AugmentedImage aI) {
     // println("shape name " + randomShapeName + " shapeBox x: " + scale.shapeBox.x + "  y: " + scale.shapeBox.y);
     } else {return;}
  }
+
+
+void loadDurations (AugmentedImage aI) {
+  for (TableRow row : durationMap.rows()) {
+    int min = row.getInt("min");
+    int max = row.getInt("max");
+    int duration_min = row.getInt("min_duration");
+    int duration_max = row.getInt("max_duration");
+
+    if (aI.cites.size() >= min && aI.cites.size() <= max) {
+      aI.mapBeatValue(duration_min, duration_max);
+    }
+  }
+}

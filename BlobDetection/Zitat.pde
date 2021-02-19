@@ -1,0 +1,137 @@
+class Zitat { //<>// //<>// //<>//
+  PImage pic_crop;
+  float angle, evenAngle;
+  int index;
+  ArrayList<PVector> points;
+  ArrayList<Edge> edges;
+  ArrayList<Line> lines;
+  java.awt.Rectangle box;
+  Contour contour, hull;
+  PGraphics surface;
+  String content;
+  PVector firstPos, baseLine, vertLine;
+
+  Zitat(int index, Contour contour) {
+    this.index = index;
+    this.contour = contour;
+    this.box = contour.getBoundingBox();
+    makeEdges();
+    this.surface = createGraphics(box.width, box.height);
+    this.hull = this.contour.getConvexHull();
+    // pointsTest();
+  }
+
+  void fillSurface(PImage pic) {
+    this.pic_crop = pic;
+    this.pic_crop.loadPixels();
+    this.surface.beginDraw();
+    // this.surface.background(120,150);
+    this.surface.loadPixels(); //<>//
+    // all pixels in the box are checked if they are inside the contour
+    for (int x= this.box.x; x < this.box.x + this.box.width; x++) {
+      println("rendered   " + (x -this.box.x)  + "   remaining " + ((this.box.x + this.box.width) -x) + " spalten");
+      for  (int y= this.box.y; y< this.box.y + this.box.height; y++) {
+        int loc = (x - this.box.x) + (y - this.box.y) * this.box.width;
+        if (this.contour.containsPoint(x, y)) {
+          // println("x   " + x  + "   y   " + y + "  color  " +  pic.get((x - this.box.x),(y - this.box.y)));
+          //println("points: " + contour.getPoints().get((y - this.box.y)) + " y  " + (y - this.box.y));
+          // this.surface.background(100, 100, 0);
+          // arraycopy() schneller?
+
+          this.surface.pixels[loc] = this.pic_crop.pixels[loc];
+        }
+        this.surface.updatePixels();
+      }
+    }
+
+    this.surface.endDraw();
+    pic_crop = this.surface.get();
+    String sIndex = str(this.index);
+    if (index <10) {
+      sIndex = "0" + index;
+    }
+     
+    pic_crop.save("st11_z" + sIndex + ".png");
+    schnipsel.add(pic_crop);
+  }
+
+  void makeEdges() {
+    points = this.contour.getPoints();
+    edges = new ArrayList();
+    StringList edgeNames = new StringList();
+    for (PVector point : points) {
+      if (point.y == this.box.y) {
+        if (!edgeNames.hasValue("y_min")) {
+          Edge edge = new Edge(point, 1, "y_min", color(255, 0, 0));
+          // println("index " + edge.index + "   name   " + edge.name + "   point   " + point);
+          edgeNames.append(edge.name);
+          edges.add(edge);
+        }
+      } else if (point.x == this.box.x) {
+        if (!edgeNames.hasValue("x_min")) {
+          Edge edge = new Edge(point, 2, "x_min", color(0, 255, 0));
+          // println("index " + edge.index + "   name   " + edge.name + "   point   " + point);
+          edgeNames.append(edge.name);
+          edges.add(edge);
+        }
+      } else if (dist(point.x, point.y, point.x, this.box.y + this.box.height) < 2) {
+        if (!edgeNames.hasValue("y_max")) {
+          Edge edge = new Edge(point, 3, "y_max", color(0, 0, 255));
+          // println("index " + edge.index + "   name   " + edge.name + "   point   " + point);
+
+          edgeNames.append(edge.name);
+          edges.add(edge);
+        }
+      } else if (dist(point.x, point.y, this.box.x +this.box.width, point.y) < 2) {
+        if (!edgeNames.hasValue("x_max")) {
+          Edge edge = new Edge(point, 4, "x_max", color(100, 100, 200));
+          // println("index " + edge.index + "   name   " + edge.name + "   point   " + point);
+          edgeNames.append(edge.name);
+          edges.add(edge);
+        }
+      }
+    }
+
+    this.firstPos = edges.get(1).point.copy();
+  }
+  void calcAngles() {
+    PVector straight = new PVector(10, 0);
+    if (this.firstPos.x < width/2) {
+      // y_max is second point
+      PVector secondPoint = edges.get(2).point;
+      // lower line of zitat
+      // was passiert hier mit der ersten und zweiten Edge?
+      baseLine = secondPoint.sub(this.firstPos);
+      PVector thirdPoint = edges.get(0).point;
+      vertLine = thirdPoint.sub(this.firstPos);
+      this.angle = PVector.angleBetween(straight, baseLine);
+      this.evenAngle = - this.angle;
+    } else {
+
+      //y_min is second Point
+      PVector secondPoint = edges.get(3).point;
+      // upper line of zitat
+      baseLine = secondPoint.sub(this.firstPos);
+      this.angle = PVector.angleBetween(baseLine, straight);
+      this.evenAngle = this.angle;
+      PVector thirdPoint = edges.get(2).point;
+      vertLine = thirdPoint.sub(this.firstPos);
+      // zitat ist gedreht, daher mus firstPos höher liegen, ergo mit der box höhe subtrahiert werden
+    }
+    println("angle   "+ degrees(this.angle) + "  of st11_z" + index + ".png");
+  }
+}
+
+class Edge {
+  PVector point;
+  int index;
+  String name;
+  color col;
+
+  Edge(PVector point, int index, String name, color col) {
+    this.point = point;
+    this.index = index;
+    this.name = name;
+    this.col = col;
+  }
+}
