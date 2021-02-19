@@ -8,6 +8,7 @@ Table bildTexte;
 String scaleName;
 int z_idx;
 boolean setOff= false;
+String zitatePath = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Einzelzitate/";
 
 
 void setup() {
@@ -26,7 +27,7 @@ void setup() {
     String zitat = row.getString("Zitat");
     float angle = row.getFloat("angle_deg");
     String fileName = "st11_z" + iStr +".png";
-    PImage p = loadImage("zitate/" + fileName);
+    PImage p = loadImage(zitatePath + "st11/" + fileName);
     AugmentedImage aI = new AugmentedImage(i, p, zitat, fileName, angle);
     schnipsel.add(aI);
   }
@@ -47,6 +48,7 @@ void draw() {
     angle = radians(z.angle);
   } 
   grid(pick);
+  //saveFrame("zitat-######.png");
 }
 
 void grid(PImage p) {
