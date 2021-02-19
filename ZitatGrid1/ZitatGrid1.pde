@@ -37,7 +37,7 @@ void setup() {
       schnipsel.add(aI);
     }
   }
-   makeGrid(3);
+   makeGrid(5);
   for (int i=0; i< grid.size(); i++) {
     z = schnipsel.get(i%schnipsel.size());
     pick = z.img;
@@ -66,13 +66,13 @@ void setup() {
 
   void makeGrid(int resolution) {
     grid = new ArrayList<PVector>();
-    float x = 50;
-    float y = 50;
+    float x = 0;
+    float y = 0;
     while (y < height) {
       PVector position = new PVector(x, y);
       grid.add(position);
       if (x >= width) {
-        x = 50;
+        x = 0;
         y += height/resolution;
       } else {
         x += width/resolution;
@@ -82,7 +82,7 @@ void setup() {
 
   void mouseReleased() {
     for (int i=0; i< grid.size(); i++) {
-      AugmentedImage aI = schnipsel.get(i);
+      AugmentedImage aI = schnipsel.get(i%schnipsel.size());
       aI.clicked(mouseX, mouseY);
     }
   }

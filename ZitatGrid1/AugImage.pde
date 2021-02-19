@@ -16,17 +16,13 @@ class AugmentedImage { //<>//
     this.scale = 0.25;
     this.w = img.width * this.scale;
     this.h = img.height * this.scale;
-    this.col = color(0, 255, 0, 100);
+    this.col = color(0, 255, 0, 200);
   }
 
   void initialPos (PVector vec) {
     this.position = vec;
   }
 
-  void adjustDimensions() {
-    this.w *= this.scale;
-    this.h *= this.scale;
-  }
 
   void move() {
     this.position.add(random(-1, 1), random(-1, 1));
@@ -48,9 +44,9 @@ class AugmentedImage { //<>//
     boolean inH = y >= this.position.y && y <=  this.position.y+ this.h;
     // println(this.clicked);
     if (inW && inH) {
-      println("name   "  + name + "  zitat   " + zitat + "   pos   " + this.position);
-      println(" width   "  + this.w + "   height   " + this.h);
-      println("  width  " + (this.position.x+ this.w) + "  height  " + (this.position.y+ this.h) +"   x  " + x + "   y  " + y);
+      // println("name   "  + name + "  zitat   " + zitat + "   pos   " + this.position);
+     // println(" width   "  + this.w + "   height   " + this.h);
+      //println("  width  " + (this.position.x+ this.w) + "  height  " + (this.position.y+ this.h) +"   x  " + x + "   y  " + y);
       this.clicked = !this.clicked;
       if (this.clicked) {
         this.scale = 0.5;
