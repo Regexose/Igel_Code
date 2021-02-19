@@ -33,7 +33,7 @@ float factor, loadStatus, messageX, messageY, messageSize;
 
 void setup() {
   size(1000, 700);
-  surface = createGraphics(width,height);
+  surface = createGraphics(width, height);
   buildRythms(newRythms);
   zitate = loadTable("Igel_Zitate.csv", "header");
   bildTexte = loadTable("Texte_im_Bild.csv", "header");
@@ -53,26 +53,26 @@ void setup() {
   frameRate(20);
   minim = new Minim(this);
   klopfen = new Klopfen(minim);
-  startTime = millis();  
+  startTime = millis();
 }
 
 void draw() {
-    if (!loading) {
-      if (hasFinished && !knock) {
-        getRythm();
-        selectImage();
-       } 
-       klopfen.analyseInput();
-       scale.display();
-      } else {
-      background(100);
-      textFont(Arial, 25);
-      textAlign(CENTER);
-      text("loading images..  " + currentScaleName, width/2, height/2);
-      strokeWeight(5);
-      stroke(250);
-      line(10, height - 50, 10 + loadStatus, height-50);
-      }
+  if (!loading) {
+    if (hasFinished && !knock) {
+      getRythm();
+      selectImage();
+    } 
+    klopfen.analyseInput();
+    scale.display();
+  } else {
+    background(100);
+    textFont(Arial, 25);
+    textAlign(CENTER);
+    text("loading images..  " + currentScaleName, width/2, height/2);
+    strokeWeight(5);
+    stroke(250);
+    line(10, height - 50, 10 + loadStatus, height-50);
+  }
 }
 
 void selectImage() {
@@ -83,10 +83,12 @@ void selectImage() {
   scale.selectImage(waitTime, scaleType);
   beatNumber += 1;
   beatNumber = beatNumber % newRythms.get(rScale).size(); 
-  if (beatNumber % newRythms.get(rScale).size() == 0) {globalCounter += 1;}
+  if (beatNumber % newRythms.get(rScale).size() == 0) {
+    globalCounter += 1;
+  }
   if (globalCounter > 0 && globalCounter%7 == 0) {
-     println("Update pause because:  " + globalCounter + " but suspended im moment");
-     // updatePause(); 
+    println("Update pause because:  " + globalCounter + " but suspended im moment");
+    // updatePause();
   }
 }
 
@@ -116,13 +118,12 @@ void loadScales() {
 }
 
 void loadRest() {
-    println("loadRest for scale: " + currentScaleName);
-    for (int i=0; i<restFileNames.size(); i++) {
-      PImage img = loadImage(restFiles.get(i));
-      AugmentedImage aI = new AugmentedImage(restFileNames.get(i), img, i);
-      scale = scaleMap.get(currentScaleName);
-      scale.imageArray.add(aI);
-      println("scale.imageArray Size: " + scale.imageArray.size());
-    }
-    
+  println("loadRest for scale: " + currentScaleName);
+  for (int i=0; i<restFileNames.size(); i++) {
+    PImage img = loadImage(restFiles.get(i));
+    AugmentedImage aI = new AugmentedImage(restFileNames.get(i), img, i);
+    scale = scaleMap.get(currentScaleName);
+    scale.imageArray.add(aI);
+    println("scale.imageArray Size: " + scale.imageArray.size());
   }
+}
