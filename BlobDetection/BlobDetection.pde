@@ -31,6 +31,7 @@ void setup() {
   pic1 = loadImage("PlanscheWeydemeyer_DSC05212.jpg");
   pic2 = loadImage("FabianAileen_DSC05217.jpg");
   pic = pic1;
+  bildTexte = loadTable("Texte_im_Bild.tsv", "header");
   opencv = new OpenCV(this, pic);
   opencv.gray();
   opencv.threshold(120);
@@ -39,8 +40,8 @@ void setup() {
   zitatList = new ArrayList<Zitat>();
   for (Contour contour : blobs) {
     schnipsel = new ArrayList<PImage>();
-    if (contour.numPoints() > 280 && contour.numPoints() < 11000 ) {
-      println("numpoits " + contour.numPoints());
+    if (contour.numPoints() > 300 && contour.numPoints() < 11000 ) {
+      // println("numpoits " + contour.numPoints());
       Zitat zitat = new Zitat(i+1, contour);
       // crop pic to zitat.box
       Rectangle box = contour.getBoundingBox();
@@ -49,7 +50,7 @@ void setup() {
       // new openCV with cropped Pic to find its lines
       // OpenCV picCrop = new OpenCV(this, pic_crop);
       zitat.calcAngles();
-      zitat.fillSurface(pic_crop);
+      // zitat.fillSurface(pic_crop);
       zitatList.add(zitat);
       bigContours.add(contour);
       i ++;
@@ -58,4 +59,23 @@ void setup() {
   i = 0;
   s = 1;
   angle = 0;
+}
+
+void draw() {
+  background(120);
+  image(pic, 0, 0, width, height);
+  for (Zitat zitat : zitatList) {
+    pushMatrix();
+    for (Edge edge : zitat.edges) {
+      stroke(edge.col);
+      strokeWeight(7);
+      fill(255);
+      float x = map(edge.point.x, 0, pic.width, 0, width);
+      float y = map(edge.point.y, 0, pic.height, 0, height);
+      text(edge.point.x + "  " + edge.point.y, x -10, y-10); 
+      point(x, y);
+    }
+    popMatrix();
+    strokeWeight(1);
+  }
 }
