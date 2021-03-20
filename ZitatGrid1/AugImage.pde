@@ -1,9 +1,9 @@
 class AugmentedImage { //<>//
   PImage img;
+  PVector position, velocity, acceleration, center;
   String name, zitat;
   int index;
-  float angle, scale, w, h;
-  PVector position, center;
+  float angle, scale, w, h, mass;
   color col;
   boolean clicked = false;
 
@@ -11,8 +11,11 @@ class AugmentedImage { //<>//
     this.index = idx;
     this.img = img;
     this.zitat = z;
+    this.velocity = new PVector(0, 0);
+    this.acceleration = new PVector (0, 0);
     this.angle = angle;
     this.name = name;
+    this.mass = 30;
     this.scale = 0.25;
     this.w = img.width * this.scale;
     this.h = img.height * this.scale;
@@ -23,9 +26,25 @@ class AugmentedImage { //<>//
     this.position = vec;
   }
 
-
+  void applyForce(PVector force) {
+    this.acceleration.add(force);
+   
+  }
+  
+  
   void move() {
     this.position.add(random(-1, 1), random(-1, 1));
+  }
+  
+  void update() {
+    PVector mouse = new PVector(mouseX, mouseY);
+    mouse.sub(this.position);
+    mouse.setMag(1);
+    this.acceleration = mouse;
+    this.velocity.add(this.acceleration);
+    this.velocity.limit(10);
+    this.position.add(this.velocity);
+    this.acceleration.mult(0);
   }
 
   void display() {
