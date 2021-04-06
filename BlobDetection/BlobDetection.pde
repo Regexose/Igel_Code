@@ -22,18 +22,23 @@ Zitat zitatNow;
 int i = 0;
 float noiseT = 0;
 float xOff, yOff, s, angle;
-
+String pathSingle, pathSkalen, pathSites;
+PFont font;
 PGraphics surface;
 boolean drawGrid = false;
 
 void setup() {
   size(1200, 800);
+  bildTexte = loadTable("newBildTexte.tsv", "header");
   pic1 = loadImage("PlanscheWeydemeyer_DSC05212.jpg");
   pic2 = loadImage("FabianAileen_DSC05217.jpg");
-  pic3 = loadImage("DSC00511.JPG");
- 
+  pic3 = loadImage("DSC00513.JPG");
+
   pic = pic3;
-   println("image w " +pic.width + "   image h   " + pic.height);
+  println("image w " +pic.width + "   image h   " + pic.height);
+  font = createFont("Helvetica", 15, true);
+  textFont(font);
+  textAlign(LEFT,CENTER);
   opencv = new OpenCV(this, pic);
   opencv.gray();
   opencv.threshold(120);
@@ -66,15 +71,15 @@ void setup() {
 void draw() {
   image(pic, 0, 0, width, height);
   for (Zitat z : zitatList) {
-    
-    xOff = map(xOff, 0, width, 0, pic.width);
-    yOff = map(yOff, 0, height, 0, pic.height);
+    xOff = map(z.firstPos.x, 0, pic.width, 0, width);
+    yOff = map(z.firstPos.y, 0, pic.height, 0, height);
     pushMatrix();
-    fill(0, 255 ,0, 100);
+    fill(0, 255, 0, 100);
     scale(0.2);
     //translate(-z.box.width, -z.box.height);
     z.contour.draw();
     popMatrix();
+    fill(255);
+    text(z.index, xOff, yOff);
   }
-
 }
