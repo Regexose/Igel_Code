@@ -12,7 +12,7 @@ import java.awt.Point;
 import java.util.Map;
 
 OpenCV opencv;
-PImage pic, pic_crop, pic1, pic2;
+PImage pic, pic_crop, pic1, pic2, pic3;
 ArrayList<Contour> blobs;
 ArrayList<Contour> bigContours;
 ArrayList<Zitat> zitatList;
@@ -27,11 +27,13 @@ PGraphics surface;
 boolean drawGrid = false;
 
 void setup() {
-  size(1200, 900);
+  size(1200, 800);
   pic1 = loadImage("PlanscheWeydemeyer_DSC05212.jpg");
   pic2 = loadImage("FabianAileen_DSC05217.jpg");
-  pic = pic1;
-  bildTexte = loadTable("Texte_im_Bild.tsv", "header");
+  pic3 = loadImage("DSC00511.JPG");
+ 
+  pic = pic3;
+   println("image w " +pic.width + "   image h   " + pic.height);
   opencv = new OpenCV(this, pic);
   opencv.gray();
   opencv.threshold(120);
@@ -40,8 +42,8 @@ void setup() {
   zitatList = new ArrayList<Zitat>();
   for (Contour contour : blobs) {
     schnipsel = new ArrayList<PImage>();
-    if (contour.numPoints() > 300 && contour.numPoints() < 11000 ) {
-      // println("numpoits " + contour.numPoints());
+    if (contour.numPoints() > 280 && contour.numPoints() < 11000 ) {
+      println("numpoits " + contour.numPoints());
       Zitat zitat = new Zitat(i+1, contour);
       // crop pic to zitat.box
       Rectangle box = contour.getBoundingBox();
@@ -62,20 +64,17 @@ void setup() {
 }
 
 void draw() {
-  background(120);
   image(pic, 0, 0, width, height);
-  for (Zitat zitat : zitatList) {
+  for (Zitat z : zitatList) {
+    
+    xOff = map(xOff, 0, width, 0, pic.width);
+    yOff = map(yOff, 0, height, 0, pic.height);
     pushMatrix();
-    for (Edge edge : zitat.edges) {
-      stroke(edge.col);
-      strokeWeight(7);
-      fill(255);
-      float x = map(edge.point.x, 0, pic.width, 0, width);
-      float y = map(edge.point.y, 0, pic.height, 0, height);
-      text(edge.point.x + "  " + edge.point.y, x -10, y-10); 
-      point(x, y);
-    }
+    fill(0, 255 ,0, 100);
+    scale(0.2);
+    //translate(-z.box.width, -z.box.height);
+    z.contour.draw();
     popMatrix();
-    strokeWeight(1);
   }
+
 }
