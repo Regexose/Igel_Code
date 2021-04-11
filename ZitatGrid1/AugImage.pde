@@ -1,79 +1,42 @@
-class AugmentedImage { //<>//
-  PImage img;
-  PVector position, velocity, acceleration, center;
-  String name, zitat;
-  int index;
-  float angle, scale, w, h, mass;
-  color col;
-  boolean clicked = false;
+/* Augmented Image ist die ganze Skala mit einer Liste von Blobs, die einzeln  //<>//
+ addressiert werden können */
 
-  AugmentedImage(int idx, PImage img, String z, String name, float angle) {
+class AugmentedImage {
+  PImage img;
+  ArrayList<Zitat> zitate;
+  String name;
+  int index;
+
+
+  AugmentedImage(int idx, PImage img, String name) {
     this.index = idx;
     this.img = img;
-    this.zitat = z;
-    this.velocity = new PVector(0, 0);
-    this.acceleration = new PVector (0, 0);
-    this.angle = angle;
     this.name = name;
-    this.mass = 30;
-    this.scale = 0.25;
-    this.w = img.width * this.scale;
-    this.h = img.height * this.scale;
-    this.col = color(0, 255, 0, 200);
+    zitate = new ArrayList<Zitat>();
+    loadZitate();
   }
 
-  void initialPos (PVector vec) {
-    this.position = vec;
-  }
-
-  void applyForce(PVector force) {
-    this.acceleration.add(force);
-   
-  }
-  
-  
-  void move() {
-    this.position.add(random(-1, 1), random(-1, 1));
-  }
-  
-  void update() {
-    PVector mouse = new PVector(mouseX, mouseY);
-    mouse.sub(this.position);
-    mouse.setMag(1);
-    this.acceleration = mouse;
-    this.velocity.add(this.acceleration);
-    this.velocity.limit(10);
-    this.position.add(this.velocity);
-    this.acceleration.mult(0);
-  }
-
-  void display() {
-    translate(this.position.x, this.position.y);
-    if (this.clicked) {
-      tint(this.col);
-    } else {
-      noTint();
-    }
-    scale(this.scale);
-    image(this.img, 0, 0);
-  }
-
-  void clicked(float x, float y) {
-    boolean inW = x >= this.position.x && x <=  this.position.x + this.w;
-    boolean inH = y >= this.position.y && y <=  this.position.y+ this.h;
-    // println(this.clicked);
-    if (inW && inH) {
-      // println("name   "  + name + "  zitat   " + zitat + "   pos   " + this.position);
-     // println(" width   "  + this.w + "   height   " + this.h);
-      //println("  width  " + (this.position.x+ this.w) + "  height  " + (this.position.y+ this.h) +"   x  " + x + "   y  " + y);
-      this.clicked = !this.clicked;
-      if (this.clicked) {
-        this.scale = 0.5;
-      } else {
-        this.scale = 0.25;
+  void loadZitate() {
+    for (TableRow row : bildTexte.rows()) {
+      String bildName = row.getString("BildName");
+      if (bildName.equals(this.name)) {
+        String zitat = row.getString("Zitat");
+        String blobName = row.getString("png_name");
+        String iStr = blobName.substring(10, 12);
+        IntList coords = new IntList();
+        String ecken = row.getString("Eckpunkte_yxmin_yx_max");
+        for (String c : ecken.split(",")){
+          coords.append(int(c));
+        }
+        
+        float angle = row.getFloat("angle_deg");
+        int i = int(iStr);
+        PImage img = loadImage(pathSingle + blobName);
+        Zitat z = new Zitat(i, zitat, img, angle, coords);
+        PVector ppt = grid.get(this.index % grid.size());
+        z.initialPos(ppt);
+        zitate.add(z);
       }
-      
-      
     }
   }
 }

@@ -1,49 +1,27 @@
+import gab.opencv.*;
 
-ArrayList<AugmentedImage> schnipsel;
+OpenCV opencv;
 int i, xGrid, yGrid;
+AugmentedImage aI;
 float s, angle, widthOffset, heightOffset;
 ArrayList<PVector>  grid;
 PVector pos;
-PImage pic, pick;
+PImage pic;
 AugmentedImage z;
 Table bildTexte;
 String scaleName;
 int z_idx;
 boolean setOff= false;
-String zitatePath = "data/Einzelzitate/";
-
+String pathSingle, pathSkalen, pathSites, computer, blobName;
 
 void setup() {
   size(1200, 900);
-  scaleName = "PlanscheWeydemeyer_DSC05212.jpg";
-  bildTexte = loadTable("Texte_im_Bild.tsv", "header");
-  pic = loadImage(scaleName);
-  pic.resize(width, height);
-  schnipsel = new ArrayList<AugmentedImage>();
-  // z_idx = 1;
-
-  for (TableRow row : bildTexte.rows()) {
-    String bildName = row.getString("BildName");
-    if (bildName.equals(scaleName)== true) {
-      String pngName = row.getString("png_name");
-      String iStr = pngName.substring(6, 8);
-      int i = int(iStr);
-      // println(" png " + pngName + " i " + i + " iStr  " + iStr);
-      String zitat = row.getString("Zitat");
-      float angle = row.getFloat("angle_deg");
-      String fileName = "st11_z" + iStr +".png";
-      PImage p = loadImage(zitatePath + "st11/" + fileName);
-      AugmentedImage aI = new AugmentedImage(i, p, zitat, fileName, angle);
-      schnipsel.add(aI);
-    }
-  }
+  computer = "iMac";
   makeGrid(5);
-  for (int i=0; i< grid.size(); i++) {
-    z = schnipsel.get(i%schnipsel.size());
-    pick = z.img;
-    PVector ppt = grid.get(i);
-    z.initialPos(ppt);
-  }
+  loadData();
+  opencv = new OpenCV(this, pic);
+  scaleName = "DSC05213.jpg";
+  bildTexte = loadTable("Texte_im_Bild.tsv", "header");
   pos = new PVector(0, 0);
   yGrid = 0;
   xGrid = 0;
@@ -55,15 +33,37 @@ void setup() {
 void draw() {
   background(pic);
 
-  for (int i=0; i< grid.size(); i++) {
-    z = schnipsel.get(i%schnipsel.size());
+  for (Zitat z : aI.zitate) {
     pushMatrix();
     z.update();
     z.move();
     z.display();
     popMatrix();
   }
+  for (PVector p : grid){
+    stroke(255);
+    strokeWeight(5);
+    point(p.x, p.y);
+  }
 }
+
+void loadData() {
+  if (computer.equals("iMac")) {
+    pathSingle = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/SingleZitate/";
+    pathSkalen = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Skalen/";
+    pathSites = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Orte/";
+  } else {
+    pathSingle = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/SingleZitate/";
+    pathSkalen = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/Skalen/";
+    pathSites = "Images/Orte/";
+  }
+  bildTexte = loadTable("Texte_im_Bild.tsv", "header");
+  scaleName = "DSC00513.JPG";
+  pic = loadImage(pathSkalen + scaleName);
+  pic.resize(width, height);
+  aI = new AugmentedImage(i, pic, scaleName);
+  }
+
 
 void makeGrid(int resolution) {
   grid = new ArrayList<PVector>();
@@ -83,10 +83,10 @@ void makeGrid(int resolution) {
 
 void mousePressed() {
   for (int i=0; i< grid.size(); i++) {
-    AugmentedImage aI = schnipsel.get(i%schnipsel.size());
-    aI.clicked(mouseX, mouseY);
+    Zitat z = aI.zitate.get(i);
+    z.clicked(mouseX, mouseY);
     PVector wind = new PVector(-1, 0);
-    aI.applyForce(wind);
+    z.applyForce(wind);
   }
 }
 
