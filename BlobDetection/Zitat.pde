@@ -4,12 +4,11 @@ class Zitat { //<>//
   int index;
   ArrayList<PVector> outLine, points;
   ArrayList<Edge> edges;
-  // ArrayList<Line> lines;
   java.awt.Rectangle box;
   Contour contour, hull;
   PGraphics surface;
   String content, sIndex, fileName;
-  PVector firstPos, baseLine, vertLine;
+  PVector firstPos, secondPos, baseLine, straight;
 
   Zitat(int index, Contour contour) {
     this.index = index; 
@@ -18,6 +17,7 @@ class Zitat { //<>//
     makeEdges();
     this.surface = createGraphics(box.width, box.height);
     this.hull = this.contour.getConvexHull();
+    straight = new PVector(300, 0); 
     calcAngles();
     tableOps();
     // fillSurf();
@@ -43,45 +43,11 @@ class Zitat { //<>//
         String tableEdges = join(ecken, ", ");
         row.setString("Eckpunkte_yxmin_yx_max", tableEdges);
         row.setString("angle_deg", str(degrees(this.angle)));
-        //println("row " + row.getString("Eckpunkte_yxmin_yx_max"));
-        //println("angle " + degrees(this.angle));
+    
       }
     }
     saveTable(bildTexte, "data/newBildTexte.tsv");
   }
-
-  //void fillSurface(PImage pic) {
-
-  //  this.pic_crop = pic; 
-  //  this.pic_crop.loadPixels(); 
-  //  this.surface.beginDraw(); 
-  //  // this.surface.background(120,150);
-  //  this.surface.loadPixels(); 
-  //  // all pixels in the box are checked if they are inside the contour
-  //  for (int x= this.box.x; x < this.box.x + this.box.width; x++) {
-  //    println("rendered   " + (x -this.box.x)  + "   remaining " + ((this.box.x + this.box.width) -x) + " spalten"); 
-  //    for  (int y= this.box.y; y< this.box.y + this.box.height; y++) {
-  //      int loc = (x - this.box.x) + (y - this.box.y) * this.box.width; 
-  //      if (this.contour.containsPoint(x, y)) {
-  //        points.add(new PVector(x, y));
-  //        // println("x   " + x  + "   y   " + y + "  color  " +  pic.get((x - this.box.x),(y - this.box.y)));
-  //        //println("points: " + contour.getPoints().get((y - this.box.y)) + " y  " + (y - this.box.y));
-  //        // this.surface.background(100, 100, 0);
-  //        // arraycopy() schneller?
-
-  //        this.surface.pixels[loc] = this.pic_crop.pixels[loc];
-  //      }
-  //      this.surface.updatePixels();
-  //    }
-  //  }
-
-  //  this.surface.endDraw(); 
-  //  pic_crop = this.surface.get(); 
-  //  pic_crop.save(pathSingle + fileName); 
-  //  schnipsel.add(pic_crop);
-  //}
-  //void makePoints() {
-  //}
 
   void fillSurf() {
     points = new ArrayList<PVector>();
@@ -93,25 +59,25 @@ class Zitat { //<>//
         }
       }
     }
-      pic.loadPixels();
-      this.surface.beginDraw();
-      this.surface.loadPixels();
-      for (PVector p : points) {
-        //println("point x  " + p.x + ", point y  " + p.y);
-        // println("copying  " + i + " from  " +  points.size());
-        int loc = int(p.x) + (int(p.y) * pic.width);
-        int surfX = int(p.x) - this.box.x;
-        int surfY = int(p.y) - this.box.y;
-        // println("surfx " + surfX + ", surf y  " + surfY);
+    pic.loadPixels();
+    this.surface.beginDraw();
+    this.surface.loadPixels();
+    for (PVector p : points) {
+      //println("point x  " + p.x + ", point y  " + p.y);
+      // println("copying  " + i + " from  " +  points.size());
+      int loc = int(p.x) + (int(p.y) * pic.width);
+      int surfX = int(p.x) - this.box.x;
+      int surfY = int(p.y) - this.box.y;
+      // println("surfx " + surfX + ", surf y  " + surfY);
 
-        int locSurf = surfX + (surfY * this.surface.width);
-        this.surface.pixels[locSurf] = pic.pixels[loc];
-      }
-      this.surface.updatePixels();
-      this.surface.endDraw();
-      pic_crop = this.surface.get(); 
-      pic_crop.save(pathSingle + fileName); 
-      schnipsel.add(pic_crop);
+      int locSurf = surfX + (surfY * this.surface.width);
+      this.surface.pixels[locSurf] = pic.pixels[loc];
+    }
+    this.surface.updatePixels();
+    this.surface.endDraw();
+    pic_crop = this.surface.get(); 
+    pic_crop.save(pathSingle + fileName); 
+    schnipsel.add(pic_crop);
   }
 
   void makeEdges() {
@@ -150,38 +116,45 @@ class Zitat { //<>//
         }
       }
     }
-
     this.firstPos = edges.get(1).point.copy();
-    // versuch, eine Surface in Form der Contour zu machen
-    //int w = int(dist(edges.get(0).point.x, edges.get(0).point.y, edges.get(2).point.x, edges.get(2).point.y));
-    //int h = int(dist(edges.get(0).point.x, edges.get(0).point.y, edges.get(1).point.x, edges.get(1).point.y));
-    //this.surface = createGraphics(w,h);
   }
+
   void calcAngles() {
-    PVector straight = new PVector(10, 0); 
-    if (this.firstPos.x < width/2) {
+    //float[] magnitudes = new float[4];
+    //Edge previous = edges.get(2);
+    //PVector prev = previous.point.copy();
+    //for (int i = 3; i>=0; i--) {
+    //  Edge e = edges.get(i);
+    //  PVector mag = PVector.sub(prev, e.point);
+    //  magnitudes[i] = mag.mag();
+    //  if (i > 0) {
+    //    prev = edges.get(i-1).point.copy();
+    //  } else {
+    //    prev = edges.get(3).point.copy();
+    //  }
+    //  println(" i   " + i  + "    edge name   " + e.name + " edge  " + e.point + " previous   " + previous.name +  " mag   " + mag.mag());
+    //}
+    //PVector y_min = edges.get(0).point;
+    //PVector y_max = edges.get(3).point;
+
+
+    if (this.firstPos.x < pic.width/2) {
       // y_max is second point
-      PVector secondPoint = edges.get(2).point; 
+      secondPos = edges.get(2).point; 
       // lower line of zitat
-      // was passiert hier mit der ersten und zweiten Edge?
-      baseLine = PVector.sub(secondPoint, this.firstPos); 
-      PVector thirdPoint = edges.get(0).point; 
-      vertLine = PVector.sub(thirdPoint, this.firstPos); 
-      this.angle = PVector.angleBetween(straight, baseLine); 
+      baseLine = PVector.sub(secondPos, this.firstPos); 
+      this.angle = - PVector.angleBetween(straight, baseLine); 
       this.evenAngle = - this.angle;
     } else {
-
       //y_min is second Point
-      PVector secondPoint = edges.get(3).point; 
+      secondPos = edges.get(0).point; 
       // upper line of zitat
-      baseLine = PVector.sub(secondPoint, this.firstPos); 
+      baseLine = PVector.sub(secondPos, this.firstPos); 
       this.angle = PVector.angleBetween(baseLine, straight); 
       this.evenAngle = this.angle; 
-      PVector thirdPoint = edges.get(2).point; 
-      vertLine = PVector.sub(thirdPoint, this.firstPos); 
-      // zitat ist gedreht, daher mus firstPos höher liegen, ergo mit der box höhe subtrahiert werden
+      ;
     }
-    // println("angle   "+ degrees(this.angle) + "   " + fileName + index + ".png");
+    println(" index  "  + index + "   angle   " + degrees(this.angle));
   }
 }
 

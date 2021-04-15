@@ -41,10 +41,9 @@ class Zitat {
   }
 
   void update() {
-    float gridX = grid.get(this.index % grid.size()).x;
-    float gridY = grid.get(this.index % grid.size()).y;
 
-    PVector mouse = new PVector(gridX, gridY);
+
+    PVector mouse = new PVector(mouseX, mouseY);
     mouse.sub(this.position);
     mouse.setMag(1);
     this.acceleration = mouse;
@@ -56,8 +55,10 @@ class Zitat {
 
   void display() {
     if (this.clicked) {
-      translate(20, 20);
-      rotate(- radians(this.angle));
+      float gridX = grid.get(this.index % grid.size()).x;
+      float gridY = grid.get(this.index % grid.size()).y;
+      translate(gridX, gridY);
+      rotate(-radians(this.angle));
       // println("name   " + this.zitat + " pos  " + grid.get(0).x + "  ,  " + grid.get(0).y);
     } else {
       translate(this.position.x, this.position.y);

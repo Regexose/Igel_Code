@@ -86,7 +86,7 @@ void mousePressed() {
     Zitat z = aI.zitate.get(i);
     z.clicked(mouseX, mouseY);
     PVector wind = new PVector(-1, 0);
-    z.applyForce(wind);
+    //z.applyForce(wind);
   }
 }
 

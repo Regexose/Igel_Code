@@ -47,12 +47,42 @@ void draw() {
     pushMatrix();
     fill(0, 255, 0, 100);
     scale(scaleVal);
+    for (Edge e : z.edges) {
+      stroke(e.col);
+      strokeWeight(30);
+      point(e.point.x, e.point.y);
+    }
     // translate(-z.box.width, -z.box.height);
-    z.contour.draw();
+    // z.contour.draw();
+    stroke(0, 255, 255);
+    strokeWeight(10);
+    point(z.firstPos.x, z.firstPos.y);
+
+    point(z.secondPos.x, z.secondPos.y);
+    PVector lineCoord = PVector.add(z.firstPos, z.baseLine);
+    PVector straightCoord = PVector.add(z.firstPos, z.straight);
+    line(z.firstPos.x, z.firstPos.y, lineCoord.x, lineCoord.y);
+
+    stroke(255, 255, 0);
+    strokeWeight(10);
+    //straight Line
+    line(z.firstPos.x, z.firstPos.y, straightCoord.x, straightCoord.y);
+    translate(z.firstPos.x, z.firstPos.y);
+       rotate(z.angle);
+    stroke(0, 0, 255);
+    strokeWeight(15);
+    PVector newBaseline = PVector.add(new PVector(0,0), z.baseLine);
+
+    // rotated baseLine
+    line(0, 0, newBaseline.x, newBaseline.y);
+    // text(z.angle, z.firstPos.x, z.firstPos.y);
     popMatrix();
-    fill(255, 0, 0, 100);
+    stroke(255, 0, 0, 100);
+    strokeWeight(1);
+    line(pic.width/2 * scaleVal, 0, pic.width/2* scaleVal, pic.height);
     rect(xOff, yOff, 20, 20);
     fill(255);
+    textSize(12);
     text(z.index, xOff, yOff);
   }
 }
