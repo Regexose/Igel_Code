@@ -6,7 +6,7 @@ import java.awt.Rectangle;
 import java.util.Random;
 // more directory stuff: https://processing.org/examples/directorylist.html
 import java.util.Timer;
-import java.util.TimerTask;
+import java.util.TimerTask;x
 // timer tutorial: https://forum.processing.org/two/discussion/1725/millis-and-timer
 final Timer t = new Timer();
 import ddf.minim.analysis.FFT;
@@ -28,6 +28,7 @@ File[] files;
 Table zitate, bildTexte, durationMap;
 int  beatNumber, rScale, globalCounter, newglobalCounter, startTime, elapsedTime;
 String currentBeat, currentScaleName, scaleType, audioPath, message;
+String pathSingle, pathSkalen, pathSites, computer, blobName;
 String[] areaNames;
 HashMap<String, Scale> scaleMap = new HashMap<String, Scale>();
 PFont Arial;
