@@ -13,8 +13,7 @@ import java.util.Map;
 
 OpenCV opencv;
 PImage pic, pic_crop, pic1, pic2, pic3;
-ArrayList<Contour> allBlobs;
-ArrayList<Contour> bigBlobs;
+ArrayList<Contour> allBlobs, bigBlobs;
 ArrayList<Zitat> zitatList;
 ArrayList<PImage> schnipsel;
 Table bildTexte;
@@ -52,8 +51,7 @@ void draw() {
       strokeWeight(30);
       point(e.point.x, e.point.y);
     }
-    // translate(-z.box.width, -z.box.height);
-    // z.contour.draw();
+    z.contour.draw();
     stroke(0, 255, 255);
     strokeWeight(10);
     point(z.firstPos.x, z.firstPos.y);
@@ -117,11 +115,6 @@ void makeBlobs() {
       // crop pic to zitat.box
       Rectangle box = contour.getBoundingBox();
       pic_crop = pic.get(box.x, box.y, box.width, box.height);
-
-      // new openCV with cropped Pic to find its lines
-      // OpenCV picCrop = new OpenCV(this, pic_crop);
-      // zitat.calcAngles();
-      // zitat.fillSurface(pic_crop);
       zitatList.add(zitat);
       bigBlobs.add(contour);
       i ++;

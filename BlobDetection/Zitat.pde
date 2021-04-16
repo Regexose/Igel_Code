@@ -43,7 +43,7 @@ class Zitat { //<>//
         String tableEdges = join(ecken, ", ");
         row.setString("Eckpunkte_yxmin_yx_max", tableEdges);
         row.setString("angle_deg", str(degrees(this.angle)));
-    
+        row.setInt("numPoints", this.contour.numPoints());
       }
     }
     saveTable(bildTexte, "data/newBildTexte.tsv");

@@ -1,23 +1,24 @@
 class Zitat {
   PImage img;
   IntList coords;
-  float angle, evenAngle, mass, scale;
+  float angle, evenAngle, scale, gridX, gridY;
   int index, w, h;
   PGraphics surface;
   String zitat, fileName;
+  Contour contour;
   PVector firstPos, position, velocity, acceleration, center;
   boolean clicked = false;
   color col;
 
-  Zitat(int index, String _z, PImage _img, float _angle, IntList _c) {
+  Zitat(int index, String _z, PImage _img, float _angle, IntList _c, Contour _contour) {
     this.index = index; 
     this.zitat = _z;
     this.img = _img;
     this.angle = _angle;
     this.coords = _c;
+    this.contour = _contour;
     this.velocity = new PVector(0, 0);
     this.acceleration = new PVector (0, 0);
-    this.mass = 30;
     this.scale = 0.25;
     this.w = int(img.width * this.scale);
     this.h = int(img.height * this.scale);
@@ -41,31 +42,49 @@ class Zitat {
   }
 
   void update() {
-
-
     PVector mouse = new PVector(mouseX, mouseY);
     mouse.sub(this.position);
     mouse.setMag(1);
     this.acceleration = mouse;
     this.velocity.add(this.acceleration);
     this.velocity.limit(10);
-    this.position.add(this.velocity);
+    // this.position.add(this.velocity);
     this.acceleration.mult(0);
   }
 
   void display() {
+    layer1.beginDraw();
+    layer1.pushMatrix();
     if (this.clicked) {
-      float gridX = grid.get(this.index % grid.size()).x;
-      float gridY = grid.get(this.index % grid.size()).y;
-      translate(gridX, gridY);
-      rotate(-radians(this.angle));
-      // println("name   " + this.zitat + " pos  " + grid.get(0).x + "  ,  " + grid.get(0).y);
+      this.position = this.firstPos.copy();
+      layer1.translate(this.firstPos.x, this.firstPos.y);
+      layer1.tint(0, 255, 0, 125);
     } else {
-      translate(this.position.x, this.position.y);
-      noTint();
+      layer1.noTint();
+      gridX = grid.get(this.index % grid.size()).x;
+      gridY = grid.get(this.index % grid.size()).y;
+      this.position = new PVector(gridX, gridY);
+      layer1.translate(gridX, gridY);
+      layer1.imageMode(CORNER);
+      layer1.rotate(radians(this.angle));
+      //println("name   " + this.zitat + " pos  " + grid.get(0).x + "  ,  " + grid.get(0).y);
     }
+    layer1.scale(this.scale);
+    layer1.image(this.img, 0, 0);
+    layer1.popMatrix();
+    layer1.endDraw();
+  }
+
+  void displayContour() {
+    float cX = map(gridX, 0, width, 0, pic.width);
+    float cY = map(gridY, 0, height, 0, pic.height);   
+    pushMatrix();
+    translate(gridX, gridY);
     scale(this.scale);
-    image(this.img, 0, 0);
+    fill(100, 255, 0, 122);
+    rotate(radians(this.angle));
+    this.contour.draw();
+    popMatrix();
   }
 
   void clicked(float x, float y) {

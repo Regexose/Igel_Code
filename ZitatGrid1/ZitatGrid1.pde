@@ -5,9 +5,10 @@ int i, xGrid, yGrid;
 AugmentedImage aI;
 float s, angle, widthOffset, heightOffset;
 ArrayList<PVector>  grid;
+ArrayList<Contour> currentContours;
 PVector pos;
 PImage pic;
-AugmentedImage z;
+PGraphics layer1;
 Table bildTexte;
 String scaleName;
 int z_idx;
@@ -15,32 +16,39 @@ boolean setOff= false;
 String pathSingle, pathSkalen, pathSites, computer, blobName;
 
 void setup() {
-  size(1200, 900);
+  size(1500, 1000);
+  layer1 = createGraphics(width, height);
   computer = "iMac";
   makeGrid(5);
   loadData();
-  opencv = new OpenCV(this, pic);
   scaleName = "DSC05213.jpg";
-  bildTexte = loadTable("Texte_im_Bild.tsv", "header");
   pos = new PVector(0, 0);
   yGrid = 0;
   xGrid = 0;
   s = 0.25;
   i = 1;
   angle = 0;
+  frameRate(25);
 }
 
 void draw() {
   background(pic);
 
-  for (Zitat z : aI.zitate) {
-    pushMatrix();
+  for (int i=0; i< aI.zitate.size(); i++) {
+    Zitat z = aI.zitate.get(i);
     z.update();
     z.move();
     z.display();
-    popMatrix();
   }
-  for (PVector p : grid){
+  if (frameCount%50 ==0) {
+    opencv = new OpenCV(this, layer1.get());
+    opencv.threshold(100);
+    currentContours = opencv.findContours();
+    aI.blobs = opencv.findContours();
+  }
+  image(layer1, 0, 0);
+
+  for (PVector p : grid) {
     stroke(255);
     strokeWeight(5);
     point(p.x, p.y);
@@ -57,12 +65,14 @@ void loadData() {
     pathSkalen = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/Skalen/";
     pathSites = "Images/Orte/";
   }
-  bildTexte = loadTable("Texte_im_Bild.tsv", "header");
+  // bildTexte = loadTable("Texte_im_Bild.tsv", "header");
+  bildTexte = loadTable("newBildTexte.tsv", "header");
   scaleName = "DSC00513.JPG";
   pic = loadImage(pathSkalen + scaleName);
+  opencv = new OpenCV(this, pic);
   pic.resize(width, height);
-  aI = new AugmentedImage(i, pic, scaleName);
-  }
+  aI = new AugmentedImage(i, pic, scaleName, opencv);
+}
 
 
 void makeGrid(int resolution) {
@@ -81,11 +91,33 @@ void makeGrid(int resolution) {
   }
 }
 
+void newOpenCV() {
+  for (Contour contour : currentContours) {
+    // println("c num   " + contour.numPoints());
+    contour = contour.getPolygonApproximation();
+    layer1.beginDraw();
+    layer1.fill(255, 0, 200);
+    layer1.beginShape();
+    for (PVector p : contour.getPoints()) {
+      layer1.vertex(p.x, p.y);
+    }
+    layer1.endShape(CLOSE);
+    layer1.endDraw();
+  }
+}
+
 void mousePressed() {
+  for (Contour c : currentContours) {
+    PVector mouse = new PVector(mouseX, mouseY);
+    PVector cPos = new PVector();
+    if (c.containsPoint(int(mouse.x), int(mouse.y))) {
+      
+    }
+  }
   for (int i=0; i< grid.size(); i++) {
     Zitat z = aI.zitate.get(i);
     z.clicked(mouseX, mouseY);
-    PVector wind = new PVector(-1, 0);
+    //PVector wind = new PVector(-1, 0);
     //z.applyForce(wind);
   }
 }
