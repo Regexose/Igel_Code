@@ -25,6 +25,7 @@ class AugmentedImage {
     loadZitate();
   }
   void loadZitate() {
+    String iStr = "";
     for (TableRow row : bildTexte.rows()) {
       String bildName = row.getString("BildName");
       IntList coords = new IntList();
@@ -33,7 +34,11 @@ class AugmentedImage {
         if (row.getString("png_name").length() != 0) {
           String blobName = row.getString("png_name");
           // println("blabname   " + blobName);
-          String iStr = blobName.substring(10, 12);
+          if (blobName.length() > 3) {
+            iStr = blobName.substring(10, 12);
+          } else {
+            iStr = blobName; // bei Zitaten, die schon freigestellt wurden
+          }
           String ecken = row.getString("Eckpunkte_yxmin_yx_max");
           for (String c : ecken.split(",")) {
             coords.append(int(c));
@@ -44,6 +49,7 @@ class AugmentedImage {
           // singleContour = singleContour.getPolygonApproximation();
           int i = int(iStr);
         }
+        println("zitat   " + zitat + "  coords   " + coords);
         PImage img = createImage(200, 200, RGB);
         Zitat z = new Zitat(1000, zitat, img, 0, coords);
         // z.initialPos(ppt);

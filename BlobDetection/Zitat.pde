@@ -25,27 +25,36 @@ class Zitat { //<>// //<>// //<>//
   }
 
   void tableOps() {
+    /*es empfiehlt sich, bei einer neuen Skale eine neue tsv zu speichern und die neuen wert manuell zu übertragen
+    sonst überschreibt er alle früheren werte */
     sIndex = str(this.index);
-    if (this.index <10) {
+
+    fileName =  "st007_Blob" + sIndex + ".png";
+    // fileName = sIndex; // für den Fall, dass es schon pngs gibt und man tableops braucht
+
+    if (fileName.length() > 3 && this.index <10) {
       sIndex = "0" + this.index;
     }
-    // fileName =  "st007_Blob" + sIndex + ".png";
-    fileName = sIndex; // für den Fall, dass es schon pngs gibt und man tableops braucht
+    fileName =  "st007_Blob" + sIndex + ".png";
     String[] ecken = new String[4];
     for (TableRow row : bildTexte.rows()) {
-      if (row.getString("png_name").equals(fileName)) {
-        for (int a=0; a<edges.size(); a++) {
-          int x = int(edges.get(a).point.x);
-          int y = int(edges.get(a).point.y);
-          String ecke = str(x) + ", " + str(y);
-          ecken[a] = ecke;
+      if (row.getString("BildName").equals(imageName)) {
+        if (row.getString("png_name").equals(fileName)) {
+          String zitat = row.getString("Zitat");
+          println("image name   " + row.getString("BildName") + "  zitat  " + zitat + "  blobName  " + fileName);
+          for (int a=0; a<edges.size(); a++) {
+            int x = int(edges.get(a).point.x);
+            int y = int(edges.get(a).point.y);
+            String ecke = str(x) + ", " + str(y);
+            ecken[a] = ecke;
+          }
+          // print("ecken" + ecken); 
+          String tableEdges = join(ecken, ", ");
+          row.setString("Eckpunkte_yxmin_yx_max", tableEdges);
+          row.setString("angle_deg", str(degrees(this.angle)));
+          row.setInt("numPoints", this.contour.numPoints());
         }
-        // print("ecken" + ecken); 
-        String tableEdges = join(ecken, ", ");
-        row.setString("Eckpunkte_yxmin_yx_max", tableEdges);
-        row.setString("angle_deg", str(degrees(this.angle)));
-        row.setInt("numPoints", this.contour.numPoints());
-      }
+      } 
     }
     saveTable(bildTexte, "data/newBildTexte.tsv");
   }

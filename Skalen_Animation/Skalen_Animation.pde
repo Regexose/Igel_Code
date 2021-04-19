@@ -1,4 +1,4 @@
-import java.util.ArrayList; //<>//
+import java.util.ArrayList; //<>// //<>//
 import java.io.File;
 import java.util.List;
 import org.opencv.core.Point;
@@ -12,7 +12,7 @@ import gab.opencv.*;
 
 
 OpenCV opencv;
-boolean hasFinished, loading;
+boolean hasFinished, loading, showZ;
 final Timer t = new Timer();
 ScaleArray scales;
 AugmentedImage aI;
@@ -66,7 +66,7 @@ void loadData() {
     pathSites = "Images/Orte/";
   }
   // bildTexte = loadTable("Texte_im_Bild.tsv", "header");
-  bildTexte = loadTable("SkalenTexte.tsv", "header");
+  bildTexte = loadTable("newBildTexte.tsv", "header");
   scales = new ScaleArray("first", pathSkalen);
 }
 
@@ -89,6 +89,11 @@ void selectImage() {
 
   if (! keyPressed) {
     aI.position.add(moveX, moveY);
+  }
+  if (showZ) {
+    for (Zitat z : aI.zitate) {
+      z.display();
+    }
   }
   fill(255, 0, 0);
   aI.display(); 
@@ -114,13 +119,15 @@ void keyReleased() {
   } else {
     if (key == 'n') {
       picIndex ++;
-    }  else if (key == ' ') {
+    } else if (key == ' ') {
       moveX = 0;
       moveY = 0;
     }
     if (key == 's') {
       aI.scaleFactor += 0.2;
-      
+    }
+    if (key == 'z') {
+      showZ = !showZ;
     }
   }
 }

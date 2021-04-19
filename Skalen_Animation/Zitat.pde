@@ -17,6 +17,7 @@ class Zitat {
     this.img = _img;
     this.angle = _angle;
     this.coords = _c;
+    this.position = new PVector (_c.get(0), _c.get(1));
     // this.contour = _contour;  // contours später definieren
     // this.contourCoords = this.contour.pointMat.toList();
     this.velocity = new PVector(0, 0);
@@ -25,7 +26,7 @@ class Zitat {
     this.w = int(img.width * this.scale);
     this.h = int(img.height * this.scale);
     this.col = color(0, 255, 0, 200);
-    //println("created Zitat " + _z);
+    // println("created Zitat " + _z);
   }
 
   void initialPos (PVector vec) {

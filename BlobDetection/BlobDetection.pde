@@ -20,7 +20,7 @@ Table bildTexte;
 Zitat zitatNow;
 float noiseT = 0;
 float xOff, yOff, scaleVal;
-String pathSingle, pathSkalen, pathSites, computer;
+String pathSingle, pathSkalen, pathSites, computer, imageName;
 PFont font;
 PGraphics surface;
 boolean drawGrid = false;
@@ -96,7 +96,8 @@ void loadData() {
     pathSites = "Images/Orte/";
   }
   bildTexte = loadTable("SkalenTexte.tsv", "header");
-  pic3 = loadImage(pathSkalen + "DSC00512.JPG");
+  imageName = "DSC00513.JPG";
+  pic3 = loadImage(pathSkalen + imageName);
   pic = pic3;
 }
 
