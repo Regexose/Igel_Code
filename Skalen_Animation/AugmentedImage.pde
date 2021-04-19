@@ -1,16 +1,22 @@
 class AugmentedImage {
   String type, name;
   PImage image;
-  int index, weight, counter;
+  PVector position;
+  int index, w, h, weight, counter;
   ArrayList<Contour> contours;
   ArrayList<Zitat> zitate;
   OpenCV ocv;
   Contour singleContour;
+  float scaleFactor;
 
   AugmentedImage(String name, PImage image, int index) {
     this.name = name;
     this.image = image;
+    w = width;
+    h = height;
     this.index = index;
+    position = new PVector (0, 0);
+    scaleFactor = 1.0;
     this.weight = 20;
     this.counter = 0;
     this.contours = makeContours(name, image);
@@ -26,7 +32,7 @@ class AugmentedImage {
         String zitat = row.getString("Zitat");
         if (row.getString("png_name").length() != 0) {
           String blobName = row.getString("png_name");
-          println("blabname   " + blobName);
+          // println("blabname   " + blobName);
           String iStr = blobName.substring(10, 12);
           String ecken = row.getString("Eckpunkte_yxmin_yx_max");
           for (String c : ecken.split(",")) {
@@ -37,7 +43,6 @@ class AugmentedImage {
           findContour(numPoints);
           // singleContour = singleContour.getPolygonApproximation();
           int i = int(iStr);
-          
         }
         PImage img = createImage(200, 200, RGB);
         Zitat z = new Zitat(1000, zitat, img, 0, coords);
@@ -45,6 +50,24 @@ class AugmentedImage {
         zitate.add(z);
       }
     }
+  }
+
+  void resizeImage(float factor) {
+    // check hier https://forum.processing.org/two/discussion/1364/constraining-an-image-while-panning-and-zooming
+    //float newWidth = map(w, 0, this.image.width, position.x, this.image.width/factor); 
+    //float newHeight = map(h, 0, this.image.height, position.y, this.image.height/factor); 
+    //this.image = this.image.get(int(position.x), int(position.y), int(newWidth), int(newHeight));
+    // this.image.resize(int(factor), int(factor));
+    println("image resized " + this.image.width + " ,"  + this.image.height);
+  }
+
+  void display() {
+    layer1.beginDraw();
+    layer1.background(220, 0, 200);
+    layer1.translate(position.x, position.y);
+    layer1.scale(scaleFactor, scaleFactor);
+    layer1.image(this.image, 0, 0, layer1.width, layer1.height);
+    layer1.endDraw();
   }
 
   void findContour(int nP) {

@@ -1,4 +1,4 @@
-class ScaleArray { //<>//
+class ScaleArray {
   ArrayList<AugmentedImage> scaleArray;
   PGraphics surface;
   AugmentedImage aI;

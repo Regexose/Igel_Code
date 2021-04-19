@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.ArrayList; //<>//
 import java.io.File;
 import java.util.List;
 import org.opencv.core.Point;
@@ -12,20 +12,20 @@ import gab.opencv.*;
 
 
 OpenCV opencv;
-
 boolean hasFinished, loading;
 final Timer t = new Timer();
 ScaleArray scales;
+AugmentedImage aI;
 File folder;
 File[] files;
 Table bildTexte;
 String pathSingle, pathSkalen, pathSites, computer, currentScaleName;
 String[] areaNames, fileNames;
-int startTime;
+int startTime, picIndex;
 PFont font;
 PImage dst;
 PGraphics loadScreen, layer1;
-float factor, loadStatus, messageX, messageY, messageSize;
+float loadStatus, messageX, messageY, messageSize, moveX, moveY;
 PShape s;
 
 void setup() {
@@ -37,7 +37,8 @@ void setup() {
   font = createFont("Courier", 16, true);
   // loading = true;
   loadStatus = 0.0;
-  currentScaleName = "Klopf";
+  currentScaleName = "";
+  picIndex = 0;
   frameRate(20);
   startTime = millis();
 }
@@ -49,7 +50,7 @@ void draw() {
     showLoadScreen();
     image(loadScreen, 0, height *7/8);
   }
-  rect(mouseX, mouseY, 40, 40);
+  // rect(mouseX, mouseY, 40, 40);
 }
 
 void loadData() {
@@ -57,7 +58,7 @@ void loadData() {
   loading = true;
   if (computer.equals("iMac")) {
     pathSingle = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/SingleZitate/";
-    pathSkalen = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Skalen/";
+    pathSkalen = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Skalen2/";
     pathSites = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Orte/";
   } else {
     pathSingle = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/SingleZitate/";
@@ -84,11 +85,45 @@ void showLoadScreen() {
 void selectImage() {
   // println("beatNumber: " + beatNumber + "   rythm size:  " + newRythms.get(rScale).size() + "   rhythm segment: " +newRythms.get(rScale).get(beatNumber) );
   //createScheduleTimer(1);
+  aI = scales.scaleArray.get(picIndex % scales.scaleArray.size());
+
+  if (! keyPressed) {
+    aI.position.add(moveX, moveY);
+  }
   fill(255, 0, 0);
-  image(scales.scaleArray.get(1).image, 0, 0, width, height);
-  rect(mouseX, mouseY, 40, 40);
+  aI.display(); 
+  image(layer1, 0, 0, width, height);
 }
 
+void keyReleased() {
+  if (key == CODED) {
+    if (keyCode == LEFT) {
+      moveX = 2;
+      moveY = 0;
+    } else if (keyCode == RIGHT) {
+      moveX = -2;
+      moveY = 0;
+    } else if (keyCode == UP) {
+      moveX = 0;
+      moveY = 2;
+    } else if (keyCode == DOWN) {
+      moveX = 0;
+      moveY = -2;
+    }
+    println("tvec?   " + aI.position);
+  } else {
+    if (key == 'n') {
+      picIndex ++;
+    }  else if (key == ' ') {
+      moveX = 0;
+      moveY = 0;
+    }
+    if (key == 's') {
+      aI.scaleFactor += 0.2;
+      
+    }
+  }
+}
 
 void createScheduleTimer(final float ms) {
   hasFinished = false;
