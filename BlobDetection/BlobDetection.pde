@@ -43,41 +43,41 @@ void draw() {
   for (Zitat z : zitatList) {
     xOff = map(z.firstPos.x, 0, pic.width, 0, width);
     yOff = map(z.firstPos.y, 0, pic.height, 0, height);
-    pushMatrix();
+    //pushMatrix();
     fill(0, 255, 0, 100);
-    scale(scaleVal);
-    for (Edge e : z.edges) {
-      stroke(e.col);
-      strokeWeight(30);
-      point(e.point.x, e.point.y);
-    }
-    z.contour.draw();
-    stroke(0, 255, 255);
-    strokeWeight(10);
-    point(z.firstPos.x, z.firstPos.y);
+    //scale(scaleVal);
+    //for (Edge e : z.edges) {
+    //  stroke(e.col);
+    //  strokeWeight(30);
+    //  point(e.point.x, e.point.y);
+    //}
+    //z.contour.draw();
+    //stroke(0, 255, 255);
+    //strokeWeight(10);
+    //point(z.firstPos.x, z.firstPos.y);
 
-    point(z.secondPos.x, z.secondPos.y);
-    PVector lineCoord = PVector.add(z.firstPos, z.baseLine);
-    PVector straightCoord = PVector.add(z.firstPos, z.straight);
-    line(z.firstPos.x, z.firstPos.y, lineCoord.x, lineCoord.y);
+    //point(z.secondPos.x, z.secondPos.y);
+    //PVector lineCoord = PVector.add(z.firstPos, z.baseLine);
+    //PVector straightCoord = PVector.add(z.firstPos, z.straight);
+    //line(z.firstPos.x, z.firstPos.y, lineCoord.x, lineCoord.y);
 
-    stroke(255, 255, 0);
-    strokeWeight(10);
-    //straight Line
-    line(z.firstPos.x, z.firstPos.y, straightCoord.x, straightCoord.y);
-    translate(z.firstPos.x, z.firstPos.y);
-       rotate(z.angle);
-    stroke(0, 0, 255);
-    strokeWeight(15);
-    PVector newBaseline = PVector.add(new PVector(0,0), z.baseLine);
+    //stroke(255, 255, 0);
+    //strokeWeight(10);
+    ////straight Line
+    //line(z.firstPos.x, z.firstPos.y, straightCoord.x, straightCoord.y);
+    //translate(z.firstPos.x, z.firstPos.y);
+    //   rotate(z.angle);
+    //stroke(0, 0, 255);
+    //strokeWeight(15);
+    //PVector newBaseline = PVector.add(new PVector(0,0), z.baseLine);
 
-    // rotated baseLine
-    line(0, 0, newBaseline.x, newBaseline.y);
-    // text(z.angle, z.firstPos.x, z.firstPos.y);
-    popMatrix();
-    stroke(255, 0, 0, 100);
-    strokeWeight(1);
-    line(pic.width/2 * scaleVal, 0, pic.width/2* scaleVal, pic.height);
+    //// rotated baseLine
+    //line(0, 0, newBaseline.x, newBaseline.y);
+    //// text(z.angle, z.firstPos.x, z.firstPos.y);
+    //popMatrix();
+    //stroke(255, 0, 0, 100);
+    //strokeWeight(1);
+    //line(pic.width/2 * scaleVal, 0, pic.width/2* scaleVal, pic.height);
     rect(xOff, yOff, 20, 20);
     fill(255);
     textSize(12);
@@ -95,8 +95,8 @@ void loadData() {
     pathSkalen = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/Skalen/";
     pathSites = "Images/Orte/";
   }
-  bildTexte = loadTable("BildTexte_0321.tsv", "header");
-  pic3 = loadImage(pathSkalen + "DSC00513.JPG");
+  bildTexte = loadTable("SkalenTexte.tsv", "header");
+  pic3 = loadImage(pathSkalen + "DSC00512.JPG");
   pic = pic3;
 }
 

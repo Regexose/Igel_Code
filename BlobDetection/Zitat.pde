@@ -29,7 +29,8 @@ class Zitat { //<>//
     if (this.index <10) {
       sIndex = "0" + this.index;
     }
-    fileName =  "st007_Blob" + sIndex + ".png";
+    // fileName =  "st007_Blob" + sIndex + ".png";
+    fileName = sIndex; // für den Fall, dass es schon pngs gibt und man tableops braucht
     String[] ecken = new String[4];
     for (TableRow row : bildTexte.rows()) {
       if (row.getString("png_name").equals(fileName)) {
