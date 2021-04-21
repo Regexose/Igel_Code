@@ -48,7 +48,7 @@ class ScaleArray {
     }
     println("finished loading  " + folderName);
     loading = false;
-    println("loading? " + loading);
+    // println("loading? " + loading);
     // this.loaded = true;
   }
 

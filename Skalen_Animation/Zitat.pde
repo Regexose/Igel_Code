@@ -3,37 +3,44 @@ class Zitat {
   IntList coords;
   List<Point> contourCoords;
   float angle, evenAngle, scale, gridX, gridY;
-  int index, w, h;
+  int index, parentW, parentH;
   PGraphics surface;
   String zitat, fileName;
   Contour contour;
   PVector firstPos, position, velocity, acceleration, center;
-  boolean clicked = false;
+  boolean clic = false;
   color col;
 
-  Zitat(int index, String _z, PImage _img, float _angle, IntList _c) {
+  Zitat(int index, String _z, PImage _img, String _angle, IntList _c, int _w, int _h) {
     this.index = index; 
     this.zitat = _z;
     this.img = _img;
-    this.angle = _angle;
+    this.angle = float(_angle);
     this.coords = _c;
-    this.position = new PVector (_c.get(0), _c.get(1));
+    makePositions();
     // this.contour = _contour;  // contours später definieren
     // this.contourCoords = this.contour.pointMat.toList();
     this.velocity = new PVector(0, 0);
     this.acceleration = new PVector (0, 0);
-    this.scale = 0.25;
-    this.w = int(img.width * this.scale);
-    this.h = int(img.height * this.scale);
+    this.scale = 0.2;
+    this.parentW = _w;
+    this.parentH = _h;
     this.col = color(0, 255, 0, 200);
-    // println("created Zitat " + _z);
+    // println("Zitat index   " + this.index + "  zitat  " + this.zitat  + "  angle   "  + _angle  + "   position  " + this.position);
   }
 
-  void initialPos (PVector vec) {
-    this.position = vec;
-    int xMin = this.coords.get(0);
-    int yMin = this.coords.get(1);
-    this.firstPos = new PVector(xMin, yMin);
+  void makePositions() {
+    float x1 = this.coords.get(2);
+    float y1 = this.coords.get(3);
+    float x2 = this.coords.get(0);
+    float y2 = this.coords.get(1);
+    this.firstPos = new PVector (x1, y1 );
+    //if (x1 < this.parentW) {
+    //  this.firstPos = new PVector (x1, y1 );
+    //} else {
+    //  this.firstPos = new PVector (x2, y2 );
+    //}
+    this.position = PVector.mult(this.firstPos, 0.167);
   }
 
   void applyForce(PVector force) {
@@ -41,7 +48,7 @@ class Zitat {
   }
 
   void move() {
-    this.position.add(random(-1, 1), random(-1, 1));
+    this.position.add(this.acceleration);
   }
 
   void update() {
@@ -51,29 +58,49 @@ class Zitat {
     this.acceleration = mouse;
     this.velocity.add(this.acceleration);
     this.velocity.limit(10);
-    // this.position.add(this.velocity);
+    this.position.add(this.velocity);
     this.acceleration.mult(0);
   }
 
   void display() {
-    layer1.beginDraw();
-    layer1.pushMatrix();
-    if (this.clicked) {
-      this.position = this.firstPos.copy();
-      layer1.translate(this.firstPos.x, this.firstPos.y);
-      layer1.tint(0, 255, 0, 125);
-    } else {
-      layer1.noTint();
-      layer1.translate(this.position.x, this.position.y);
-      layer1.imageMode(CORNER);
-      layer1.rotate(radians(this.angle));
-      //println("name   " + this.zitat + " pos  " + grid.get(0).x + "  ,  " + grid.get(0).y);
-    }
-    layer1.scale(this.scale);
-    layer1.image(this.img, 0, 0);
-    layer1.popMatrix();
-    layer1.endDraw();
+    // println("displaying zitat   " + this.zitat + "  at pos   " + this.position);
+    layer2.beginDraw();
+    // layer2.background(130, 100);
+    layer2.pushMatrix();
+    layer2.noTint();
+    layer2.translate(this.position.x, this.position.y);
+    layer2.imageMode(CORNER);
+    // layer2.rotate(radians(this.angle));
+    layer2.stroke(255);
+    layer2.strokeWeight(30);
+    layer2.scale(this.scale, this.scale);
+    layer2.image(this.img, 0, 0);
+    layer2.point(0, 0);
+    layer2.popMatrix();
+    layer2.endDraw();
   }
+
+  void textDisplay() {
+    layer2.beginDraw();
+    layer2.clear();
+    layer2.pushMatrix();
+    layer2.translate(this.position.x, this.position.y);
+    if (this.position.x < this.parentW) {
+      layer2.rotate(-radians(this.angle));
+    } else {
+      layer2.rotate(radians(this.angle));
+    }
+    layer2.scale(this.scale);
+    layer2.fill(200);
+    layer2.textFont(font, 12);
+    layer2.rect(0, -textAscent(), textWidth(this.zitat), textAscent() +5);
+    layer2.fill(10);
+    
+    layer2.text(this.zitat, 0, 0);
+    layer2.popMatrix();
+    layer2.endDraw();
+  }
+
 
   //void displayContour() {  
   //  printArray("coords   " + this.contourCoords);
@@ -94,15 +121,15 @@ class Zitat {
   //}
 
   void clicked(float x, float y) {
-    boolean inW = x >= this.position.x && x <=  this.position.x + this.w;
-    boolean inH = y >= this.position.y && y <=  this.position.y+ this.h;
+    boolean inW = x >= this.position.x && x <=  this.position.x + this.parentW;
+    boolean inH = y >= this.position.y && y <=  this.position.y+ this.parentH;
     // println(this.clicked);
     if (inW && inH) {
       // println("name   "  + name + "  zitat   " + zitat + "   pos   " + this.position);
       // println(" width   "  + this.w + "   height   " + this.h);
       //println("  width  " + (this.position.x+ this.w) + "  height  " + (this.position.y+ this.h) +"   x  " + x + "   y  " + y);
-      this.clicked = !this.clicked;
-      if (this.clicked) {
+      this.clic = !this.clic;
+      if (this.clic) {
         this.scale = 0.5;
       } else {
         this.scale = 0.25;

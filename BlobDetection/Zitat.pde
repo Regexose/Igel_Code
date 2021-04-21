@@ -19,7 +19,7 @@ class Zitat { //<>// //<>// //<>//
     this.hull = this.contour.getConvexHull();
     straight = new PVector(300, 0); 
     calcAngles();
-    tableOps();
+    //tableOps();
     // fillSurf();
     // pointsTest();
   }

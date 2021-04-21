@@ -1,4 +1,4 @@
-import java.util.ArrayList; //<>// //<>//
+import java.util.ArrayList; //<>// //<>// //<>//
 import java.io.File;
 import java.util.List;
 import org.opencv.core.Point;
@@ -12,7 +12,7 @@ import gab.opencv.*;
 
 
 OpenCV opencv;
-boolean hasFinished, loading, showZ;
+boolean hasFinished, loading, showZ, mFollow, stopMove;
 final Timer t = new Timer();
 ScaleArray scales;
 AugmentedImage aI;
@@ -24,18 +24,21 @@ String[] areaNames, fileNames;
 int startTime, picIndex;
 PFont font;
 PImage dst;
-PGraphics loadScreen, layer1;
+PGraphics loadScreen, layer1, layer2;
 float loadStatus, messageX, messageY, messageSize, moveX, moveY;
 PShape s;
 
 void setup() {
-  size(1000, 700);
+  size(1800, 1200);
   computer = "iMac";
   thread("loadData");
   loadScreen = createGraphics(width, height/8);
   layer1 = createGraphics(width, height);
+  layer2 = createGraphics(width, height);
+  layer2.smooth();
   font = createFont("Courier", 16, true);
-  // loading = true;
+  mFollow = false;
+  stopMove = true;
   loadStatus = 0.0;
   currentScaleName = "";
   picIndex = 0;
@@ -50,7 +53,6 @@ void draw() {
     showLoadScreen();
     image(loadScreen, 0, height *7/8);
   }
-  // rect(mouseX, mouseY, 40, 40);
 }
 
 void loadData() {
@@ -58,7 +60,7 @@ void loadData() {
   loading = true;
   if (computer.equals("iMac")) {
     pathSingle = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/SingleZitate/";
-    pathSkalen = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Skalen2/";
+    pathSkalen = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Skalen/";
     pathSites = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Orte/";
   } else {
     pathSingle = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/SingleZitate/";
@@ -83,25 +85,53 @@ void showLoadScreen() {
 }
 
 void selectImage() {
-  // println("beatNumber: " + beatNumber + "   rythm size:  " + newRythms.get(rScale).size() + "   rhythm segment: " +newRythms.get(rScale).get(beatNumber) );
-  //createScheduleTimer(1);
+  // println("picIndex  " + picIndex);
+  AugmentedImage bg = scales.scaleArray.get(2);
   aI = scales.scaleArray.get(picIndex % scales.scaleArray.size());
 
-  if (! keyPressed) {
+  if (! keyPressed && !stopMove) {
     aI.position.add(moveX, moveY);
-  }
-  if (showZ) {
+    aI.scaleFactor += 0.001;
+    
     for (Zitat z : aI.zitate) {
-      z.display();
+      z.position.add(moveX, moveY);
     }
   }
   fill(255, 0, 0);
+  bg.display();
   aI.display(); 
-  image(layer1, 0, 0, width, height);
+  image(layer1, 0, 0);
+
+  if (showZ) {
+    for (Zitat z : aI.zitate) {
+      z.display();
+      z.textDisplay();
+      image(layer2, 0, 0);
+    }
+  }
+  if (mFollow) {
+    aI.update();
+    aI.display();
+    for (Zitat z : aI.zitate) {
+      z.update();
+      z.textDisplay();
+    }
+  }
+
+  if (mousePressed) {
+    for (Zitat z : aI.zitate) {
+      z.move();
+      // z.display();
+      z.textDisplay();
+    }
+  }
+  image(layer2, 0, 0);
 }
+
 
 void keyReleased() {
   if (key == CODED) {
+    stopMove = false;
     if (keyCode == LEFT) {
       moveX = 2;
       moveY = 0;
@@ -115,19 +145,39 @@ void keyReleased() {
       moveX = 0;
       moveY = -2;
     }
-    println("tvec?   " + aI.position);
   } else {
     if (key == 'n') {
       picIndex ++;
-    } else if (key == ' ') {
       moveX = 0;
       moveY = 0;
+      aI.scaleFactor = 1.0;
     }
+    
+    if (key == ' ') {
+      stopMove = true;
+      moveX = 0;
+      moveY = 0;
+    } 
     if (key == 's') {
-      aI.scaleFactor += 0.2;
+      stopMove = false;
+      aI.scaleFactor += 0.04;
+      for (Zitat z : aI.zitate) {
+        z.scale += 0.06;
+      }
+    }
+    
+    if (key == 'a') {
+      stopMove = false;
+      aI.scaleFactor -= 0.8;
+      for (Zitat z : aI.zitate) {
+        z.scale -= 0.06;
+      }
     }
     if (key == 'z') {
       showZ = !showZ;
+    }
+    if (key == 'm') {
+      mFollow = !mFollow;
     }
   }
 }
