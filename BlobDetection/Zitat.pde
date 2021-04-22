@@ -7,7 +7,7 @@ class Zitat { //<>//
   java.awt.Rectangle box;
   Contour contour, hull;
   PGraphics surface;
-  String content, sIndex, fileName;
+  String content, sIndex, pngName;
   PVector firstPos, secondPos, baseLine, straight;
 
   Zitat(int index, Contour contour) {
@@ -19,36 +19,12 @@ class Zitat { //<>//
     this.hull = this.contour.getConvexHull();
     straight = new PVector(300, 0); 
     calcAngles();
-    tableOps();
+
     // fillSurf();
     // pointsTest();
   }
 
-  void tableOps() {
-    sIndex = str(this.index);
-    if (this.index <10) {
-      sIndex = "0" + this.index;
-    }
-    // fileName =  "st007_Blob" + sIndex + ".png";
-    fileName = sIndex; // für den Fall, dass es schon pngs gibt und man tableops braucht
-    String[] ecken = new String[4];
-    for (TableRow row : bildTexte.rows()) {
-      if (row.getString("png_name").equals(fileName)) {
-        for (int a=0; a<edges.size(); a++) {
-          int x = int(edges.get(a).point.x);
-          int y = int(edges.get(a).point.y);
-          String ecke = str(x) + ", " + str(y);
-          ecken[a] = ecke;
-        }
-        // print("ecken" + ecken); 
-        String tableEdges = join(ecken, ", ");
-        row.setString("Eckpunkte_yxmin_yx_max", tableEdges);
-        row.setString("angle_deg", str(degrees(this.angle)));
-        row.setInt("numPoints", this.contour.numPoints());
-      }
-    }
-    saveTable(bildTexte, "data/newBildTexte.tsv");
-  }
+  
 
   void fillSurf() {
     points = new ArrayList<PVector>();

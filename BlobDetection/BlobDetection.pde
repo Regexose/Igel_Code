@@ -1,9 +1,7 @@
 /*
 Idee einer automatischen Zitaterkennung, die 
- 1. aus einem grossen Bild allen Zitaten Koordinaten zuweist
- 2. alle Zitate freistellt und als png sichert
- 3. in einem Raster anordnet
- 4. per mouseKlick vergrößert
+ png files werden nicht mehr stacheln, sondern jpg zugeordnet. Ist sonst zu viel fuss
+ blob detection mit besser winkeln, die das spätere rekonstruieren erleichtern
  
  */
 import gab.opencv.*;
@@ -20,7 +18,7 @@ Table bildTexte;
 Zitat zitatNow;
 float noiseT = 0;
 float xOff, yOff, scaleVal;
-String pathSingle, pathSkalen, pathSites, computer;
+String pathSingle, pathSkalen, pathSites, computer, fileName;
 PFont font;
 PGraphics surface;
 boolean drawGrid = false;
@@ -36,6 +34,7 @@ void setup() {
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
   scaleVal = float(width) / float(pic.width);
+  tableOps();
 }
 
 void draw() {
@@ -95,8 +94,9 @@ void loadData() {
     pathSkalen = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/Skalen/";
     pathSites = "Images/Orte/";
   }
+  fileName = "DSC00512.JPG";
   bildTexte = loadTable("SkalenTexte.tsv", "header");
-  pic3 = loadImage(pathSkalen + "DSC00512.JPG");
+  pic3 = loadImage(pathSkalen + fileName);
   pic = pic3;
 }
 
@@ -118,6 +118,45 @@ void makeBlobs() {
       zitatList.add(zitat);
       bigBlobs.add(contour);
       i ++;
+    }
+  }
+}
+
+void tableOps() {
+
+
+  for (Zitat z : zitatList) {
+    String sIndex = str(z.index);
+    if (z.index <10) {
+      sIndex = "0" + z.index;
+    }
+    String pngName =  fileName + "_Blob" + sIndex + ".png";
+    println("pngname   " + pngName);
+    // pngName = sIndex; // für den Fall, dass es schon pngs gibt und man tableops braucht
+    String[] ecken = new String[4];
+    for (int i= bildTexte.getRowCount()-1; i >= 0; i--) {
+      TableRow row =  bildTexte.getRow(i);
+      if (!row.getString("png_name").equals(pngName) && !row.getString("BildName").equals(fileName)) {
+        println("i  " + i + " removing ort   " + row.getString("Ort")); 
+        bildTexte.removeRow(i);
+      } else if(row.getString("png_name").equals(pngName))  {
+
+        println("i  " + i + " keeping blob   " + row.getString("png_name")); 
+        for (int a=0; a< z.edges.size(); a++) {
+          int x = int(z.edges.get(a).point.x);
+          int y = int(z.edges.get(a).point.y);
+          String ecke = str(x) + ", " + str(y);
+          ecken[a] = ecke;
+        }
+        // print("ecken" + ecken); 
+        String tableEdges = join(ecken, ", ");
+        row.setString("Eckpunkte_yxmin_yx_max", tableEdges);
+        row.setString("angle_deg", str(degrees(z.angle)));
+        row.setInt("numPoints", z.contour.numPoints());
+      }
+
+
+      saveTable(bildTexte, "data/" + fileName + "_detected.tsv");
     }
   }
 }
