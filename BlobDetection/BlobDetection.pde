@@ -109,7 +109,7 @@ void loadData() {
     pathSkalen = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/Skalen/";
     pathSites = "Images/Orte/";
   }
-  fileName = "DSC00513.JPG";
+  fileName = "DSC00512.JPG";
   bildTexte = loadTable("SkalenTexte.tsv", "header");
   pic = loadImage(pathSkalen + fileName);
 }
