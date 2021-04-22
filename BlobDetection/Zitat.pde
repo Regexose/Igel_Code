@@ -1,30 +1,26 @@
 class Zitat { //<>//
-  PImage pic_crop;
-  float angle, evenAngle;
+  PImage pic_crop, contourPic;
+  float angle, lineAngle, centerAngle;
   int index;
   ArrayList<PVector> outLine, points;
   ArrayList<Edge> edges;
+  ArrayList<Line> lines;
   java.awt.Rectangle box;
-  Contour contour, hull;
-  PGraphics surface;
+  Contour contour;
+  PGraphics surface, contourSurf;
   String content, sIndex, pngName;
-  PVector firstPos, secondPos, baseLine, straight;
+  PVector firstPos, zitatPos, secondPos, baseLine, horizontal;
 
   Zitat(int index, Contour contour) {
     this.index = index; 
     this.contour = contour;
     this.box = contour.getBoundingBox();
+    this.surface = createGraphics(box.width, box.height, P2D);
+    this.contourSurf = createGraphics(box.width, box.height);
     makeEdges();
-    this.surface = createGraphics(box.width, box.height);
-    this.hull = this.contour.getConvexHull();
-    straight = new PVector(300, 0); 
-    calcAngles();
-
+    horizontal = new PVector(1, 0);
     // fillSurf();
-    // pointsTest();
   }
-
-  
 
   void fillSurf() {
     points = new ArrayList<PVector>();
@@ -93,42 +89,60 @@ class Zitat { //<>//
         }
       }
     }
-    this.firstPos = edges.get(1).point.copy();
+    // make contourPic to find lines
+    this.contourSurf.beginDraw();
+    // this.contourSurf.background(100);
+    this.contourSurf.fill(0, 0, 255);
+    this.contourSurf.beginShape();
+    for (Edge e : edges) {
+      float eX = e.point.x - this.box.x;
+      float eY = e.point.y- this.box.y;
+      //println("surf w   " + this.contourSurf.width + " eX  " + eX);
+      //println("surf h   " + this.contourSurf.height + " eY  " + eY);
+      this.contourSurf.vertex(eX, eY);
+    }
+    this.contourSurf.endShape(CLOSE);
+    this.contourSurf.endDraw();
+    this.contourPic = this.contourSurf.get();
+    // contourPics.add(this.contourPic);
+    // image(this.contourPic, width/2, height/2);
+
+    if (edges.get(1).point.x < pic.width/2) {
+      this.firstPos = edges.get(1).point.copy();
+    } else { 
+      this.firstPos = edges.get(0).point.copy();
+    }
+  }
+
+  void makeZitatPosition() {
+    float posX = 0;
+    float posY = 0;
+    if (this.firstPos.x > pic.width/2) {
+      posX = center.x + cos(this.lineAngle - HALF_PI) * scaleRadius/2 ;
+      posY = center.y +  sin(this.lineAngle - HALF_PI) * scaleRadius/2;
+    } else {
+      posX = center.x + cos(this.lineAngle + HALF_PI) * scaleRadius/2 ;
+      posY = center.y +  sin(this.lineAngle + HALF_PI) * scaleRadius/2;
+    }
+    this.zitatPos = new PVector(posX, posY);
   }
 
   void calcAngles() {
-    //float[] magnitudes = new float[4];
-    //Edge previous = edges.get(2);
-    //PVector prev = previous.point.copy();
-    //for (int i = 3; i>=0; i--) {
-    //  Edge e = edges.get(i);
-    //  PVector mag = PVector.sub(prev, e.point);
-    //  magnitudes[i] = mag.mag();
-    //  if (i > 0) {
-    //    prev = edges.get(i-1).point.copy();
-    //  } else {
-    //    prev = edges.get(3).point.copy();
-    //  }
-    //  println(" i   " + i  + "    edge name   " + e.name + " edge  " + e.point + " previous   " + previous.name +  " mag   " + mag.mag());
-    //}
-    //PVector y_min = edges.get(0).point;
-    //PVector y_max = edges.get(3).point;
-
+    this.lineAngle = (float)lines.get(0).angle;
+    println("Lineangle of  " + this.index + " =   " + this.lineAngle);
 
     if (this.firstPos.x < pic.width/2) {
       // y_max is second point
       secondPos = edges.get(2).point; 
       // lower line of zitat
       baseLine = PVector.sub(secondPos, this.firstPos); 
-      this.angle = - PVector.angleBetween(straight, baseLine); 
-      this.evenAngle = - this.angle;
+      this.angle = - PVector.angleBetween(horizontal, baseLine);
     } else {
       //y_min is second Point
       secondPos = edges.get(0).point; 
       // upper line of zitat
       baseLine = PVector.sub(secondPos, this.firstPos); 
-      this.angle = PVector.angleBetween(baseLine, straight); 
-      this.evenAngle = this.angle; 
+      this.angle = PVector.angleBetween(baseLine, horizontal); 
       ;
     }
     println(" index  "  + index + "   angle   " + degrees(this.angle));
