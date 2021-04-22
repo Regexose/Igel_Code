@@ -72,7 +72,7 @@ class AugmentedImage {
             coords.append(x);
           }
         }
-        println("zitat   " + zitat + "  angle   " + angle);
+        // println("zitat   " + zitat + "  angle   " + angle);
 
         Zitat z = new Zitat(i, zitat, img, angle, coords, this.image.width, this.image.height);
         zitate.add(z);

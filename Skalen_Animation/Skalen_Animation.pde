@@ -1,4 +1,4 @@
-import java.util.ArrayList; //<>// //<>// //<>//
+import java.util.ArrayList; //<>//
 import java.io.File;
 import java.util.List;
 import org.opencv.core.Point;
@@ -29,12 +29,12 @@ float loadStatus, messageX, messageY, messageSize, moveX, moveY;
 PShape s;
 
 void setup() {
-  size(1800, 1200);
+  size(1800, 1200, P2D);
   computer = "iMac";
   thread("loadData");
-  loadScreen = createGraphics(width, height/8);
-  layer1 = createGraphics(width, height);
-  layer2 = createGraphics(width, height);
+  loadScreen = createGraphics(width, height/12 );
+  layer1 = createGraphics(width, height, P2D);
+  layer2 = createGraphics(width, height, P2D);
   layer2.smooth();
   font = createFont("Courier", 16, true);
   mFollow = false;
@@ -51,7 +51,7 @@ void draw() {
     selectImage();
   } else {
     showLoadScreen();
-    image(loadScreen, 0, height *7/8);
+    image(loadScreen, 0, height *11/12);
   }
 }
 
@@ -91,8 +91,6 @@ void selectImage() {
 
   if (! keyPressed && !stopMove) {
     aI.position.add(moveX, moveY);
-    aI.scaleFactor += 0.001;
-    
     for (Zitat z : aI.zitate) {
       z.position.add(moveX, moveY);
     }

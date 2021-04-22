@@ -39,7 +39,7 @@ class ScaleArray {
     for (int i=0; i<fileNames.length; i++) {
       if (fileNames[i].toLowerCase().endsWith(".jpg")) {  
         PImage img = loadImage(files[i].toString());
-        println("filename " + fileNames[i]);
+       // println("filename " + fileNames[i]);
         AugmentedImage aI = new AugmentedImage(fileNames[i], img, i);
         this.scaleArray.add(aI);
         currentScaleName = fileNames[i];
