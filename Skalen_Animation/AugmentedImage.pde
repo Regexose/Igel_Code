@@ -17,19 +17,19 @@ class AugmentedImage {
     h = height;
     //println(" image width " + this.image.width + "  width   " + width + "  ratio width/image.w)   " + float(width)/float(this.image.width));
     this.index = index;
-    this.position = new PVector (0, 0);
-    scaleFactor = 1.0;
+    this.position = new PVector (-width/3, -height/2);
+    scaleFactor = 1.75;
     this.weight = 20;
     this.counter = 0;
     this.contours = makeContours(name, image);
     this.hasZitate = false;
     this.zitate = new ArrayList<Zitat>();
-      this.velocity = new PVector(0, 0);
+    this.velocity = new PVector(0, 0);
     this.acceleration = new PVector (0, 0);
     // println("countours leng " + this.contours.size());
     loadZitate();
   }
-  
+
   void loadZitate() {
     String iStr = "";
     String blobName = "";
@@ -57,8 +57,8 @@ class AugmentedImage {
             coords.append(int(c));
           }
           angle = row.getString("angle_deg");
-          
-         
+
+
           int numPoints = row.getInt("numPoints");
           findContour(numPoints);
           // singleContour = singleContour.getPolygonApproximation();
@@ -79,7 +79,7 @@ class AugmentedImage {
       }
     }
   }
-  
+
   void update() {
     PVector mouse = new PVector(mouseX, mouseY);
     mouse.sub(this.position);
@@ -89,6 +89,10 @@ class AugmentedImage {
     this.velocity.limit(10);
     this.position.add(this.velocity);
     this.acceleration.mult(0);
+  }
+
+  void rePosition(PVector newPos) {
+    this.position = newPos;
   }
 
   void display() {

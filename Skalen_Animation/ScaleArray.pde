@@ -10,11 +10,11 @@ class ScaleArray {
 
   ScaleArray(String name, String path) {
     this.name = name;
-    loadImages(path);
     this.surface = createGraphics(width, height);
     this.loaded = false;
     this.flicker = false;
     this.z_shape = createShape(RECT, 0, 0, 50, 50);
+    loadImages(path);
   }
 
   public void display() {
