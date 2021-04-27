@@ -5,9 +5,10 @@ class Zitat {
   float angle, evenAngle, scale, gridX, gridY;
   int index, parentW, parentH;
   PGraphics surface;
-  String zitat, fileName;
+  String zitat;
   Contour contour;
   PVector firstPos, position, velocity, acceleration, center;
+  Line line;
   boolean clic = false;
   color col;
 
@@ -15,18 +16,19 @@ class Zitat {
     this.index = index; 
     this.zitat = _z;
     this.img = _img;
-    this.angle = float(_angle);
+    this.angle = float(_angle.replace(',', '.'));
     this.coords = _c;
     makePositions();
     // this.contour = _contour;  // contours später definieren
     // this.contourCoords = this.contour.pointMat.toList();
+    this.line = makeLine(this.img);
     this.velocity = new PVector(0, 0);
     this.acceleration = new PVector (0, 0);
     this.scale = 0.2;
     this.parentW = _w;
     this.parentH = _h;
     this.col = color(0, 255, 0, 200);
-    // println("Zitat index   " + this.index + "  zitat  " + this.zitat  + "  angle   "  + _angle  + "   position  " + this.position);
+    //println("Zitat index   " + this.index + "  zitat  " + this.zitat  + "  angle   "  +this.angle  + "   position  " + this.position);
   }
 
   void makePositions() {
@@ -95,15 +97,17 @@ class Zitat {
     layer2.textFont(font, 12);
     layer2.rect(0, -textAscent(), textWidth(this.zitat), textAscent() +5);
     layer2.fill(10);
-    
+
     layer2.text(this.zitat, 0, 0);
     layer2.popMatrix();
     layer2.endDraw();
   }
 
 
-  //void displayContour() {  
-  //  printArray("coords   " + this.contourCoords);
+  //void contourDisplay() {  
+  //  // printArray("coords   " + this.contourCoords);
+
+  //  this.contourCoords = this.contour.pointMat.toList();
   //  layer2.beginDraw();
   //  for (Point p : this.contourCoords) {
   //    float cX = (float) p.x;
@@ -117,7 +121,6 @@ class Zitat {
   //    layer2.endShape(CLOSE);
   //  }
   //  layer2.endDraw();
-
   //}
 
   void clicked(float x, float y) {

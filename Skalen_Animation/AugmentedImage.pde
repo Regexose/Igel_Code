@@ -5,6 +5,7 @@ class AugmentedImage {
   int index, w, h, weight, counter;
   ArrayList<Contour> contours;
   ArrayList<Zitat> zitate;
+  ArrayList<Line> lines;
   OpenCV ocv;
   Contour singleContour;
   float scaleFactor;
@@ -21,7 +22,7 @@ class AugmentedImage {
     scaleFactor = 1.75;
     this.weight = 20;
     this.counter = 0;
-    this.contours = makeContours(name, image);
+    //this.contours = makeContours(name, image);
     this.hasZitate = false;
     this.zitate = new ArrayList<Zitat>();
     this.velocity = new PVector(0, 0);
@@ -56,11 +57,7 @@ class AugmentedImage {
           for (String c : ecken.split(", ")) {
             coords.append(int(c));
           }
-          angle = row.getString("angle_deg");
-
-
-          int numPoints = row.getInt("numPoints");
-          findContour(numPoints);
+          angle = row.getString("lineAngle");
           // singleContour = singleContour.getPolygonApproximation();
           i = int(iStr);
         } else {
@@ -105,11 +102,52 @@ class AugmentedImage {
     layer1.endDraw();
   }
 
-  void findContour(int nP) {
-    for (Contour c : contours) {
-      if (c.numPoints() == nP) {
-        singleContour = c;
+  void findContour(int x, int y) {
+    for (Contour c : this.contours) {
+      if (c.containsPoint(x, y)) {
+        // make contourPic to find lines
+        PImage pic = makeContourPic(c);
+        Line line = makeLine(pic);
+        float[] angles = new float[this.zitate.size()];
+        for (int i=0; i<this.zitate.size(); i++) {
+          Zitat z = this.zitate.get(i);
+          // println("z angle  " + z.angle + " lineAngle  " + nf((float)line.angle, 1, 3));
+          //float diff = abs(abs((float)line.angle) - abs(z.angle));
+          float between = (float)line.angleFrom(z.line);
+          angles[i] = abs(between);
+        }
+        for (int i=0; i<this.zitate.size(); i++) {
+          if (angles[i]== min(angles)) {
+            currentZitat = this.zitate.get(i);
+            println(" i " + i + "   Zitat found " + currentZitat.zitat + " angle "  + currentZitat.angle);
+            printArray(angles);
+          }
+        }
       }
     }
+  }
+
+  PImage makeContourPic(Contour c) {
+    Rectangle box = c.getBoundingBox();
+    PGraphics contourSurf = createGraphics(box.width, box.height);
+    c = c.getPolygonApproximation();
+    contourSurf.beginDraw();
+    // this.contourSurf.background(100);
+
+    contourSurf.beginShape();
+    contourSurf.fill(0, 0, 255);
+    for (PVector p : c.getPoints()) {
+      float pX = p.x - box.x;
+      float pY = p.y - box.y;
+      //println("surf w   " + contourSurf.width + " pX  " + pX);
+      //println("surf h   " + contourSurf.height + " pY  " + pY);
+      contourSurf.vertex(pX, pY);
+    }
+    contourSurf.endShape(CLOSE);
+    contourSurf.endDraw();
+    // println("box  " + box);
+    PImage contourPic = contourSurf.get();
+    dst = contourSurf.get();
+    return contourPic;
   }
 }

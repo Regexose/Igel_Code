@@ -11,11 +11,13 @@ import java.util.TimerTask;
 import gab.opencv.*;
 
 
-OpenCV opencv;
+OpenCV opencv, linesCV, liveCV;
 boolean hasFinished, loading, showZ, mFollow, stopMove;
 final Timer t = new Timer();
 ScaleArray scales;
 AugmentedImage aI;
+ArrayList<Contour> liveContours;
+Zitat currentZitat;
 File folder;
 File[] files;
 Table bildTexte;
@@ -44,6 +46,7 @@ void setup() {
   picIndex = 0;
   frameRate(20);
   startTime = millis();
+  dst = createImage(20, 29, RGB);
 }
 
 void draw() {
@@ -60,7 +63,7 @@ void loadData() {
   loading = true;
   if (computer.equals("iMac")) {
     pathSingle = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/SingleZitate/";
-    pathSkalen = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Skalen/";
+    pathSkalen = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Skalen2/";
     pathSites = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Orte/";
   } else {
     pathSingle = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/SingleZitate/";
@@ -68,26 +71,17 @@ void loadData() {
     pathSites = "Images/Orte/";
   }
   // bildTexte = loadTable("Texte_im_Bild.tsv", "header");
-  bildTexte = loadTable("newBildTexte.tsv", "header");
+  bildTexte = loadTable("Skalen_detected.tsv", "header");
   scales = new ScaleArray("first", pathSkalen);
 }
 
-void showLoadScreen() {
-  loadScreen.beginDraw();
-  loadScreen.background(100);
-  loadScreen.textFont(font);
-  loadScreen.textAlign(CENTER);
-  loadScreen.text("loading images..  " + currentScaleName, loadScreen.width/2, loadScreen.height/2);
-  loadScreen.strokeWeight(5);
-  loadScreen.stroke(250);
-  loadScreen.line(10, loadScreen.height - 50, 10 + loadStatus, loadScreen.height-50);
-  loadScreen.endDraw();
-}
+
 
 void selectImage() {
   // println("picIndex  " + picIndex);
   aI = scales.scaleArray.get(picIndex % scales.scaleArray.size());
-  AugmentedImage bg = scales.scaleArray.get(5);
+  // AugmentedImage bg = scales.scaleArray.get(5);
+
 
   if (! keyPressed && !stopMove) {
     aI.position.add(moveX, moveY);
@@ -96,9 +90,20 @@ void selectImage() {
     }
   }
   fill(255, 0, 0);
-  bg.display();
+  // bg.display();
   aI.display(); 
   image(layer1, 0, 0);
+  liveCV = new OpenCV(this, layer1.get());
+  liveCV.gray();
+  liveCV.threshold(80);
+  liveContours = liveCV.findContours();
+  for (int i=liveContours.size()-1;  i>=0; i--){
+    Contour c = liveContours.get(i);
+    if (c.numPoints() < 100){
+      liveContours.remove(i);
+    }
+  }
+  aI.contours = liveContours;
 
   if (showZ) {
     for (Zitat z : aI.zitate) {
@@ -115,92 +120,14 @@ void selectImage() {
       z.textDisplay();
     }
   }
-
   if (mousePressed) {
-    for (Zitat z : aI.zitate) {
-      z.move();
-      // z.display();
-      z.textDisplay();
-    }
+    aI.findContour(mouseX, mouseY);
   }
-  image(layer2, 0, 0);
+  
+  image(dst, mouseX, mouseY);
 }
 
 
-void keyReleased() {
-  int xStep = 10;
-  int yStep = 10;
-  if (key == CODED) {
-    stopMove = false;
-    if (keyCode == LEFT) {
-      moveX = xStep;
-      moveY = 0;
-    } else if (keyCode == RIGHT) {
-      moveX = -xStep;
-      moveY = 0;
-    } else if (keyCode == UP) {
-      moveX = 0;
-      moveY = yStep;
-    } else if (keyCode == DOWN) {
-      moveX = 0;
-      moveY = -yStep;
-    }
-  } else {
-    if (key == 'n') {
-      picIndex ++;
-      moveX = 0;
-      moveY = 0;
-    }
-    if (key == 'p') {
-      if (picIndex > 0) {
-        picIndex --;
-      } else {
-        picIndex = scales.scaleArray.size();
-      }
-      moveX = 0;
-      moveY = 0;
-    }
-
-    if (key == ' ') {
-      stopMove = true;
-      moveX = 0;
-      moveY = 0;
-    } 
-    if (key == 's') {
-      stopMove = false;
-      aI.scaleFactor += 0.04;
-      for (Zitat z : aI.zitate) {
-        z.scale += 0.06;
-      }
-    }
-
-    if (key == 'a') {
-      stopMove = false;
-      aI.scaleFactor -= 0.1 ;
-      for (Zitat z : aI.zitate) {
-        z.scale -= 0.06;
-      }
-    }
-    if (key == 'r') {
-      stopMove = false;
-      aI.scaleFactor = 1.0 ;
-      aI.position = new PVector(0, 0);
-    }
-
-    if (key == 'o') {
-      aI.rePosition(new PVector(-mouseX, -mouseY));
-    }
-    if (key == 'i') {
-      aI.rePosition(new PVector(-width/3, -height));
-    }
-    if (key == 'z') {
-      showZ = !showZ;
-    }
-    if (key == 'm') {
-      mFollow = !mFollow;
-    }
-  }
-}
 
 void createScheduleTimer(final float ms) {
   hasFinished = false;
@@ -213,6 +140,24 @@ void createScheduleTimer(final float ms) {
   , (long) (ms));
 }
 
+Line makeLine(PImage pic) {
+  linesCV = new OpenCV(this, pic); // thread?
+  linesCV.findCannyEdges(20, 75);
+  ArrayList<Line> lines = linesCV.findLines(100, 30, 20);
+  // println("found  " + lines.size() + "  lines");
+  float[] lineLength = new float[lines.size()];
+  int lineIndex = 0;
+  for (int i=0; i<lines.size(); i++) {
+    Line l = lines.get(i);
+    float len = PVector.sub(l.end, l.start).mag();
+    lineLength[i] = len;
+    if (len > max(lineLength)) {
+      lineIndex ++;
+    }
+  }
+  return lines.get(lineIndex);
+}
+
 ArrayList<Contour> makeContours(String name, PImage img) {
   img.resize(width, height);
   opencv = new OpenCV(this, img);
@@ -221,4 +166,16 @@ ArrayList<Contour> makeContours(String name, PImage img) {
   ArrayList<Contour> contours = opencv.findContours();
   // println("name " + name + "  contours: " + contours.size());
   return contours;
+}
+
+void showLoadScreen() {
+  loadScreen.beginDraw();
+  loadScreen.background(100);
+  loadScreen.textFont(font);
+  loadScreen.textAlign(CENTER);
+  loadScreen.text("loading images..  " + currentScaleName, loadScreen.width/2, loadScreen.height/2);
+  loadScreen.strokeWeight(5);
+  loadScreen.stroke(250);
+  loadScreen.line(10, loadScreen.height - 50, 10 + loadStatus, loadScreen.height-50);
+  loadScreen.endDraw();
 }
