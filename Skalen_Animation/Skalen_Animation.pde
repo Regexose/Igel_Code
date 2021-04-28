@@ -63,7 +63,7 @@ void loadData() {
   loading = true;
   if (computer.equals("iMac")) {
     pathSingle = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/SingleZitate/";
-    pathSkalen = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Skalen2/";
+    pathSkalen = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Skalen/";
     pathSites = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Orte/";
   } else {
     pathSingle = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/SingleZitate/";
@@ -97,9 +97,9 @@ void selectImage() {
   liveCV.gray();
   liveCV.threshold(80);
   liveContours = liveCV.findContours();
-  for (int i=liveContours.size()-1;  i>=0; i--){
+  for (int i=liveContours.size()-1; i>=0; i--) {
     Contour c = liveContours.get(i);
-    if (c.numPoints() < 100){
+    if (c.numPoints() < 100) {
       liveContours.remove(i);
     }
   }
@@ -109,22 +109,26 @@ void selectImage() {
     for (Zitat z : aI.zitate) {
       z.display();
       z.textDisplay();
-      image(layer2, 0, 0);
+      //image(layer2, 0, 0);
     }
   }
   if (mFollow) {
-    aI.update();
-    aI.display();
+    //aI.update();
+    //aI.display();
     for (Zitat z : aI.zitate) {
       z.update();
-      z.textDisplay();
+      z.display();
     }
   }
   if (mousePressed) {
-    aI.findContour(mouseX, mouseY);
+    if (aI.hasZitate) {
+      aI.findContour(mouseX, mouseY);
+      currentZitat.display();
+      image(layer2, 0, 0);
+    } else {
+      println("name  " + aI.name + "  has zitate?   "+ aI.hasZitate);
+    }
   }
-  
-  image(dst, mouseX, mouseY);
 }
 
 
@@ -141,10 +145,11 @@ void createScheduleTimer(final float ms) {
 }
 
 Line makeLine(PImage pic) {
+  // find longest line
   linesCV = new OpenCV(this, pic); // thread?
   linesCV.findCannyEdges(20, 75);
   ArrayList<Line> lines = linesCV.findLines(100, 30, 20);
-  // println("found  " + lines.size() + "  lines");
+  println("found  " + lines.size() + "  lines");
   float[] lineLength = new float[lines.size()];
   int lineIndex = 0;
   for (int i=0; i<lines.size(); i++) {

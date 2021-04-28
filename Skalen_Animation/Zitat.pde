@@ -24,9 +24,10 @@ class Zitat {
     this.line = makeLine(this.img);
     this.velocity = new PVector(0, 0);
     this.acceleration = new PVector (0, 0);
-    this.scale = 0.2;
+   
     this.parentW = _w;
     this.parentH = _h;
+     this.scale = float(width)/ float(parentW);
     this.col = color(0, 255, 0, 200);
     //println("Zitat index   " + this.index + "  zitat  " + this.zitat  + "  angle   "  +this.angle  + "   position  " + this.position);
   }
@@ -37,12 +38,12 @@ class Zitat {
     float x2 = this.coords.get(0);
     float y2 = this.coords.get(1);
     this.firstPos = new PVector (x1, y1 );
-    //if (x1 < this.parentW) {
-    //  this.firstPos = new PVector (x1, y1 );
-    //} else {
-    //  this.firstPos = new PVector (x2, y2 );
-    //}
-    this.position = PVector.mult(this.firstPos, 0.167);
+    if (x1 < this.parentW) {
+      this.firstPos = new PVector (x1, y1 );
+    } else {
+      this.firstPos = new PVector (x2, y2 );
+    }
+    this.position = PVector.mult(this.firstPos, 0.1);
   }
 
   void applyForce(PVector force) {
@@ -69,15 +70,12 @@ class Zitat {
     layer2.beginDraw();
     // layer2.background(130, 100);
     layer2.pushMatrix();
-    layer2.noTint();
+    //layer2.noTint();
     layer2.translate(this.position.x, this.position.y);
     layer2.imageMode(CORNER);
-    // layer2.rotate(radians(this.angle));
-    layer2.stroke(255);
-    layer2.strokeWeight(30);
+    // layer2.rotate(this.angle);
     layer2.scale(this.scale, this.scale);
     layer2.image(this.img, 0, 0);
-    layer2.point(0, 0);
     layer2.popMatrix();
     layer2.endDraw();
   }
@@ -87,7 +85,7 @@ class Zitat {
     layer2.clear();
     layer2.pushMatrix();
     layer2.translate(this.position.x, this.position.y);
-    if (this.position.x < this.parentW) {
+    if (this.position.x < this.parentW/2) {
       layer2.rotate(-radians(this.angle));
     } else {
       layer2.rotate(radians(this.angle));

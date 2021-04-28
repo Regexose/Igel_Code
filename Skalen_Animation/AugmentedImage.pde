@@ -69,7 +69,7 @@ class AugmentedImage {
             coords.append(x);
           }
         }
-        // println("zitat   " + zitat + "  angle   " + angle);
+        println("zitat   " + zitat + "  angle   " + angle + " name  " + this.name);
 
         Zitat z = new Zitat(i, zitat, img, angle, coords, this.image.width, this.image.height);
         zitate.add(z);
@@ -103,24 +103,27 @@ class AugmentedImage {
   }
 
   void findContour(int x, int y) {
+    // println("findContour  ");
     for (Contour c : this.contours) {
       if (c.containsPoint(x, y)) {
         // make contourPic to find lines
         PImage pic = makeContourPic(c);
         Line line = makeLine(pic);
+        println("zitat  " + this.zitate.size());
         float[] angles = new float[this.zitate.size()];
         for (int i=0; i<this.zitate.size(); i++) {
           Zitat z = this.zitate.get(i);
-          // println("z angle  " + z.angle + " lineAngle  " + nf((float)line.angle, 1, 3));
-          //float diff = abs(abs((float)line.angle) - abs(z.angle));
           float between = (float)line.angleFrom(z.line);
           angles[i] = abs(between);
         }
+        printArray(angles);
+        Rectangle box = c.getBoundingBox();
         for (int i=0; i<this.zitate.size(); i++) {
           if (angles[i]== min(angles)) {
             currentZitat = this.zitate.get(i);
+            currentZitat.position = new PVector(box.x, box.y); 
             println(" i " + i + "   Zitat found " + currentZitat.zitat + " angle "  + currentZitat.angle);
-            printArray(angles);
+          
           }
         }
       }
@@ -145,9 +148,9 @@ class AugmentedImage {
     }
     contourSurf.endShape(CLOSE);
     contourSurf.endDraw();
-    // println("box  " + box);
+    //println("box  " + box);
     PImage contourPic = contourSurf.get();
-    dst = contourSurf.get();
+    // dst = contourSurf.get();
     return contourPic;
   }
 }
