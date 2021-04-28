@@ -40,7 +40,6 @@ void setup() {
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
   scaleVal = float(width) / float(pic.width);
-
   tableOps();
 }
 
@@ -109,7 +108,7 @@ void loadData() {
     pathSkalen = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/Skalen/";
     pathSites = "Images/Orte/";
   }
-  fileName = "DSC00512.JPG";
+  fileName = "DSC03692.JPG";
   bildTexte = loadTable("SkalenTexte.tsv", "header");
   pic = loadImage(pathSkalen + fileName);
 }
@@ -176,13 +175,12 @@ void reconstruct() {
 }
 
 void tableOps() {
-  bildTexte.addColumn("lineAngle");
   for (Zitat z : zitatList) {
     String sIndex = str(z.index);
     if (z.index <10) {
       sIndex = "0" + z.index;
     }
-    String pngName =  fileName + "_Blob" + sIndex + ".png";
+    String pngName = fileName + "_Blob" + sIndex + ".png";
     println("pngname   " + pngName);
     // pngName = sIndex; // für den Fall, dass es schon pngs gibt und man tableops braucht
     String[] ecken = new String[4];
@@ -207,7 +205,6 @@ void tableOps() {
         row.setInt("numPoints", z.contour.numPoints());
         row.setString("lineAngle", str(z.lineAngle));
       }
-
       saveTable(bildTexte, "data/" + fileName + "_detected.tsv");
     }
   }

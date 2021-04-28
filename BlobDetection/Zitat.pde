@@ -15,11 +15,11 @@ class Zitat { //<>//
     this.index = index; 
     this.contour = contour;
     this.box = contour.getBoundingBox();
-    this.surface = createGraphics(box.width, box.height, P2D);
+    this.surface = createGraphics(box.width, box.height);
     this.contourSurf = createGraphics(box.width, box.height);
     makeEdges();
     horizontal = new PVector(1, 0);
-    // fillSurf();
+    //fillSurf();
   }
 
   void fillSurf() {
@@ -49,7 +49,12 @@ class Zitat { //<>//
     this.surface.updatePixels();
     this.surface.endDraw();
     pic_crop = this.surface.get(); 
-    pic_crop.save(pathSingle + fileName); 
+    String sIndex = str(this.index);
+    if (this.index <10) {
+      sIndex = "0" + this.index;
+    }
+    String pngName = fileName + "_Blob" + sIndex + ".png";
+    pic_crop.save(pathSingle + pngName); 
     schnipsel.add(pic_crop);
   }
 
