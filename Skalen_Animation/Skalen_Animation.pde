@@ -31,8 +31,8 @@ float loadStatus, messageX, messageY, messageSize, moveX, moveY;
 PShape s;
 
 void setup() {
-  size(1800, 1200, P2D);
-  computer = "iMac";
+  size(1100, 750, P2D);
+  computer = "MacBook";
   thread("loadData");
   loadScreen = createGraphics(width, height/12 );
   layer1 = createGraphics(width, height, P2D);
@@ -66,9 +66,9 @@ void loadData() {
     pathSkalen = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Skalen/";
     pathSites = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Orte/";
   } else {
-    pathSingle = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/SingleZitate/";
-    pathSkalen = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/Skalen/";
-    pathSites = "Images/Orte/";
+    pathSingle = "/Volumes/OhneTitel/Igel/Code/Images/SingleZitate/";
+    pathSkalen = "/Volumes/OhneTitel/Igel/Code/Images/Skalen/";
+    pathSites = "/Volumes/OhneTitel/Igel/Code/Images/Orte/";
   }
   // bildTexte = loadTable("Texte_im_Bild.tsv", "header");
   bildTexte = loadTable("Skalen_detected.tsv", "header");

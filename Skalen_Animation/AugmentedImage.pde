@@ -103,7 +103,7 @@ class AugmentedImage {
   }
 
   void findContour(int x, int y) {
-    // println("findContour  ");
+    println("findContour  " + " name " + this.name + "  has Z  " + this.hasZitate);
     for (Contour c : this.contours) {
       if (c.containsPoint(x, y)) {
         // make contourPic to find lines
