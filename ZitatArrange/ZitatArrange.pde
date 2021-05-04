@@ -135,35 +135,28 @@ void reconstruct() {
       zY = centerNow.y  + sin(z.angle + HALF_PI ) * newRadius ;
       //rotate(z.angle);
     }
-
+    // das ist der Punkt an dem der Streifen endet/beginnt
     point(zX, zY);
-    // z.textDisplay(zX, zY); 
+    z.textDisplay(zX, zY); 
     pushMatrix();
-    if (z.firstPos.x < img.width/2) {
-      translate (zX - z.img.width, zY - z.img.height );
-    } else {
-      translate (zX , zY - z.img.height );
+    //if (z.firstPos.x < img.width/2) {
+    //  translate (zX - (z.img.width * z.scale), zY - (z.img.height * z.scale) );
+    //} else {
+    //  translate (zX , zY - (z.img.height * z.scale) );
       
-    }
-
-    fill(255, 120);
-    if (z.firstPos.x > img.width/2) {
-      rotate(z.angle + HALF_PI);
-    } else {
-      rotate(z.angle - HALF_PI);
-    }
-    // text(z.zitat, 0, 0); 
-
-    stroke(0);
-    strokeWeight(1);
-
-    rectMode(CORNER);
-    //rect(0, 0, 150, 20);
+    //}
+    //// translate (zX , zY );
+    //fill(255, 120);
+    //if (z.firstPos.x > img.width/2) {
+    //  rotate(z.angle + HALF_PI);
+    //} else {
+    //  rotate(z.angle - HALF_PI);
+    //}
+    //text(z.zitat, 0, 0); 
     z.position = new PVector(zX , zY);
     z.display();
     popMatrix();
   }
-  // center.mult(1);
 }
 
 Line makeLine(PImage pic) {

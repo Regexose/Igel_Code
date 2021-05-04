@@ -89,11 +89,13 @@ class Zitat {
     layer2.beginDraw();
     // layer2.clear();
     layer2.pushMatrix();
-    layer2.translate(x, y);
-    if (this.position.x < this.parentW/2) {
+    // layer2.translate(x, y);
+    if (this.firstPos.x < this.parentW/2) {
+      layer2.translate(this.position.x - (this.img.width * this.scale), this.position.y - (this.img.height * this.scale));
       layer2.rotate(this.angle - HALF_PI);
     } else {
-      layer2.rotate(this.angle + HALF_PI);
+      layer2.translate(this.position.x, this.position.y );
+      layer2.rotate(this.angle - HALF_PI);
     }
     // layer2.scale(this.scale);
     layer2.fill(200);
