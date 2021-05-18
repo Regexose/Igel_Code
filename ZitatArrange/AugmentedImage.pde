@@ -49,10 +49,8 @@ class AugmentedImage {
     int i = 0;
     PImage img = createImage(30, 30, RGB);
     String angle = "0";
-
     for (TableRow row : bildTexte.rows()) {
       String bildName = row.getString("BildName");
-      
       if (bildName.equals(this.name)) {
         IntList coords = new IntList();
         String zitat = row.getString("Zitat");
@@ -85,7 +83,7 @@ class AugmentedImage {
             coords.append(x);
           }
         }
-        // println("zitat   " + zitat + "  index   " + i + " name  " + this.name);
+        // println("zitat   " + zitat + "  index   " + i + " name  " + blobName);
         Zitat z = new Zitat(i, zitat, img, angle, coords, this.image.width, this.image.height);
         this.zitate.add(z);
       }

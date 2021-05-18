@@ -16,7 +16,7 @@ AugmentedImage aI;
 ArrayList<Contour> liveContours;
 Zitat currentZitat;
 Table bildTexte;
-String pathSingle, pathSkalen, pathSites, fileName;
+String pathSingle, pathSkalen, pathSites, fileName, computer;
 String[] areaNames;
 int startTime, radius;
 PVector center;
@@ -28,13 +28,8 @@ PShape s;
 
 void setup() {
   size(1100, 750, P2D);
-  pathSingle = "/Volumes/OhneTitel/Igel/Code/Images/SingleZitate/";
-  pathSkalen = "/Volumes/OhneTitel/Igel/Code/Images/Skalen/";
-  pathSites = "/Volumes/OhneTitel/Igel/Code/Images/Orte/";
-  bildTexte = loadTable("Skalen_detected.tsv", "header");
-  fileName = "DSC00512.JPG";
-  img = loadImage("data/" + fileName);
-  aI = new AugmentedImage(fileName, img, 0);
+  computer = "iMac";
+  loadData();
   layer1 = createGraphics(width, height, P2D);
   layer2 = createGraphics(width, height, P2D);
   layer2.smooth();
@@ -137,13 +132,13 @@ void reconstruct() {
     }
     // das ist der Punkt an dem der Streifen endet/beginnt
     point(zX, zY);
-    z.textDisplay(zX, zY); 
+    // z.textDisplay(zX, zY); 
     pushMatrix();
     //if (z.firstPos.x < img.width/2) {
     //  translate (zX - (z.img.width * z.scale), zY - (z.img.height * z.scale) );
     //} else {
     //  translate (zX , zY - (z.img.height * z.scale) );
-      
+
     //}
     //// translate (zX , zY );
     //fill(255, 120);
@@ -153,10 +148,25 @@ void reconstruct() {
     //  rotate(z.angle - HALF_PI);
     //}
     //text(z.zitat, 0, 0); 
-    z.position = new PVector(zX , zY);
+    z.position = new PVector(zX, zY);
     z.display();
     popMatrix();
   }
+}
+void loadData() {
+  if (computer.equals("iMac")) {
+    pathSingle = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/SingleZitate/";
+    pathSkalen = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Skalen/";
+    pathSites = "/Volumes/Macintosh HD 2/projekte/Igel_der_Begegnung/Igel_Code_fork/Images/Orte/";
+  } else {
+    pathSingle = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/SingleZitate/";
+    pathSkalen = "/Users/borisjoens/Documents/IchProjekte/Igel/Igel_Code/Images/Skalen/";
+    pathSites = "Images/Orte/";
+  }
+  bildTexte = loadTable("Skalen_detected.tsv", "header");
+  fileName = "DSC00512.JPG";
+  img = loadImage(pathSkalen + fileName);
+  aI = new AugmentedImage(fileName, img, 0);
 }
 
 Line makeLine(PImage pic) {
